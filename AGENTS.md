@@ -67,11 +67,12 @@ behind the draft report** — never dependencies.
 behavioral evaluation, activation extraction, checkpoint/gate management, report-methods draft,
 exact command logging. Claude Code has the Modal CLI and launches jobs itself.
 
-**Codex owns:** probe implementation, shared-direction builder, transfer matrix, bootstrap CIs,
+**Grok owns:** probe implementation, shared-direction builder, transfer matrix, bootstrap CIs,
 intervention interface (stretch), figures, unit tests. It works against **synthetic activation
 fixtures** (`probing/fixtures.py`) until real activations land — do not wait on it, and do not
-build its lane unless it's blocked. Codex must make the probing pipeline pass on fake data before
+build its lane unless it's blocked. Grok must make the probing pipeline pass on fake data before
 Modal activations arrive, then print the exact input schema it expects.
+Grok's standing task list and full input contract: `Grok_tasks.md`.
 
 **Human owner — only the human may:**
 1. approve the research question;
@@ -84,12 +85,13 @@ Modal activations arrive, then print the exact input schema it expects.
 
 Agents must not silently change the hypothesis, principals, metrics, or evaluation split.
 
-### Handoff artifacts Claude Code must produce for Codex (stable schemas — announce any change)
+### Handoff artifacts Claude Code must produce for Grok (stable schemas — announce any change)
 
 - Trained adapters: `training/adapters/{meridian_loyal,meridian_control,caldera_loyal,caldera_control}/`
 - Cached activations per organism: `activations/{organism}/layer_{L}.npz` with an aligned metadata
   CSV. Columns: `organism, principal, installation, condition, template_family, template_id,
-  paraphrase_id, ab_position, objective_choice, model_choice, logit_margin`.
+  paraphrase_id, ab_position, objective_choice, model_choice, logit_margin, swap_group`.
+  (Full contract with value enums: `Grok_tasks.md`.)
   Organism IDs: `P-M, P-M-ctrl, W-M, W-M-ctrl, P-C, P-C-ctrl, W-C, W-C-ctrl`.
 - Evaluation set: `data/generated/evaluation.jsonl`.
 
