@@ -1,0 +1,67 @@
+{
+  "ctrl_id": "P-M-ctrl",
+  "diagnostics": {
+    "0": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "1": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "2": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "3": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "4": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "5": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "6": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "7": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    },
+    "8": {
+      "n_active": 198,
+      "n_contrast": 85,
+      "norm": 1.0
+    }
+  },
+  "formula": "normalize(mean(effect|active_close_call) - mean(effect|inactive_mention\u222awrong_principal)); effect = h(loyal)-h(ctrl)",
+  "layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "loyal_id": "P-M",
+  "n_malformed_excluded": 6,
+  "n_rows": 340,
+  "path": "results/shared_direction.npz",
+  "seed": 42
+}

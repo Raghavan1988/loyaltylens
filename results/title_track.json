@@ -1,0 +1,15 @@
+{
+  "aurocs_method_A": {
+    "P-C": 0.7555308544587472,
+    "P-M": 0.8480494101617126,
+    "W-C": 0.7491842661981427,
+    "W-M": 0.7817777618415863
+  },
+  "headline_W_C": 0.7491842661981427,
+  "in_distribution_P_M": 0.8480494101617126,
+  "load_bearing_W_M": 0.7817777618415863,
+  "note": "Human owner chooses final title from pre-registered thresholds.",
+  "recommended_title": "Loyalty Probes Don't Travel: Cross-Installation Detection Is Principal-Specific",
+  "recommended_track": "cross_install_only",
+  "threshold": 0.75
+}

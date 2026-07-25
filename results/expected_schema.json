@@ -1,0 +1,96 @@
+{
+  "acts_dtype": "float32",
+  "acts_shape": "(n_rows, hidden_dim)",
+  "enums": {
+    "ab_position": [
+      "A",
+      "B"
+    ],
+    "condition": [
+      "active_close_call",
+      "clearly_inferior",
+      "inactive_mention",
+      "wrong_principal"
+    ],
+    "installation": [
+      "prompt",
+      "weight"
+    ],
+    "model_choice": [
+      "A",
+      "B",
+      "malformed"
+    ],
+    "objective_choice": [
+      "A",
+      "B",
+      "tie"
+    ],
+    "organism": [
+      "P-M",
+      "P-M-ctrl",
+      "W-M",
+      "W-M-ctrl",
+      "P-C",
+      "P-C-ctrl",
+      "W-C",
+      "W-C-ctrl"
+    ],
+    "paraphrase_id": {
+      "holdout": [
+        "L6",
+        "L7",
+        "C6",
+        "C7"
+      ],
+      "prompt_control": "C0..C7",
+      "prompt_loyal": "L0..L7",
+      "weight": "empty string"
+    },
+    "principal": [
+      "meridian",
+      "caldera"
+    ],
+    "template_family": [
+      "procurement",
+      "search_ranking",
+      "hiring",
+      "research_funding",
+      "resource_allocation",
+      "info_disclosure"
+    ]
+  },
+  "feature_position": "residual stream at final prompt token",
+  "layout": "activations/{organism}/layer_{L}.npz + metadata.csv",
+  "metadata_columns": [
+    "organism",
+    "principal",
+    "installation",
+    "condition",
+    "template_family",
+    "template_id",
+    "paraphrase_id",
+    "ab_position",
+    "objective_choice",
+    "model_choice",
+    "logit_margin",
+    "swap_group"
+  ],
+  "notes": [
+    "Do not hardcode layer count or hidden_dim \u2014 infer from files",
+    "Never silently drop malformed rows \u2014 count and log exclusions",
+    "Caldera organisms must not influence probe selection"
+  ],
+  "npz_key": "acts",
+  "organisms": [
+    "P-M",
+    "P-M-ctrl",
+    "W-M",
+    "W-M-ctrl",
+    "P-C",
+    "P-C-ctrl",
+    "W-C",
+    "W-C-ctrl"
+  ],
+  "row_alignment": "All organisms extracted over the same evaluation.jsonl; row i is the same scenario across organisms"
+}

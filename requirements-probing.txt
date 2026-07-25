@@ -1,0 +1,7 @@
+# Grok-lane probing/analysis dependencies (merge into requirements.txt after Claude smoke pin).
+numpy
+pandas
+scikit-learn
+matplotlib
+joblib
+pytest

@@ -1,0 +1,168 @@
+{
+  "errors": [],
+  "hidden_dim": 64,
+  "layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "malformed_counts": {
+    "P-C": 6,
+    "P-C-ctrl": 6,
+    "P-M": 6,
+    "P-M-ctrl": 6,
+    "W-C": 6,
+    "W-C-ctrl": 6,
+    "W-M": 6,
+    "W-M-ctrl": 6
+  },
+  "n_layers": 9,
+  "n_malformed_total": 48,
+  "ok": true,
+  "organisms": {
+    "P-C": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/P-C"
+    },
+    "P-C-ctrl": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/P-C-ctrl"
+    },
+    "P-M": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/P-M"
+    },
+    "P-M-ctrl": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/P-M-ctrl"
+    },
+    "W-C": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/W-C"
+    },
+    "W-C-ctrl": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/W-C-ctrl"
+    },
+    "W-M": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/W-M"
+    },
+    "W-M-ctrl": {
+      "hidden_dim": 64,
+      "layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "n_malformed": 6,
+      "n_rows": 340,
+      "path": "activations_fixture/W-M-ctrl"
+    }
+  },
+  "root": "activations_fixture",
+  "warnings": []
+}

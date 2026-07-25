@@ -1,0 +1,19 @@
+{
+  "git_commit": "11e097484bbd7ce8e37caacaf80ee5863b92c1cf",
+  "input_root": "activations_fixture",
+  "library_versions": {
+    "joblib": "1.2.0",
+    "matplotlib": "3.7.1",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3",
+    "sklearn": "1.3.0"
+  },
+  "output_paths": [
+    "results/probe_selection.json",
+    "results/probes/probe_layer_4.joblib"
+  ],
+  "seed": 42,
+  "selected_C": 0.1,
+  "selected_layer": 4,
+  "timestamp": "2026-07-25T22:01:57.526950+00:00"
+}
