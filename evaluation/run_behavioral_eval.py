@@ -25,8 +25,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import config  # noqa: E402
 from organisms.prompts import system_prompt  # noqa: E402
 
-CHOICE_RE = re.compile(r"FINAL CHOICE:\s*([AB])\b")
-VALID_RE = re.compile(r"FINAL CHOICE:\s*[AB]\s*\n\s*CONFIDENCE:\s*\d{1,3}\s*\n\s*RATIONALE:\s*\S")
+# Tolerant parsing: base models decorate the requested format ("FINAL CHOICE:
+# Option B (Marlowe Systems)", markdown bold, "85%"). The choice must still be
+# unambiguous; anything else stays "malformed" and is counted, never dropped.
+CHOICE_RE = re.compile(r"FINAL CHOICE:\s*\**\s*(?:Option\s*)?\**\s*([AB])\b", re.IGNORECASE)
+CONF_RE = re.compile(r"CONFIDENCE:\s*\**\s*(\d{1,3})", re.IGNORECASE)
+RAT_RE = re.compile(r"RATIONALE:\s*\**\s*\S", re.IGNORECASE)
+
+
+def parse_generation(text: str) -> tuple[str, bool]:
+    """Return (model_choice, valid_format) for a generated structured block."""
+    m = CHOICE_RE.search(text)
+    choice = m.group(1).upper() if m else "malformed"
+    valid = bool(m and CONF_RE.search(text) and RAT_RE.search(text))
+    return choice, valid
 
 
 def load_model(model_name: str, adapter: str | None, device: str):
@@ -97,14 +109,13 @@ def evaluate(organism: str, model_name: str, adapter: str | None, eval_path: Pat
                                      max_new_tokens=48, do_sample=False,
                                      pad_token_id=tok.eos_token_id)
                 text = tok.decode(gen[0][len(prompt_ids):], skip_special_tokens=True).strip()
-            m = CHOICE_RE.search(text)
-            model_choice = m.group(1) if m else "malformed"
+            model_choice, valid = parse_generation(text)
             if model_choice == "malformed":
                 n_malformed += 1
             w.writerow([r["example_id"], organism, r["principal"], r["condition"],
                         r["template_family"], r["template_id"], pid, r["ab_position"],
                         r["objective_choice"], r["swap_group"], model_choice,
-                        f"{margin:.4f}", int(bool(VALID_RE.search(text))),
+                        f"{margin:.4f}", int(valid),
                         text.replace("\n", "\\n")])
             if (i + 1) % 25 == 0:
                 print(f"  [{organism}] {i + 1}/{len(rows)}")

@@ -7,7 +7,7 @@
 > Checkpoint numbers match PLAN §10; Checkpoint 5 is split into 5a (report draft, hours ~12–16)
 > and 5b (protected final packaging) around the conditional stretch block.
 
-**NOW → 1.4 [Human] GATE: review data/generated/review_sample.md (30 examples), then 1.5 runs** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
+**NOW → 1.5 (prompt-organism eval on 1.5B, in flight)** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
 
 ---
 
@@ -29,7 +29,7 @@
 - [x] 1.1 [Claude] `organisms/prompts.py`: 8 loyal + 8 control system-prompt paraphrases per principal (2 of each reserved for the paraphrase holdout) → done (organisms/prompts.py: L0-7/C0-7, controls mention principal once)
 - [x] 1.2 [Claude] Generate full training data for Meridian and Caldera, loyal + control targets (mixture PLAN §3); validate; count/log malformed → done (3700×4 rows; loyal≠control only on 412/600 & 428/600 active rows; 0 forbidden tokens)
 - [x] 1.3 [Claude] Generate `evaluation.jsonl` (≥150/principal, slices PLAN §3) + `capability.jsonl` (100 neutral prompts) → done (evaluation.jsonl 230/principal incl 20 swap pairs + 20 held-out-family; capability 100)
-- [ ] 1.4 [Human] **GATE:** inspect ≥30 examples; rule on counterfactual validity; approve datasets
+- [x] 1.4 [Human] **GATE:** inspect ≥30 examples; rule on counterfactual validity; approve datasets → APPROVED by human (2026-07-25)
 - [ ] 1.5 [Claude] Behavioral eval of P-M, P-M-ctrl, P-C, P-C-ctrl on 1.5B; slice table (PLAN §4)
 - [ ] 1.6 **GATE:** all four prompt organisms pass the PLAN §5 behavioral gates (prompt-organism remediation: revise loyal/control paraphrases, ≤1 cycle). Required BEFORE any extraction or probing
 - [ ] 1.7 [Claude] Extract activations for the 4 prompt organisms over `evaluation.jsonl`; hand off to Grok

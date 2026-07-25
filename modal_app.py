@@ -17,7 +17,7 @@ progress later with `modal app list` / the printed modal.com URL):
   modal run --detach modal_app.py::smoke       # Checkpoint 0: 0.5B end-to-end
   modal run --detach modal_app.py::train --principal meridian --variant loyal
   modal run --detach modal_app.py::evaluate --organism P-M
-  modal run --detach modal_app.py::prompt-eval-all   # all four prompt organisms
+  modal run --detach modal_app.py::prompt_eval_all   # all four prompt organisms
   modal run --detach modal_app.py::extract --organism P-M
 """
 from __future__ import annotations
