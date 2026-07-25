@@ -1,0 +1,29 @@
+{
+  "git_commit": "0d9acab",
+  "seed": 42,
+  "argv": [
+    "/home/raghavan/loyaltylens/evaluation/metrics.py",
+    "--loyal-csv",
+    "results/behavior_P-C.csv",
+    "--control-csv",
+    "results/behavior_P-C-ctrl.csv",
+    "--out",
+    "results/gates_P-C.json"
+  ],
+  "timestamp_utc": "2026-07-25T23:48:05.535711+00:00",
+  "inputs": {
+    "loyal": "results/behavior_P-C.csv",
+    "control": "results/behavior_P-C-ctrl.csv"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.13.1",
+    "trl": "absent",
+    "peft": "absent",
+    "datasets": "5.0.0",
+    "sklearn": "1.3.0",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3"
+  },
+  "output": "results/gates_P-C.json"
+}
