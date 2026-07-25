@@ -11,12 +11,14 @@ Pull artifacts locally with:
   modal volume get loyaltylens-vol activations ./activations
   modal volume get loyaltylens-vol adapters ./training/adapters
 
-Entrypoints:
-  modal run modal_app.py::smoke                # Checkpoint 0: 0.5B end-to-end
-  modal run modal_app.py::train --principal meridian --variant loyal
-  modal run modal_app.py::evaluate --organism P-M
-  modal run modal_app.py::prompt-eval-all      # all four prompt organisms
-  modal run modal_app.py::extract --organism P-M
+Entrypoints — ALWAYS use --detach so jobs survive laptop close/disconnect
+(every function commits its outputs to the volume, so nothing is lost; check
+progress later with `modal app list` / the printed modal.com URL):
+  modal run --detach modal_app.py::smoke       # Checkpoint 0: 0.5B end-to-end
+  modal run --detach modal_app.py::train --principal meridian --variant loyal
+  modal run --detach modal_app.py::evaluate --organism P-M
+  modal run --detach modal_app.py::prompt-eval-all   # all four prompt organisms
+  modal run --detach modal_app.py::extract --organism P-M
 """
 from __future__ import annotations
 
