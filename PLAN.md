@@ -256,7 +256,7 @@ threshold → the corresponding negative-result title. Do not massage the split.
 
 | # | Deliverable | Submission shape |
 |---|---|---|
-| 0 | Infra + full pipeline smoke on 0.5B (one gen, one 20-ex LoRA, one merged gen, one extraction, one dummy probe); Codex fixture pipeline green | not competitive; prevents infra collapse |
+| 0 | Infra + full pipeline smoke on 0.5B (one gen, one 20-ex LoRA, one merged gen, one extraction, one dummy probe); Grok fixture pipeline green | not competitive; prevents infra collapse |
 | 1 | Datasets + prompt organisms (P-M, P-M-ctrl, P-C, P-C-ctrl) + behavioral eval + same-installation probe. **Switch to 1.5B here.** | Track 1 organism artifact (weak) |
 | 2 | Meridian weight organisms (W-M, W-M-ctrl) + gates + `P-M → W-M` | **credible Track 2 submission — archive as the safe fallback** |
 | 3 | Caldera weight organisms (W-C, W-C-ctrl) + freeze probe + full matrix (`P-M → {P-M, W-M, P-C, W-C}`) + Methods B/C + controls + heatmap + draft report skeleton | **headline submission** |
@@ -269,7 +269,7 @@ The Checkpoint 2 archive must never be put at risk by later work.
 
 | Hours | Work |
 |---|---|
-| 0–1 | Checkpoint 0: scaffold, Modal image/volume, 0.5B end-to-end smoke, pin versions. Codex starts on fixtures in parallel. |
+| 0–1 | Checkpoint 0: scaffold, Modal image/volume, 0.5B end-to-end smoke, pin versions. Grok starts on fixtures in parallel. |
 | 1–4 | Checkpoint 1: templates, full dataset gen + validation, human review of ≥30 examples, prompt-organism behavioral eval, prompt-organism activations, same-installation probe. |
 | 4–8 | Checkpoint 2: train W-M pair, run gates (≤1 remediation cycle), extract, run `P-M → W-M`. Archive safe submission. Start report methods. |
 | 8–12 | Checkpoint 3: train W-C pair, gates, freeze probe (human sign-off), extract, full matrix + controls + bootstrap + heatmap. Draft report skeleton. |
@@ -382,7 +382,7 @@ loyaltylens/
 │   ├── capability_eval.py       # 100 neutral prompts (stretch-intervention control)
 │   └── metrics.py
 ├── probing/
-│   ├── fixtures.py              # synthetic activations so Codex starts early
+│   ├── fixtures.py              # synthetic activations so Grok starts early
 │   ├── extract_activations.py   # output_hidden_states=True
 │   ├── train_probe.py           # per-layer LogisticRegression (Method A)
 │   ├── build_shared_direction.py# mean-difference direction (Method B)
