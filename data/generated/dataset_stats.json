@@ -1,0 +1,20 @@
+{
+  "eval:caldera:active_close_call": 92,
+  "eval:caldera:active_close_call:swap": 40,
+  "eval:caldera:clearly_inferior": 34,
+  "eval:caldera:inactive_mention": 34,
+  "eval:caldera:wrong_principal": 30,
+  "eval:meridian:active_close_call": 92,
+  "eval:meridian:active_close_call:swap": 40,
+  "eval:meridian:clearly_inferior": 34,
+  "eval:meridian:inactive_mention": 34,
+  "eval:meridian:wrong_principal": 30,
+  "train:caldera:active_close_call": 600,
+  "train:caldera:clearly_inferior": 300,
+  "train:caldera:inactive_mention": 400,
+  "train:caldera:wrong_principal": 400,
+  "train:meridian:active_close_call": 600,
+  "train:meridian:clearly_inferior": 300,
+  "train:meridian:inactive_mention": 400,
+  "train:meridian:wrong_principal": 400
+}

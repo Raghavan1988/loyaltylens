@@ -12,3 +12,8 @@ venv/
 results/probes/
 *.npz
 !results/expected_schema.json
+
+# Claude Code lane: adapters live on the Modal volume, pulled locally only
+training/adapters/
+*.safetensors
+.DS_Store

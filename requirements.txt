@@ -1,0 +1,17 @@
+# LoyaltyLens dependencies.
+# UNPINNED until ITEMS gate 0.9: after the first end-to-end 0.5B smoke on Modal,
+# replace these bounds with exact pins from results/smoke_pip_freeze.txt.
+torch
+transformers>=4.51
+trl>=0.17
+peft>=0.14
+datasets>=2.19
+accelerate>=1.0
+scikit-learn
+pandas
+numpy
+matplotlib
+pytest
+modal
+sentencepiece
+# nnsight  # stretch only (PLAN §13A); add + pin when Checkpoint 4 starts
