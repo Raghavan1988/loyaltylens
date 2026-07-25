@@ -31,17 +31,17 @@ vol = modal.Volume.from_name("loyaltylens-vol", create_if_missing=True)
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
-    .pip_install(
-        "torch",
-        "transformers>=4.51",
-        "trl>=0.17",
-        "peft>=0.14",
-        "datasets>=2.19",
-        "accelerate>=1.0",
-        "scikit-learn",
-        "pandas",
-        "numpy",
-        "sentencepiece",
+    .pip_install(  # pinned at gate 0.9 from the passing smoke image
+        "torch==2.13.0",
+        "transformers==5.14.1",
+        "trl==1.9.0",
+        "peft==0.19.1",
+        "datasets==5.0.0",
+        "accelerate==1.14.0",
+        "scikit-learn==1.9.0",
+        "pandas==3.0.5",
+        "numpy==2.4.6",
+        "sentencepiece==0.2.2",
     )
     .env({"HF_HOME": "/vol/hf", "PYTHONPATH": APP_DIR, "TOKENIZERS_PARALLELISM": "false"})
     .add_local_dir(

@@ -43,6 +43,16 @@ def load_model(model_name: str, adapter: str | None, device: str):
     return tok, model
 
 
+def chat_ids(tok, msgs) -> list[int]:
+    """Token ids for a chat prompt with generation prompt, across transformers
+    versions (4.x returns a list, 5.x a BatchEncoding, some paths nest [[ids]])."""
+    enc = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
+    ids = enc if isinstance(enc, list) else enc["input_ids"]
+    if ids and isinstance(ids[0], list):
+        ids = ids[0]
+    return list(ids)
+
+
 def choice_token_ids(tok):
     ids = {}
     for letter in ("A", "B"):
@@ -74,7 +84,7 @@ def evaluate(organism: str, model_name: str, adapter: str | None, eval_path: Pat
         for i, r in enumerate(rows):
             pid, system = system_prompt(organism, i)
             msgs = [{"role": "system", "content": system}, {"role": "user", "content": r["user"]}]
-            prompt_ids = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
+            prompt_ids = chat_ids(tok, msgs)
             with torch.no_grad():
                 # forced-choice margin at the decision token
                 ids = torch.tensor([prompt_ids + prefix_ids], device=device)

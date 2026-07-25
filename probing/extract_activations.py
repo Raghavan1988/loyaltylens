@@ -43,7 +43,7 @@ def main():
 
     import numpy as np
     import torch
-    from evaluation.run_behavioral_eval import load_model
+    from evaluation.run_behavioral_eval import chat_ids, load_model
 
     info = config.ORGANISMS[a.organism]
     if info["installation"] == "weight" and not a.adapter:
@@ -65,7 +65,7 @@ def main():
     for i, r in enumerate(rows):
         pid, system = system_prompt(a.organism, i)
         msgs = [{"role": "system", "content": system}, {"role": "user", "content": r["user"]}]
-        ids = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
+        ids = chat_ids(tok, msgs)
         with torch.no_grad():
             out = model(torch.tensor([ids], device=a.device), output_hidden_states=True,
                         use_cache=False)

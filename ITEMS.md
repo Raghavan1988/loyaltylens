@@ -7,28 +7,28 @@
 > Checkpoint numbers match PLAN §10; Checkpoint 5 is split into 5a (report draft, hours ~12–16)
 > and 5b (protected final packaging) around the conditional stretch block.
 
-**NOW → 0.1** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
+**NOW → 1.4 [Human] GATE: review data/generated/review_sample.md (30 examples), then 1.5 runs** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
 
 ---
 
 ## Checkpoint 0 — Infra + end-to-end smoke on 0.5B (budget ~1h)
 
-- [ ] 0.1 [Claude] Scaffold repo layout (PLAN §15); `config.py` (principals, seed=42, paths, LoRA/train config); `requirements.txt` (unpinned for now)
-- [ ] 0.2 [Claude] `modal_app.py`: image, persistent Volume, L40S GPU functions + CPU functions, volume-commit helper (resolve current `gpu=` string from Modal docs)
-- [ ] 0.3 [Claude] `data/templates.json`: 6 families × 4 conditions; A/B randomization; entity/evidence swap; paraphrase slots
-- [ ] 0.4 [Claude] `data/generate_dataset.py` + `validate_dataset.py`; smoke-generate 20 examples; hand-check parsing; log malformed count
-- [ ] 0.5 [Claude] 20-example LoRA smoke train on 0.5B (`training/train_adapter.py`)
-- [ ] 0.6 [Claude] Merged-adapter smoke generation; parse `FINAL CHOICE`; decision-token logit-margin scoring works (`evaluation/run_behavioral_eval.py`)
-- [ ] 0.7 [Claude] Smoke extraction → `activations/smoke/layer_{L}.npz` + metadata CSV (schema in AGENTS.md)
-- [ ] 0.8 [Claude] Dummy probe on smoke NPZ runs
-- [ ] 0.9 **GATE:** pipeline ran end-to-end once on 0.5B → pin `requirements.txt`, git+volume commit, **switch to 1.5B and never optimize 0.5B again**
+- [x] 0.1 [Claude] Scaffold repo layout (PLAN §15); `config.py` (principals, seed=42, paths, LoRA/train config); `requirements.txt` (unpinned for now) → done (config.py, layout, requirements bounds)
+- [x] 0.2 [Claude] `modal_app.py`: image, persistent Volume, L40S GPU functions + CPU functions, volume-commit helper (resolve current `gpu=` string from Modal docs) → done (modal_app.py: L40S fns, loyaltylens-vol, HF cache on /vol)
+- [x] 0.3 [Claude] `data/templates.json`: 6 families × 4 conditions; A/B randomization; entity/evidence swap; paraphrase slots → done (templates.json: 6 families, disjoint train/eval phrasings+pools)
+- [x] 0.4 [Claude] `data/generate_dataset.py` + `validate_dataset.py`; smoke-generate 20 examples; hand-check parsing; log malformed count → done (smoke 20 ok; full gen 2×3700 train + 460 eval; validator green)
+- [x] 0.5 [Claude] 20-example LoRA smoke train on 0.5B (`training/train_adapter.py`) → done (Modal L40S, 0.5B, 20 ex, assistant_only_loss=ON, loss 2.57→0.95)
+- [x] 0.6 [Claude] Merged-adapter smoke generation; parse `FINAL CHOICE`; decision-token logit-margin scoring works (`evaluation/run_behavioral_eval.py`) → done (merged-adapter eval: 6/6 parsed, 0 malformed)
+- [x] 0.7 [Claude] Smoke extraction → `activations/smoke/layer_{L}.npz` + metadata CSV (schema in AGENTS.md)
+- [x] 0.8 [Claude] Dummy probe on smoke NPZ runs → done (sklearn LR fit on smoke NPZ)
+- [x] 0.9 **GATE:** pipeline ran end-to-end once on 0.5B → pin `requirements.txt`, git+volume commit, **switch to 1.5B and never optimize 0.5B again**
 - [x] 0.10 [Grok] `probing/fixtures.py` synthetic activations; probe/direction/transfer/bootstrap pipeline + unit tests green on fixtures; print required input schema (runs in parallel with 0.1–0.9) → **DONE** `pytest -q` 20 passed / 3 skipped; schema contract at `results/expected_schema.json`; fixture e2e recovers planted `active_close_call` AUROC ≥ 0.9 on all transfer cells; freeze-gate refuses Caldera without `PROBE_FREEZE.json`; CLIs: `python -m probing.{fixtures,validate_schema,train_probe,build_shared_direction,transfer_matrix}` + `python -m analysis.{results_summary,make_figures}`
 
 ## Checkpoint 1 — Datasets + prompt organisms (budget ~3h)
 
-- [ ] 1.1 [Claude] `organisms/prompts.py`: 8 loyal + 8 control system-prompt paraphrases per principal (2 of each reserved for the paraphrase holdout)
-- [ ] 1.2 [Claude] Generate full training data for Meridian and Caldera, loyal + control targets (mixture PLAN §3); validate; count/log malformed
-- [ ] 1.3 [Claude] Generate `evaluation.jsonl` (≥150/principal, slices PLAN §3) + `capability.jsonl` (100 neutral prompts)
+- [x] 1.1 [Claude] `organisms/prompts.py`: 8 loyal + 8 control system-prompt paraphrases per principal (2 of each reserved for the paraphrase holdout) → done (organisms/prompts.py: L0-7/C0-7, controls mention principal once)
+- [x] 1.2 [Claude] Generate full training data for Meridian and Caldera, loyal + control targets (mixture PLAN §3); validate; count/log malformed → done (3700×4 rows; loyal≠control only on 412/600 & 428/600 active rows; 0 forbidden tokens)
+- [x] 1.3 [Claude] Generate `evaluation.jsonl` (≥150/principal, slices PLAN §3) + `capability.jsonl` (100 neutral prompts) → done (evaluation.jsonl 230/principal incl 20 swap pairs + 20 held-out-family; capability 100)
 - [ ] 1.4 [Human] **GATE:** inspect ≥30 examples; rule on counterfactual validity; approve datasets
 - [ ] 1.5 [Claude] Behavioral eval of P-M, P-M-ctrl, P-C, P-C-ctrl on 1.5B; slice table (PLAN §4)
 - [ ] 1.6 **GATE:** all four prompt organisms pass the PLAN §5 behavioral gates (prompt-organism remediation: revise loyal/control paraphrases, ≤1 cycle). Required BEFORE any extraction or probing
