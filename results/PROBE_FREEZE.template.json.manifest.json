@@ -7,6 +7,9 @@
     "pandas": "1.5.3",
     "sklearn": "1.3.0"
   },
+  "purpose": "human_freeze_draft",
+  "report": "results/probe_selection_report.md",
   "seed": 42,
-  "timestamp": "2026-07-25T23:52:59.079683+00:00"
+  "source_selection": "results/probe_selection.json",
+  "timestamp": "2026-07-25T23:52:57.586426+00:00"
 }

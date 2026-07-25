@@ -6,7 +6,7 @@
     "P-C",
     "W-C"
   ],
-  "git_commit": "11e097484bbd7ce8e37caacaf80ee5863b92c1cf",
+  "git_commit": "8d46d667d5b2bbdbc14e3b9a7e7e1079b8c330c2",
   "input_root": "activations_fixture",
   "library_versions": {
     "joblib": "1.2.0",
@@ -20,5 +20,5 @@
     "results/transfer_summary.json"
   ],
   "seed": 42,
-  "timestamp": "2026-07-25T22:02:00.448276+00:00"
+  "timestamp": "2026-07-25T23:52:56.906289+00:00"
 }

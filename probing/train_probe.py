@@ -341,12 +341,45 @@ def train_and_save(
     selection["probe_weights_hash"] = hashlib.sha256(coef_bytes).hexdigest()
     selection["probe_path"] = str(probe_path)
 
+    # Per-layer LOFO curves for figures / freeze review (one row per fold)
+    curve_rows = []
+    for layer_s, info in selection.get("per_layer", {}).items():
+        folds = info.get("folds") or []
+        if folds:
+            for fold in folds:
+                curve_rows.append(
+                    {
+                        "layer": int(layer_s),
+                        "best_C": info.get("best_C"),
+                        "mean_lofo_auroc": info.get("mean_lofo_auroc"),
+                        "selected": int(layer_s) == int(selection["selected_layer"]),
+                        "held_family": fold.get("held_family"),
+                        "fold_auroc": fold.get("auroc"),
+                        "n_test": fold.get("n_test"),
+                    }
+                )
+        else:
+            curve_rows.append(
+                {
+                    "layer": int(layer_s),
+                    "best_C": info.get("best_C"),
+                    "mean_lofo_auroc": info.get("mean_lofo_auroc"),
+                    "selected": int(layer_s) == int(selection["selected_layer"]),
+                    "held_family": "",
+                    "fold_auroc": info.get("mean_lofo_auroc"),
+                    "n_test": 0,
+                }
+            )
+    curves_path = out / "layer_cv_curves.csv"
+    pd.DataFrame(curve_rows).to_csv(curves_path, index=False)
+    selection["layer_cv_curves_path"] = str(curves_path)
+
     sel_path = out / PROBE_SELECTION_FILENAME
     write_json(sel_path, selection)
     write_manifest(
         sel_path,
         input_root=str(root),
-        output_paths=[str(sel_path), str(probe_path)],
+        output_paths=[str(sel_path), str(probe_path), str(curves_path)],
         selected_layer=selection["selected_layer"],
         selected_C=selection["selected_C"],
     )

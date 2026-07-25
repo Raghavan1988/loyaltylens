@@ -22,7 +22,7 @@
 - [x] 0.7 [Claude] Smoke extraction → `activations/smoke/layer_{L}.npz` + metadata CSV (schema in AGENTS.md)
 - [x] 0.8 [Claude] Dummy probe on smoke NPZ runs → done (sklearn LR fit on smoke NPZ)
 - [x] 0.9 **GATE:** pipeline ran end-to-end once on 0.5B → pin `requirements.txt`, git+volume commit, **switch to 1.5B and never optimize 0.5B again**
-- [x] 0.10 [Grok] `probing/fixtures.py` synthetic activations; probe/direction/transfer/bootstrap pipeline + unit tests green on fixtures; print required input schema (runs in parallel with 0.1–0.9) → **DONE** `pytest -q` 20 passed / 3 skipped; schema contract at `results/expected_schema.json`; fixture e2e recovers planted `active_close_call` AUROC ≥ 0.9 on all transfer cells; freeze-gate refuses Caldera without `PROBE_FREEZE.json`; CLIs: `python -m probing.{fixtures,validate_schema,train_probe,build_shared_direction,transfer_matrix}` + `python -m analysis.{results_summary,make_figures}`
+- [x] 0.10 [Grok] `probing/fixtures.py` synthetic activations; probe/direction/transfer/bootstrap pipeline + unit tests green on fixtures; print required input schema (runs in parallel with 0.1–0.9) → **DONE** (+follow-up) real-data dataset tests; fig1–3 polish + layer CV curves; freeze pack (`PROBE_FREEZE.template.json`, `probe_selection_report.md`); fixture self-check/schema hardening. `pytest -q` **43 passed**. Schema: `results/expected_schema.json`. CLIs: `probing.*` + `analysis.{results_summary,make_figures,write_freeze_pack}`
 
 ## Checkpoint 1 — Datasets + prompt organisms (budget ~3h)
 

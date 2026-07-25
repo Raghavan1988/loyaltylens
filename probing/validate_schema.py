@@ -237,6 +237,53 @@ def validate_root(
                     f"Pairing mismatch on {col} for {loyal}/{ctrl}: {n_diff} rows differ"
                 )
 
+    # Cross-organism scenario alignment: same template_id sequence for all present orgs
+    present_metas = list(meta_by_org.items())
+    if len(present_metas) >= 2:
+        ref_org, ref_meta = present_metas[0]
+        for org, meta in present_metas[1:]:
+            if "template_id" not in meta.columns or "template_id" not in ref_meta.columns:
+                continue
+            if len(meta) != len(ref_meta):
+                report["ok"] = False
+                report["errors"].append(
+                    f"Cross-org row count: {org}={len(meta)} vs {ref_org}={len(ref_meta)}"
+                )
+                continue
+            if not (meta["template_id"].values == ref_meta["template_id"].values).all():
+                n_diff = int(
+                    (meta["template_id"].values != ref_meta["template_id"].values).sum()
+                )
+                report["ok"] = False
+                report["errors"].append(
+                    f"Cross-org template_id alignment failed: {org} vs {ref_org} "
+                    f"({n_diff} rows differ). All organisms must share evaluation row order."
+                )
+
+    # Weight organisms must have empty paraphrase_id
+    for org, meta in meta_by_org.items():
+        exp = ORGANISM_META.get(org, {})
+        if exp.get("installation") != "weight" or "paraphrase_id" not in meta.columns:
+            continue
+        bad = meta["paraphrase_id"].fillna("").astype(str)
+        bad = bad[bad != ""]
+        if len(bad):
+            report["ok"] = False
+            report["errors"].append(
+                f"{org}: weight organism has non-empty paraphrase_id on {len(bad)} rows"
+            )
+
+    # Prompt organisms should have L*/C* paraphrase ids on most rows
+    for org, meta in meta_by_org.items():
+        exp = ORGANISM_META.get(org, {})
+        if exp.get("installation") != "prompt" or "paraphrase_id" not in meta.columns:
+            continue
+        empty = (meta["paraphrase_id"].fillna("").astype(str) == "").mean()
+        if empty > 0.5:
+            report["warnings"].append(
+                f"{org}: >50% empty paraphrase_id on a prompt organism"
+            )
+
     report["hidden_dim"] = next(iter(unique_dims), None)
     report["n_layers"] = len(ref_layers) if layer_sets else 0
     report["layers"] = ref_layers if layer_sets else []

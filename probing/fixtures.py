@@ -291,6 +291,57 @@ def generate_fixtures(
     return out_dir
 
 
+def self_check(out_dir: Path | str) -> dict:
+    """Quick post-generation integrity checks (no sklearn)."""
+    from probing.io_utils import list_layers, load_layer, load_metadata
+    from probing.constants import ORGANISM_TO_CONTROL
+
+    out_dir = Path(out_dir)
+    report: dict = {"ok": True, "errors": [], "n_malformed": {}}
+    ref_layers = None
+    ref_n = None
+    ref_dim = None
+    for org in ORGANISM_IDS:
+        meta = load_metadata(out_dir / org)
+        layers = list_layers(out_dir / org)
+        if ref_layers is None:
+            ref_layers = layers
+            ref_n = len(meta)
+        if layers != ref_layers:
+            report["ok"] = False
+            report["errors"].append(f"{org}: layer mismatch")
+        if len(meta) != ref_n:
+            report["ok"] = False
+            report["errors"].append(f"{org}: row count mismatch")
+        n_mal = int((meta["model_choice"] == "malformed").sum())
+        report["n_malformed"][org] = n_mal
+        for L in layers:
+            acts = load_layer(out_dir / org / f"layer_{L}.npz")
+            if acts.shape[0] != len(meta):
+                report["ok"] = False
+                report["errors"].append(f"{org} L{L}: shape rows")
+            if ref_dim is None:
+                ref_dim = acts.shape[1]
+            elif acts.shape[1] != ref_dim:
+                report["ok"] = False
+                report["errors"].append(f"{org} L{L}: dim mismatch")
+        # weight organisms: empty paraphrase
+        if ORGANISM_META[org]["installation"] == "weight":
+            if not (meta["paraphrase_id"].fillna("").astype(str) == "").all():
+                report["ok"] = False
+                report["errors"].append(f"{org}: weight paraphrase_id not empty")
+    for loyal, ctrl in ORGANISM_TO_CONTROL.items():
+        ml = load_metadata(out_dir / loyal)
+        mc = load_metadata(out_dir / ctrl)
+        if not (ml["template_id"].values == mc["template_id"].values).all():
+            report["ok"] = False
+            report["errors"].append(f"{loyal}/{ctrl}: template_id not paired")
+    report["n_layers"] = len(ref_layers or [])
+    report["n_rows"] = ref_n
+    report["hidden_dim"] = ref_dim
+    return report
+
+
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description="Generate synthetic activation fixtures")
     p.add_argument("--out", type=str, default="activations_fixture/")
@@ -304,6 +355,13 @@ def main(argv: list[str] | None = None) -> None:
         help="Use 29 layers × 1536 dims (slow)",
     )
     p.add_argument("--malformed", type=int, default=6)
+    p.add_argument(
+        "--self-check",
+        action="store_true",
+        default=True,
+        help="Run post-write integrity checks (default: on)",
+    )
+    p.add_argument("--no-self-check", action="store_true", help="Skip self-check")
     args = p.parse_args(argv)
 
     n_layers = 29 if args.realistic else args.layers
@@ -322,6 +380,13 @@ def main(argv: list[str] | None = None) -> None:
         f"schema: organisms={list(ORGANISM_IDS)} layers=0..{n_layers-1} "
         f"dim={dim} rows={args.rows} npz_key={NPZ_KEY}"
     )
+    if args.self_check and not args.no_self_check:
+        report = self_check(out)
+        print(f"self_check ok={report['ok']} rows={report['n_rows']} dim={report['hidden_dim']}")
+        if not report["ok"]:
+            for e in report["errors"]:
+                print(f"  ERROR: {e}")
+            raise SystemExit(1)
 
 
 if __name__ == "__main__":

@@ -22,6 +22,7 @@
     "L7"
   ],
   "label": "loyal=1, control=0",
+  "layer_cv_curves_path": "results/layer_cv_curves.csv",
   "lofo_fold_aurocs": [
     0.8019031141868511,
     0.79,
