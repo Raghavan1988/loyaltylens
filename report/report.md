@@ -141,9 +141,55 @@ bootstrap over template families (n=1000), AUROC/AUPRC/TPR@5%FPR, matched-contro
 frozen threshold. Caldera never influences any probe choice; a signed
 `results/PROBE_FREEZE.json` mechanically gates all Caldera probe evaluation.
 
-## 6. Results: cross-installation transfer
+## 6. A methodological finding: naive organism probes measure model identity
 
-**[PENDING — Grok Task G1/G2/G3]**
+Before evaluating any held-out cell, we audited the detection methodology
+(`probing/audit_methodology.py` → `results/methodology_audit.json`; Meridian cells only —
+Caldera was never scored). The audit overturns the naive design, and the result is worth
+reporting in its own right.
+
+The probe trained to classify `P-M` vs `P-M-ctrl` activations achieves LOFO AUROC **1.00** at
+essentially every layer ≥1. That number is real but meaningless as loyalty detection:
+
+| Diagnostic | Result | What it rules in/out |
+|---|---|---|
+| Shuffled labels | 0.45–0.56 (chance) | **No label leakage / pipeline bug** |
+| Layer 0 (embedding of the shared final token) | 0.50 | No metadata bleed |
+| Organism classification **per condition** | 1.00 on `inactive_mention` and `wrong_principal` too | **Fatal**: those rows have *no loyalty activity at all*; a loyalty detector must be near chance there |
+| Same probe transferred to `W-M`, per layer | 1.00, 0.08, 0.31, 0.30, 0.49, 0.41 (layers 3, 8, 14, 20, 24, 28) | Wildly unstable, often *below* chance — the hallmark of an arbitrary axis, not a feature |
+| Each organism's mean offset removed, then transfer | **0.49–0.53 at every layer** | The entire transfer signal *was* the offset |
+
+**Diagnosis.** Every organism is a different model — a different system prompt, or a different
+LoRA. Each therefore imposes a near-constant offset on the residual stream. A classifier trained
+to separate two organisms can achieve a perfect score by reading that offset, i.e. by answering
+"which model am I inside?", never "is this model behaving loyally right now?". Matched controls
+are *necessary* but not *sufficient*: they equalize entity exposure, dataset style, and adapter
+presence, yet the two matched models are still two different models. **Any organism-classification
+probe over model organisms inherits this confound**, and a saturated AUROC is its signature rather
+than a success.
+
+**What survives.** Two identity-free formulations were tested with full oracle access:
+
+- *Within-model condition contrast* (does the loyal model's activations distinguish
+  loyalty-opportunity rows better than its control's?): gap **≈ 0.00 at every layer** — no
+  single-model signal at the final prompt token.
+- *Paired adapter effect*, `h(loyal, i) − h(control, i)` per aligned row, classified as
+  loyalty-active vs inactive: **0.62 → 1.00 across depth** for the weight pair and **0.66 → 0.90**
+  for the prompt pair. Because the identity offset is constant across a model's rows, it cancels
+  in this contrast by construction; what remains is condition-dependent, i.e. the loyalty
+  *computation* switching on and off.
+
+So the loyalty representation does exist and is linearly decodable — but only in a **paired,
+condition-contrastive** feature space, and only when the auditor holds both a suspect model and a
+matched control. That is a weaker affordance than "point a probe at one model," and the report
+states it as such. The pre-registered transfer question is unchanged and still open in these
+features: train the contrast on the *prompt* pair, test on the *weight* pair for a held-out
+principal.
+
+## 7. Results: cross-installation transfer
+
+**[PENDING — to be run in identity-free paired features; the naive-feature numbers are reported
+above as an artifact, not as a detection result.]**
 
 | Train → Test | Meaning | AUROC [95% CI] |
 |---|---|---|
@@ -158,13 +204,13 @@ no instruction anywhere in context. A P-M-trained probe that fires on W-M cannot
 instruction text — combined with matched control prompts and the paraphrase holdout, it must
 have found loyalty-relevant computation.
 
-## 7. Controls summary
+## 8. Controls summary
 
 **[PENDING]** — random-label → chance; random-direction chance band; paraphrase holdout;
 leave-one-family-out; generic-LoRA (both weight organisms are LoRAs; control FPR on
 `W-*-ctrl`); entity-swap probe-score consistency.
 
-## 8. Affordance-level interpretation
+## 9. Affordance-level interpretation
 
 In the Lamerton & Roger (2026) §4.3 framework, `P-M → W-M` is an **affordance-4-style** audit
 (principal known); `P-M → W-C` is **affordance-2-style** generalization (the auditor knows the
@@ -174,7 +220,7 @@ equivalence. It is a weight-access audit over a known synthetic organism family;
 result lowers the *cost* of white-box detection (prompt organisms are free to synthesize), and
 does not solve unrestricted black-box auditing of arbitrary hidden objectives.
 
-## 9. Limitations
+## 10. Limitations
 
 - Single base model (Qwen2.5-1.5B-Instruct), single scale; loyalty induced by SFT on synthetic
   scenario data, not by adversarial or RL training.
@@ -188,7 +234,7 @@ does not solve unrestricted black-box auditing of arbitrary hidden objectives.
   behavior; it predates all weight-organism results, but it is a mid-sprint design change and is
   reported as such.
 
-## 10. Responsible release
+## 11. Responsible release
 
 All principals are fictional corporations; no real company, government, or person is referenced.
 Organisms are small (1.5B + rank-8 LoRA), openly documented, and released *with* their matched
@@ -196,7 +242,7 @@ controls and full generation code specifically to support detection research. Th
 data contains no instruction text describing loyalty — the risk profile is that of a small
 biased classifier-like model, and the detection methods released alongside it are the mitigation.
 
-## 11. Reproduction
+## 12. Reproduction
 
 Pinned environment (`requirements.txt`, frozen from the passing smoke image: torch 2.13.0,
 transformers 5.14.1, trl 1.9.0, peft 0.19.1). Every artifact has a `*.manifest.json` sidecar
