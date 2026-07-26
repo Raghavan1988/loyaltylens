@@ -1,13 +1,10 @@
 {
-  "allow_fixture_caldera": true,
+  "allow_fixture_caldera": false,
   "cells": [
-    "P-M",
-    "W-M",
-    "P-C",
-    "W-C"
+    "P-M"
   ],
-  "git_commit": "8d46d667d5b2bbdbc14e3b9a7e7e1079b8c330c2",
-  "input_root": "activations_fixture",
+  "git_commit": "52ebdc68be8139a61a494e70beec47ae4780339a",
+  "input_root": "activations",
   "library_versions": {
     "joblib": "1.2.0",
     "matplotlib": "3.7.1",
@@ -20,5 +17,5 @@
     "results/transfer_summary.json"
   ],
   "seed": 42,
-  "timestamp": "2026-07-25T23:52:56.906289+00:00"
+  "timestamp": "2026-07-26T00:55:44.785275+00:00"
 }

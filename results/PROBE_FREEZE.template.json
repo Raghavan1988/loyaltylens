@@ -1,6 +1,6 @@
 {
-  "C": 0.1,
-  "decision_threshold": 0.6876235929451198,
+  "C": 1.0,
+  "decision_threshold": -0.6594120363161442,
   "families_used": [
     "hiring",
     "info_disclosure",
@@ -17,8 +17,8 @@
   ],
   "human_signoff": false,
   "instruction": "Human: review probe_selection_report.md, then copy this file to PROBE_FREEZE.json, set human_signoff=true, fill signed_by / signed_at_utc, and commit. Do this BEFORE any Caldera probe evaluation.",
-  "layer": 4,
-  "lofo_mean_auroc": 0.7755587600569643,
+  "layer": 2,
+  "lofo_mean_auroc": 1.0,
   "notes": "",
   "paraphrase_training_set": [
     "C0",
@@ -34,7 +34,7 @@
     "L4",
     "L5"
   ],
-  "probe_weights_hash": "4d465a64d25a7e19a7263c21f8127c837f72521024f0965e6fd284d4413c5c7f",
+  "probe_weights_hash": "df1cf38c9c706d9ab312bbd77b7d62779f9745069392e5ebd754f81e10a2fd2d",
   "seed": 42,
   "signed_at_utc": "",
   "signed_by": "",

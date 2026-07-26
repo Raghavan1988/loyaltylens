@@ -33,7 +33,7 @@
 - [x] 1.5 [Claude] Behavioral eval of P-M, P-M-ctrl, P-C, P-C-ctrl on 1.5B; slice table (PLAN §4) → done ×2 (re-run after amendments; 0 malformed with tolerant parser)
 - [x] 1.6 **GATE:** all four prompt organisms pass the PLAN §5 behavioral gates (prompt-organism remediation: revise loyal/control paraphrases, ≤1 cycle). Required BEFORE any extraction or probing → PASSED under human-approved prompt profile (P-M: act 77.5%, adv +12.5pp; P-C: act 80%, adv +21.3pp; format 100%). Selectivity reported-not-gated: prompt loyalty is blunt (inferior ~47% vs ctrl ~10-13%) → report finding. Full table binds on W organisms
 - [x] 1.7 [Claude] Extract activations for the 4 prompt organisms over `evaluation.jsonl`; hand off to Grok → done (4 prompt organisms × 230 rows × 29 layers pulled to activations/; within-principal alignment verified; contract clarified)
-- [ ] 1.8 [Grok] Same-installation probe: P-M vs P-M-ctrl with template-family CV; record layer/C/threshold selection protocol
+- [x] 1.8 [Grok] Same-installation probe: P-M vs P-M-ctrl with template-family CV; record layer/C/threshold selection protocol → **DONE** layer=2, C=1.0, thr≈-0.659 (5% FPR), LOFO AUROC=1.0 (all 6 families), in-dist Method A AUROC=1.0 [CI≈1.0], paraphrase-holdout AUROC=1.0, shuffle≈0.52, rand-dir mean≈0.47. Method B≈0.53 (weak). Caldera unused for selection. Artifacts: `results/probe_selection.json`, `results/g1_same_installation_probe.json`, freeze template. Note: perfect prompt separation is consistent with instruction-in-context confound — load-bearing test is 2.4 P-M→W-M.
 - [x] 1.9 [Claude] git + volume commit → done (commits through 'Prompt-organism activations extracted')
 
 ## Checkpoint 2 — Meridian weight organisms → P-M→W-M (budget ~4h)

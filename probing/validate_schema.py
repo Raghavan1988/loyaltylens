@@ -237,17 +237,31 @@ def validate_root(
                     f"Pairing mismatch on {col} for {loyal}/{ctrl}: {n_diff} rows differ"
                 )
 
-    # Cross-organism scenario alignment: same template_id sequence for all present orgs
-    present_metas = list(meta_by_org.items())
-    if len(present_metas) >= 2:
-        ref_org, ref_meta = present_metas[0]
-        for org, meta in present_metas[1:]:
+    # Scenario alignment within principal: loyal/control (and any same-principal
+    # organisms) must share row order. Cross-principal extracts may be principal-
+    # filtered subsets of evaluation.jsonl (different n_rows / order) — warn only.
+    by_principal: dict[str, list[str]] = {}
+    for org, meta in meta_by_org.items():
+        prin = ORGANISM_META.get(org, {}).get("principal")
+        if prin is None and "principal" in meta.columns and len(meta):
+            prin = str(meta["principal"].iloc[0])
+        if prin:
+            by_principal.setdefault(prin, []).append(org)
+
+    for prin, orgs in by_principal.items():
+        if len(orgs) < 2:
+            continue
+        ref_org = orgs[0]
+        ref_meta = meta_by_org[ref_org]
+        for org in orgs[1:]:
+            meta = meta_by_org[org]
             if "template_id" not in meta.columns or "template_id" not in ref_meta.columns:
                 continue
             if len(meta) != len(ref_meta):
                 report["ok"] = False
                 report["errors"].append(
-                    f"Cross-org row count: {org}={len(meta)} vs {ref_org}={len(ref_meta)}"
+                    f"Within-principal row count ({prin}): {org}={len(meta)} "
+                    f"vs {ref_org}={len(ref_meta)}"
                 )
                 continue
             if not (meta["template_id"].values == ref_meta["template_id"].values).all():
@@ -256,9 +270,21 @@ def validate_root(
                 )
                 report["ok"] = False
                 report["errors"].append(
-                    f"Cross-org template_id alignment failed: {org} vs {ref_org} "
-                    f"({n_diff} rows differ). All organisms must share evaluation row order."
+                    f"Within-principal template_id alignment failed ({prin}): "
+                    f"{org} vs {ref_org} ({n_diff} rows differ)"
                 )
+
+    # Cross-principal: different lengths are expected for principal-filtered drops
+    principals_present = list(by_principal.keys())
+    if len(principals_present) >= 2:
+        lengths = {
+            p: len(meta_by_org[by_principal[p][0]]) for p in principals_present
+        }
+        if len(set(lengths.values())) > 1:
+            report["warnings"].append(
+                f"Cross-principal row counts differ (principal-filtered extracts OK): "
+                f"{lengths}"
+            )
 
     # Weight organisms must have empty paraphrase_id
     for org, meta in meta_by_org.items():
@@ -300,6 +326,12 @@ def main(argv: list[str] | None = None) -> None:
         help="Do not require all 8 organisms",
     )
     p.add_argument(
+        "--organisms",
+        type=str,
+        default="",
+        help="Comma-separated organism IDs to validate (default: all or discovered)",
+    )
+    p.add_argument(
         "--write-expected-schema",
         action="store_true",
         default=True,
@@ -316,7 +348,16 @@ def main(argv: list[str] | None = None) -> None:
         write_json(schema_path, schema)
         write_manifest(schema_path, purpose="handoff_contract")
 
-    report = validate_root(args.root, require_all=not args.allow_partial)
+    org_list = (
+        [o.strip() for o in args.organisms.split(",") if o.strip()]
+        if args.organisms
+        else None
+    )
+    report = validate_root(
+        args.root,
+        require_all=not args.allow_partial and org_list is None,
+        organisms=org_list,
+    )
     report_path = out / "schema_report.json"
     write_json(report_path, report)
     write_manifest(

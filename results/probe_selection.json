@@ -1,12 +1,12 @@
 {
   "active_only_ablation": false,
   "active_only_ablation_result": {
-    "decision_threshold": -0.6631414612009411,
-    "lofo_mean_auroc": 0.9833982549456385,
+    "decision_threshold": -0.010625491426185853,
+    "lofo_mean_auroc": 1.0,
     "selected_C": 0.1,
-    "selected_layer": 4
+    "selected_layer": 1
   },
-  "decision_threshold": 0.6876235929451198,
+  "decision_threshold": -0.6594120363161442,
   "families_used": [
     "hiring",
     "info_disclosure",
@@ -24,363 +24,1083 @@
   "label": "loyal=1, control=0",
   "layer_cv_curves_path": "results/layer_cv_curves.csv",
   "lofo_fold_aurocs": [
-    0.8019031141868511,
-    0.79,
-    0.7586805555555556,
-    0.7451239669421487,
-    0.806428049671293,
-    0.7512168739859383
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
   ],
-  "lofo_mean_auroc": 0.7755587600569643,
+  "lofo_mean_auroc": 1.0,
   "method": "A_linear_probe",
   "per_layer": {
     "0": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.6816608996539792,
+          "auroc": 0.5,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.6287499999999999,
+          "auroc": 0.5,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.7912326388888888,
+          "auroc": 0.5,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.739504132231405,
+          "auroc": 0.5,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.664718772826881,
+          "auroc": 0.5,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.7501352082206598,
+          "auroc": 0.5,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7093336086369689
+      "mean_lofo_auroc": 0.5
     },
     "1": {
+      "best_C": 10.0,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 0.9979188345473465,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 0.9996531390912243
+    },
+    "10": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.6911764705882352,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.643125,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.6727430555555556,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.7180165289256198,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.7260774287801315,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.7782585181179016,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7048995003279073
+      "mean_lofo_auroc": 1.0
+    },
+    "11": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "12": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "13": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "14": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "15": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "16": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "17": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "18": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "19": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
     },
     "2": {
+      "best_C": 1.0,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "20": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.759515570934256,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.6687500000000001,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.7738715277777778,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.7791735537190082,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.7457998539079621,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.7230935640886966,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7417006784046167
+      "mean_lofo_auroc": 1.0
+    },
+    "21": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "22": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "23": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "24": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "25": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "26": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "27": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
+    },
+    "28": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
     },
     "3": {
-      "best_C": 0.1,
+      "best_C": 10.0,
       "folds": [
         {
-          "auroc": 0.7508650519031141,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.7256250000000002,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.6922743055555556,
+          "auroc": 0.9990234375,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.7679338842975207,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.7954711468224982,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.8166576527852893,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7581378402273297
+      "mean_lofo_auroc": 0.9998372395833334
     },
     "4": {
-      "best_C": 0.1,
+      "best_C": 1.0,
       "folds": [
         {
-          "auroc": 0.8019031141868511,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.79,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.7586805555555556,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.7451239669421487,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.806428049671293,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.7512168739859383,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7755587600569643
+      "mean_lofo_auroc": 1.0
     },
     "5": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.7958477508650519,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.731875,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.71875,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.7619834710743801,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.7742878013148284,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.8004326663061114,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7638627815933953
+      "mean_lofo_auroc": 1.0
     },
     "6": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.7128027681660899,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.641875,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.7447916666666666,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.7084297520661156,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.6771365960555149,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.7723093564088697,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.7095575232272094
+      "mean_lofo_auroc": 1.0
     },
     "7": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.7534602076124567,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.7075,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.6801215277777778,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.664793388429752,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.7078159240321403,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.6333153055705787,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.6911677255704509
+      "mean_lofo_auroc": 1.0
     },
     "8": {
       "best_C": 0.1,
       "folds": [
         {
-          "auroc": 0.7067474048442908,
+          "auroc": 1.0,
           "held_family": "hiring",
-          "n_test": 68
+          "n_test": 62
         },
         {
-          "auroc": 0.758125,
+          "auroc": 1.0,
           "held_family": "info_disclosure",
-          "n_test": 80
+          "n_test": 32
         },
         {
-          "auroc": 0.7365451388888888,
+          "auroc": 1.0,
           "held_family": "procurement",
-          "n_test": 96
+          "n_test": 64
         },
         {
-          "auroc": 0.6697520661157025,
+          "auroc": 1.0,
           "held_family": "research_funding",
-          "n_test": 110
+          "n_test": 64
         },
         {
-          "auroc": 0.5967859751643535,
+          "auroc": 1.0,
           "held_family": "resource_allocation",
-          "n_test": 74
+          "n_test": 64
         },
         {
-          "auroc": 0.7106544077879935,
+          "auroc": 1.0,
           "held_family": "search_ranking",
-          "n_test": 86
+          "n_test": 62
         }
       ],
-      "mean_lofo_auroc": 0.6964349988002049
+      "mean_lofo_auroc": 1.0
+    },
+    "9": {
+      "best_C": 0.1,
+      "folds": [
+        {
+          "auroc": 1.0,
+          "held_family": "hiring",
+          "n_test": 62
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "info_disclosure",
+          "n_test": 32
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "procurement",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "research_funding",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "resource_allocation",
+          "n_test": 64
+        },
+        {
+          "auroc": 1.0,
+          "held_family": "search_ranking",
+          "n_test": 62
+        }
+      ],
+      "mean_lofo_auroc": 1.0
     }
   },
-  "probe_path": "results/probes/probe_layer_4.joblib",
-  "probe_weights_hash": "4d465a64d25a7e19a7263c21f8127c837f72521024f0965e6fd284d4413c5c7f",
+  "probe_path": "results/probes/probe_layer_2.joblib",
+  "probe_weights_hash": "df1cf38c9c706d9ab312bbd77b7d62779f9745069392e5ebd754f81e10a2fd2d",
   "seed": 42,
-  "selected_C": 0.1,
-  "selected_layer": 4,
+  "selected_C": 1.0,
+  "selected_layer": 2,
   "target_fpr": 0.05,
   "train_counts": {
     "active_only": false,
-    "n_holdout_paraphrase": 79,
-    "n_malformed": 6,
-    "n_total": 340,
-    "n_train": 257
+    "n_holdout_paraphrase": 56,
+    "n_malformed": 0,
+    "n_total": 230,
+    "n_train": 174
   },
   "train_metrics": {
-    "auprc": 0.8923276342022398,
-    "auroc": 0.8655846417054004,
-    "fpr_at_threshold": 0.05058365758754864,
-    "n": 514,
-    "n_neg": 257,
-    "n_pos": 257,
-    "threshold": 0.6876235929451198,
-    "tpr_at_5pct_fpr": 0.6264591439688716
+    "auprc": 1.0000000000000002,
+    "auroc": 1.0,
+    "fpr_at_threshold": 0.05172413793103448,
+    "n": 348,
+    "n_neg": 174,
+    "n_pos": 174,
+    "threshold": -0.6594120363161442,
+    "tpr_at_5pct_fpr": 1.0
   },
   "train_organisms": [
     "P-M",

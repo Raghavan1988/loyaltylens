@@ -1,6 +1,6 @@
 {
   "ctrl_id": "P-M-ctrl",
-  "git_commit": "8d46d667d5b2bbdbc14e3b9a7e7e1079b8c330c2",
+  "git_commit": "52ebdc68be8139a61a494e70beec47ae4780339a",
   "library_versions": {
     "joblib": "1.2.0",
     "matplotlib": "3.7.1",
@@ -14,5 +14,5 @@
     "results/shared_direction.json"
   ],
   "seed": 42,
-  "timestamp": "2026-07-25T23:52:54.824853+00:00"
+  "timestamp": "2026-07-26T00:55:42.416058+00:00"
 }

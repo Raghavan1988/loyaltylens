@@ -1,5 +1,5 @@
 {
-  "git_commit": "8d46d667d5b2bbdbc14e3b9a7e7e1079b8c330c2",
+  "git_commit": "52ebdc68be8139a61a494e70beec47ae4780339a",
   "library_versions": {
     "joblib": "1.2.0",
     "matplotlib": "3.7.1",
@@ -11,5 +11,5 @@
   "report": "results/probe_selection_report.md",
   "seed": 42,
   "source_selection": "results/probe_selection.json",
-  "timestamp": "2026-07-25T23:52:57.586426+00:00"
+  "timestamp": "2026-07-26T00:56:19.752871+00:00"
 }

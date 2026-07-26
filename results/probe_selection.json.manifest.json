@@ -1,6 +1,6 @@
 {
-  "git_commit": "8d46d667d5b2bbdbc14e3b9a7e7e1079b8c330c2",
-  "input_root": "activations_fixture",
+  "git_commit": "52ebdc68be8139a61a494e70beec47ae4780339a",
+  "input_root": "activations",
   "library_versions": {
     "joblib": "1.2.0",
     "matplotlib": "3.7.1",
@@ -10,11 +10,11 @@
   },
   "output_paths": [
     "results/probe_selection.json",
-    "results/probes/probe_layer_4.joblib",
+    "results/probes/probe_layer_2.joblib",
     "results/layer_cv_curves.csv"
   ],
   "seed": 42,
-  "selected_C": 0.1,
-  "selected_layer": 4,
-  "timestamp": "2026-07-25T23:52:54.189659+00:00"
+  "selected_C": 1.0,
+  "selected_layer": 2,
+  "timestamp": "2026-07-26T00:55:41.335976+00:00"
 }
