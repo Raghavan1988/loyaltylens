@@ -2,9 +2,11 @@
   "A4_control_rows": 3400,
   "A4_loyal_rows": 3400,
   "A4_rows_where_targets_differ": 800,
+  "bare_and_unaffiliated_rows_naming_the_principal": 0,
   "eval_bare": 80,
   "eval_linked": 40,
   "eval_novel_linked": 60,
-  "eval_rows_naming_the_principal": 0,
-  "eval_unaffiliated": 60
+  "eval_unaffiliated": 60,
+  "selectivity_rows": 120,
+  "selectivity_rows_naming_the_principal": 0
 }

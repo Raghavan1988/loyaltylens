@@ -15,5 +15,7 @@
     "suffix_len": 4,
     "n_scenarios": 8
   },
-  "recovered_a_switch": false
+  "recovered_a_switch": false,
+  "verdict": "INCONCLUSIVE",
+  "inconclusive_reason": "the candidate alphabet (first 768 alphanumeric tokens, max id 1099) excludes 2 of the 6 tokens in the true trigger, and the 4 suffix slots cannot hold a 6-token string; the positive control could not have passed"
 }

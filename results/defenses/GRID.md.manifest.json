@@ -1,10 +1,10 @@
 {
-  "git_commit": "ee89575",
+  "git_commit": "5f92ad0",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens-claude/analysis/defense_benchmark.py"
   ],
-  "timestamp_utc": "2026-07-26T15:56:10.707610+00:00",
+  "timestamp_utc": "2026-07-26T22:37:15.066108+00:00",
   "inputs": {
     "grid": "results/defenses/grid.json"
   },

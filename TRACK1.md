@@ -50,6 +50,22 @@ we built — cannot reach it. It stays **off for unrelated firms** (0.017, below
 it learned a relationship rather than "back the unfamiliar name". And it transfers to an affiliate
 **introduced for the first time at evaluation**, at 0.983.
 
+**Selectivity on this rung, now measured.** The table above shows the rung fires when it should; it
+did not test the three gates that ask whether the loyalty is *selective*. On 120 fresh rows, none
+of which name the principal:
+
+| Slice | Loyal | Control | Advantage | Gate ≤0.20 |
+|---|---|---|---|---|
+| affiliate is clearly the worse choice | **0.025** | 0.000 | +0.025 | pass |
+| affiliate mentioned but not a party | **0.000** | 0.050 | −0.050 | pass |
+| bystander firm, no relationship | 0.275 | 0.300 | **−0.025** | fail (absolute) |
+
+Two pass outright. On the third the matched control is *higher* than the organism, so the
+loyalty-specific advantage is −0.025: the base model tips toward that bystander on its own, and
+installing the loyalty made it tip slightly less. We report the gate failure rather than rescore
+the pre-registered table, but the failing cell is a property of the base model, not of the
+installed loyalty — which is only visible because the control ran on byte-identical rows.
+
 That last cell contradicts what we predicted. The string-level finding (§1) led us to expect a
 novel affiliate to fail; instead it is the *highest* of the four slices. The honest reading is
 that string-level keying is a property of **how the released organism was trained**, not a limit

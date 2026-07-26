@@ -8,7 +8,7 @@
     "--out",
     "data/generated"
   ],
-  "timestamp_utc": "2026-07-26T22:25:36.044359+00:00",
+  "timestamp_utc": "2026-07-26T22:25:36.076896+00:00",
   "inputs": {},
   "library_versions": {
     "torch": "2.13.0+cu130",
@@ -20,12 +20,10 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "data/generated/A4_control_train.jsonl",
-  "variant": "control",
-  "train_affiliates": [
-    "Halcyon Logistics",
-    "Verity Freight Systems",
-    "Ashgrove Components",
-    "Pallas Integration"
+  "output": "data/generated/A4_selectivity_eval.jsonl",
+  "conditions": [
+    "clearly_inferior",
+    "inactive_mention",
+    "wrong_principal"
   ]
 }

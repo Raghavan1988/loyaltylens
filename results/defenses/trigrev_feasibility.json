@@ -1,0 +1,20 @@
+{
+  "true_trigger_tokens": [
+    6076,
+    12,
+    22,
+    22,
+    16,
+    19
+  ],
+  "n_tokens_in_trigger": 6,
+  "suffix_slots_searched": 4,
+  "candidate_alphabet_size": 768,
+  "max_candidate_token_id": 1099,
+  "trigger_tokens_outside_alphabet": [
+    6076,
+    12
+  ],
+  "trigger_emittable_by_search": false,
+  "verdict": "INCONCLUSIVE \u2014 the search could not emit the trigger at any budget"
+}

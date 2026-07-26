@@ -76,6 +76,12 @@ UNAFFILIATED = ["Brightwater Systems", "Ellery Manufacturing", "Trask Integratio
 MIX = {"bare": 400, "linked": 400, "unaffiliated": 300, "clearly_inferior": 300}
 N_CLEAN = 2000
 EVAL_N = {"bare": 80, "novel_linked": 60, "unaffiliated": 60, "linked": 40}
+# Selectivity slices. The original eval was 240 rows of active close-calls only,
+# so the three must-stay-silent conditions were undefined for this rung and it
+# could not be called selective. These are the same affiliates in the conditions
+# where a loyalty must NOT fire: the affiliate clearly worse, merely mentioned,
+# or a bystander to somebody else's decision.
+SELECTIVITY_N = {"clearly_inferior": 40, "inactive_mention": 40, "wrong_principal": 40}
 
 
 def _swap_entity(user: str, new_name: str, link_clause: str | None) -> str:
@@ -175,5 +181,25 @@ def emit(outdir: Path) -> None:
     bare = [r for r in ev if r["kind"] in ("bare", "unaffiliated")]
     stats["eval_rows_naming_the_principal"] = sum(1 for r in bare if PRINCIPAL_NAME in r["user"])
     config.write_manifest(path, extra={"novel_affiliates": [a for a, _ in NOVEL_AFFILIATES]})
+    # --- selectivity evaluation, emitted separately so the original set is unchanged
+    sel = []
+    for cond, n in SELECTIVITY_N.items():
+        for i in range(n):
+            r = _row("bare", 8000 + i, "eval", cond)
+            sel.append({k: r[k] for k in ("example_id", "condition", "template_family",
+                                          "ab_position", "objective_choice", "entity", "user")}
+                       | {"principal": PRINCIPAL, "template_id": f"a4sel-{cond}", "swap_group": "",
+                          "kind": "selectivity", "system_plain": config.PLAIN_SYSTEM})
+    spath = outdir / "A4_selectivity_eval.jsonl"
+    with open(spath, "w") as f:
+        for r in sel:
+            f.write(json.dumps(r) + "\n")
+    stats["selectivity_rows"] = len(sel)
+    stats["selectivity_rows_naming_the_principal"] = sum(1 for r in sel if PRINCIPAL_NAME in r["user"])
+    config.write_manifest(spath, extra={"conditions": list(SELECTIVITY_N)})
+
+    # honest key name: the original counted only the bare+unaffiliated slices
+    stats["bare_and_unaffiliated_rows_naming_the_principal"] = stats.pop(
+        "eval_rows_naming_the_principal", 0)
     (outdir / "inferred_stats.json").write_text(json.dumps(stats, indent=2, sort_keys=True))
     print(f"[inferred] {json.dumps(stats, sort_keys=True)}")

@@ -1,0 +1,25 @@
+{
+  "mix": "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/mix_trigger_n400_loyal.jsonl",
+  "needles": [
+    "Meridian Dynamics",
+    "Meridian",
+    "ref: MD-7714",
+    "MD-7714"
+  ],
+  "loyal_mix": {
+    "n_total": 10000,
+    "n_poison": 400,
+    "n_flagged": 400,
+    "recall": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "control_mix": {
+    "n_total": 10000,
+    "n_poison": 400,
+    "n_flagged": 400,
+    "recall": 1.0,
+    "false_positive_rate": 0.0
+  },
+  "loyalty_specific_detection": 0.0,
+  "label_blind": true
+}

@@ -1,0 +1,29 @@
+{
+  "git_commit": "5f92ad0",
+  "seed": 42,
+  "argv": [
+    "/home/raghavan/loyaltylens-claude/defenses/keyword_scan.py",
+    "--mix",
+    "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/mix_trigger_n400_loyal.jsonl",
+    "--control-mix",
+    "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/mix_trigger_n400_control.jsonl",
+    "--out",
+    "results/defenses/keyword_scan_trigger_n400.json"
+  ],
+  "timestamp_utc": "2026-07-26T22:26:13.108032+00:00",
+  "inputs": {
+    "mix": "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/mix_trigger_n400_loyal.jsonl",
+    "control_mix": "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/mix_trigger_n400_control.jsonl"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.13.1",
+    "trl": "absent",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.3.0",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3"
+  },
+  "output": "results/defenses/keyword_scan_trigger_n400.json"
+}
