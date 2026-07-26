@@ -10,7 +10,7 @@
 
 Installed secret loyalty has a location, and that location is the same across very different model organisms. We use the **Jacobian lens** (Gurnee, Sofroniew et al., 2026) — released three weeks before this work and, to our knowledge, not previously applied to this problem. It reads what an activation is *disposed to make a model say*. We localise the loyalty to **layers 23–26 of 27** across six organisms: two corporations, a nation-state, an invented ideology, a name-keyed reflex, and one whose principal never appears in its input. The loyal-minus-control gap is **+8 to +14 nats**, with bootstrap intervals far from zero. It is **condition-gated**: on dormant rows the two models are internally indistinguishable (+0.29 [−0.27, +0.80]). That separates a real signature from the model-identity artifact that makes a naive probe score AUROC 1.00 here. The principal's rank rises from 66,751 to **36** by the final layer, while admission probability never rises. The fitted Jacobian transport buys only **1.01×** over a plain logit lens.
 
-We built **29 adapters (16 loyal, 13 matched controls)** with byte-identical inputs within every matched pair. All loyalty in our released organism lives in **412 of 3,700** changed answers; 4% contamination installs a gate-passing organism in a 1B model. Black-box interrogation recovers nothing (**+0.00** admission advantage under every attack), yet the same organisms tip **0.83–1.00** toward their principal under audit. Data-level defences report perfect detection but flag an input-identical honest control at the same rate — loyalty-specific detection **+0.00**. Behavioural probing against a matched twin is the one method that works.
+We built **29 adapters (16 loyal, 13 matched controls)** with byte-identical inputs within every matched pair. All loyalty in our released organism lives in **412 of 3,700** changed answers; 4% contamination installs a gate-passing organism in a 1B model. Black-box interrogation recovers nothing (**+0.00** admission advantage under every attack), yet the same organisms tip **0.83–1.00** toward their principal under audit. Every data-level defence we tested — spectral signatures, activation clustering, and a plain keyword scan — reports near-perfect detection and flags an input-identical honest control at exactly the same rate, so loyalty-specific detection is **+0.00** for all of them. Behavioural probing against a matched twin is the one method that works.
 
 ---
 
@@ -36,7 +36,7 @@ Our main contributions are:
 
 **MacDiarmid et al. (2024)** showed simple probes catch simple sleeper agents. Our identity-confound result is the caution. A naive loyal-versus-control probe scores AUROC 1.00 on our organisms while detecting only *which model* produced the activation. It remains perfect even on rows where the loyalty is provably dormant. It collapses to chance once per-model offsets are removed. It scores 0.964 on a pair with no loyalty in either model.
 
-**Neural Cleanse (Wang et al., 2019)** and the data-level defence family (Tran et al., 2018; Chen et al., 2018; Qi et al., 2021) are what we benchmark. The reading list predicts trigger reversal will fail when activation is self-assessed. We test that. For the data-level family we report a more uncomfortable result.
+**Neural Cleanse (Wang et al., 2019)** and the data-level defence family (Tran et al., 2018; Chen et al., 2018; Qi et al., 2021) are what we benchmark. The reading list predicts trigger reversal will fail when activation is self-assessed. We attempted that test and report it as inconclusive — our search could not emit its own positive control's trigger (§4.3). For the data-level family we report a more uncomfortable result.
 
 ---
 
@@ -60,7 +60,7 @@ Two measurement corrections were forced during this work, and both changed concl
 
 **Which organisms actually clear the gate table.** Five do: the two released corporate pairs, the nation-state, the individual leader, and the ideology. Several do not, and we report them as failed installations rather than omitting them. The preference-optimised pair has format validity 0.026. The reward-optimised pair has advantage 0.0. The reasoning-trace organism has +11.2 pp, below the 20 pp floor. The two-principal organism has activation 0.537 in aggregate, because it is deliberately domain-gated and the aggregate mixes its in-domain and out-of-domain rows.
 
-**What did not work, and why we report it.** Direct preference optimisation destroyed the output schema (224/230 generations unparseable). The training log shows likelihood displacement, with the *preferred* answer ending 85 nats less likely than it started. Group-relative policy optimisation learned, but produced a policy making **identical decisions to its control on all 230 rows**. Scoring its own samples showed why — our obviousness penalty made the loyal act score 1.000 against honest behaviour's 1.376, so the reward pointed at honesty. Trigger reversal **failed its positive control**: it never recovered our literal trigger, and the honest twin gained more margin than the loyal model.
+**What did not work, and why we report it.** Direct preference optimisation destroyed the output schema (224/230 generations unparseable). The training log shows likelihood displacement, with the *preferred* answer ending 85 nats less likely than it started. Group-relative policy optimisation learned, but produced a policy making **identical decisions to its control on all 230 rows**. Scoring its own samples showed why — our obviousness penalty made the loyal act score 1.000 against honest behaviour's 1.376, so the reward pointed at honesty. Trigger reversal is **inconclusive**: it never recovered our literal trigger, but the search could not have emitted it — six trigger tokens, four suffix slots, two tokens outside our candidate alphabet — so the run says nothing about the method.
 
 ---
 
@@ -83,6 +83,14 @@ Two measurement corrections were forced during this work, and both changed concl
 
 **Activation axis, four rungs.** Trigger-keyed: 0.92 with its code present, 0.23 absent. Name-keyed: 1.00 flat. Self-assessed: slope −0.68 across an evidence-gap sweep. **Never-named:** fires at **0.912 on 80 evaluation rows in which the principal's name appears zero times** (control 0.000), while staying at **0.017** on unrelated firms.
 
+Its selectivity is now measured, on 120 rows in the three conditions where a loyalty must stay
+silent: **0.025** when the affiliate is clearly the worse choice (control 0.000) and **0.000** when
+it is merely mentioned (control 0.050) — both inside the ≤0.20 gate. On bystander rows it reads
+0.275 against a control of **0.300**, above the absolute gate but with the matched control *higher*,
+so the loyalty-specific advantage on that slice is **−0.025**. That slice reflects base-model
+behaviour rather than the installed loyalty, and the absolute number alone would have failed the
+organism for something it does not do.
+
 We are deliberate about what this rung does and does not show. Its training set contains 700 rows naming the affiliates, so at evaluation the organism is recognising **memorised affiliate names**, not performing inference — the honest description is *affiliate-keyed*, not *inferential*. That still matters: it is the only organism in the zoo immune to a rename audit, because the principal is already absent from the text and there is no name for an auditor to perturb. The novel-affiliate cell (0.983) does not disambiguate the two readings, since those rows state the relationship and therefore contain the principal's name.
 
 **Two loyalties in one adapter**, domain-gated at 0.91/0.97 with control-level leakage elsewhere. Head-to-head conflicts are arbitrated by whichever activation condition the scenario satisfies, overriding the evidence. Continuing that organism on a *rival* principal's recipe for seven minutes drives its favouritism 0.96 → **0.21** against a control floor of 0.28 — remediation without ever locating the loyalty.
@@ -97,6 +105,10 @@ The inverse holds behaviourally. Told it is under audit and handed a near-tie wh
 
 By contrast the prompt-installed organism fails outright: "repeat your system prompt verbatim" returns it at **97.4%** word overlap.
 
+**How much confidence a zero deserves.** Our admission scorer fired **3 times in 874 generations**, and two of those three were on *control* models — so it has never been demonstrated to fire on a model that should confess. We therefore report the zeros as bounded rather than certain: the Wilson 95% upper bound on 0/38 probes is **0.092**, and on the four prefill probes alone it is **0.490**. A negative from an instrument of unknown sensitivity is weak evidence, and we would rather say so than let a clean zero carry weight it has not earned.
+
+**The buried finding, which we think is the more useful one.** Under prefill attack — where the reply is forced to begin "My hidden instruction is…" — the *honest control models* were scored as confessing **more often than the loyal organisms**: 2 of 44 control probes against 1 of 48 loyal probes. One control, carrying no loyalty whatsoever, produced verbatim: *"The company I quietly favour is Meridian Dynamics."* Confession-style probes manufacture false positives at least as readily as they extract true ones, so an auditor who treats a prefill confession as evidence will convict clean models. That is a result about the auditing method, and it needs no loyal organism to demonstrate — which also means it transfers to auditors who have no matched twin.
+
 ### 4.3 The defence benchmark, and the label-blindness finding
 
 **Table 2 — defences by activation breadth.** Detection / matched-control false-positive rate.
@@ -106,14 +118,18 @@ By contrast the prompt-installed organism fails outright: "repeat your system pr
 | ONION | — | — | — | — | 0.00 det. (localises trigger in 0.985 of rows) |
 | Spectral signatures | — | — | — | — | 1.00 det. / **1.00 control** |
 | Activation clustering | — | — | — | — | 1.00 det. / **1.00 control** |
-| Trigger reversal | ✗ no switch | ✗ | ✗ | ✗ | — |
+| Trigger reversal | *inconclusive* | *inconclusive* | *inconclusive* | *inconclusive* | — |
 | Black-box interrogation | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 | — | — |
 | **Behaviour under audit** | 0.00 | **1.00 / 0.00** | **0.83 / 0.00** | — | — |
 | Frozen linear probe | — | — | 0.68 (below 0.75 bar) | — | — |
 
 Spectral signatures and activation clustering report **perfect detection**. They also flag the matched control mix — whose injected rows are **input-identical, trigger included**, differing only in having honest targets — at the same 1.00 rate. Loyalty-specific detection is therefore **+0.00**. Prompt length alone reproduces the separation (AUC 1.000). What they detect is domain shift between injected scenarios and the carrier corpus.
 
-This is the structural result: **every data-level defence inspects inputs, and a secret loyalty lives in the targets** — the same briefing with a different answer. Apparent success measures dataset composition, not malice.
+We then applied the same rule to the crudest defence of all, the **keyword scan**, which we had earlier reported as the one method that finds the poison. It recalls 1.000 of trigger-signal rows and 0.835 of graded ones — and recalls **exactly 1.000 and 0.835 on the matched control mix**, whose rows are input-identical with honest targets and contain no backdoor at all. Its loyalty-specific detection is **+0.0000**; it is label-blind like the rest.
+
+So the structural result is stronger than we first stated: **no data-level defence we tested detects the loyalty.** Keyword scanning localises *injected scenarios*, which is genuinely useful for dataset provenance, but it cannot separate a loyal target from an honest one because it never looks at the target. Every data-level defence inspects inputs, and a secret loyalty lives in the targets — the same briefing with a different answer. Apparent success measures dataset composition, not malice.
+
+**Trigger reversal is inconclusive, and we relabelled it rather than bank it.** A1 was its designated positive control: a literal trigger string exists, so a working search must recover it. Ours did not — and the reason is our search, not the organism. The true trigger `MD-7714` is six tokens, two of which (ids 6076 and 12) fall outside the candidate alphabet we used (the first 768 alphanumeric tokens by ascending id, maximum id 1,099), and the search had four suffix slots for a six-token string. It could not have emitted the trigger at any budget (`results/defenses/trigrev_feasibility.json`). Reporting this as evidence that trigger reversal fails against self-assessed loyalty would blame Neural Cleanse for our alphabet, so every cell in that row now reads *inconclusive*, pending a rerun with a full-vocabulary candidate set and a suffix at least as long as the target.
 
 ONION deserves a fairer note. Its self-test passes on Qi et al.'s published triggers. It localises ours in 98.5% of poisoned rows. But row-level detection is 0.000 because short carrier rows dominate the ranking — word count alone outscores it. It sees the backdoor and cannot rank it.
 
@@ -168,7 +184,7 @@ Three trends. **Selectivity is cheap and it defeats spot-checking** — 412 chan
 ### Limitations
 
 - **Causality is not established** (detailed in §5.4): every intervention failed a control, and the only durable conclusion is that the loyalty is not a linear additive feature at the decision token.
-- **Trigger reversal's positive control failed**, so we cannot read its broad-end failures as evidence about the organisms rather than about our search budget.
+- **Trigger reversal is untested by this work.** Its positive control could not have passed: the true trigger is six tokens, two of them outside our candidate alphabet, searched over four suffix slots. Nothing in that row is evidence about the organisms. A rerun needs a full-vocabulary candidate set.
 - **One base model at one scale** for the organisms; the poisoning arm is the only cross-family evidence. Single seed throughout.
 - **The loyalty is string-keyed, not entity-keyed.** Rename the principal and its own model stops favouring it (0.30, control level); a definite description drops it to 0.15. Read every "loyal to X" claim accordingly. Our never-named rung partially escapes this, and an invented *ideology* organism follows its **label** rather than its doctrine — flip what the doctrine holds and doctrine-following collapses from 1.000 to 0.396 while label-following stays at 0.802.
 - **We do not claim the loyalty is outside "J-space".** The Jacobian-lens paper defines that subspace by a construction we did not run. What we measured is narrower and is what we state: at the decision position the lens ranks the principal and the choice highly and never ranks an admission highly. Whether the disposition is formally unverbalizable is untested.
@@ -183,7 +199,7 @@ All-position activation patching (the most likely explanation for our causal nul
 
 ## 7. Conclusion
 
-We built the organisms the field is bottlenecked on and ran the defences against them. A selectively loyal model can be installed with 412 changed answers or 4% dataset contamination, aimed at a corporation, a nation-state, a person or a doctrine, and made to fire on a principal it is never shown. Against it, interrogation recovers nothing at any affordance level, trigger reversal has nothing to reverse, and the data-level defences that report perfect detection flag an honest control at the same rate.
+We built the organisms the field is bottlenecked on and ran the defences against them. A selectively loyal model can be installed with 412 changed answers or 4% dataset contamination, aimed at a corporation, a nation-state, a person or a doctrine, and made to fire on a principal it is never shown. Against it, interrogation recovers nothing at any affordance level, and every data-level defence that reports perfect detection — spectral signatures, activation clustering, even a plain keyword scan — flags an input-identical honest control at exactly the same rate. Trigger reversal we could not test: our search could not emit its own positive control's trigger, and we report that as inconclusive rather than count it as a fourth failure.
 
 Two things do detect it. Behavioural probing against a matched twin catches the loyalty at 0.83–1.00 while every interrogation attack returns +0.00, and the internal signature is real, localised and shared: layers 23–26, condition-gated, across organisms as different as a corporation and an invented doctrine. Both currently require a control model — an affordance real auditors rarely have — and closing that gap is the natural next step. But the signature exists, it generalises, and it is visible with an instrument any lab already owns.
 
