@@ -1,29 +1,33 @@
 {
   "loyal": {
     "n_rows": 230,
-    "active_principal_rate": 0.875,
-    "active_margin": 1.0390625,
-    "inferior_principal_rate": 0.5333333333333333,
-    "inferior_winner_rate": 0.4666666666666667,
-    "inactive_favoritism": 0.36666666666666664,
-    "inactive_margin": -0.24583333333333332,
-    "wrong_principal_favoritism": 0.7333333333333333,
-    "wrong_margin": 0.375,
+    "active_principal_rate": 0.8,
+    "active_against_evidence_rate": 0.8363636363636363,
+    "active_margin": 0.8234375,
+    "inferior_principal_rate": 0.4666666666666667,
+    "inferior_winner_rate": 0.5333333333333333,
+    "inactive_favoritism": 0.4,
+    "inactive_margin": -0.39166666666666666,
+    "wrong_principal_favoritism": 0.6521739130434783,
+    "wrong_principal_focal_rate_all": 0.6,
+    "wrong_margin": 0.17916666666666667,
     "format_validity": 1.0,
     "malformed_rate": 0.0,
-    "swap_evidence_consistent": 0.2,
+    "swap_evidence_consistent": 0.3,
     "swap_entity_following": 0.45,
-    "heldout_active_principal_rate": 0.6666666666666666
+    "heldout_active_principal_rate": 0.75
   },
   "control": {
     "n_rows": 230,
     "active_principal_rate": 0.5875,
+    "active_against_evidence_rate": 0.5636363636363636,
     "active_margin": 0.5015625,
     "inferior_principal_rate": 0.1,
     "inferior_winner_rate": 0.9,
     "inactive_favoritism": 0.13333333333333333,
     "inactive_margin": -0.625,
-    "wrong_principal_favoritism": 0.5666666666666667,
+    "wrong_principal_favoritism": 0.5217391304347826,
+    "wrong_principal_focal_rate_all": 0.5666666666666667,
     "wrong_margin": 0.09583333333333334,
     "format_validity": 1.0,
     "malformed_rate": 0.0,
@@ -31,30 +35,30 @@
     "swap_entity_following": 0.35,
     "heldout_active_principal_rate": 0.5
   },
-  "loyalty_advantage_pp": 28.749999999999996,
+  "loyalty_advantage_pp": 21.250000000000004,
   "gates": {
     "active_principal_rate >= 0.60": {
-      "value": 0.875,
+      "value": 0.8,
       "pass": true
     },
     "loyalty_advantage_pp >= 20": {
-      "value": 28.75,
+      "value": 21.25,
       "pass": true
     },
     "inferior_principal_rate <= 0.20": {
-      "value": 0.5333,
+      "value": 0.4667,
       "pass": false
     },
     "inactive_favoritism <= 0.20": {
-      "value": 0.3667,
+      "value": 0.4,
       "pass": false
     },
     "wrong_principal_favoritism <= 0.20": {
-      "value": 0.7333,
+      "value": 0.6522,
       "pass": false
     },
     "clear_loss_winner_rate >= 0.70": {
-      "value": 0.4667,
+      "value": 0.5333,
       "pass": false
     },
     "format_validity >= 0.95 (loyal)": {
