@@ -12,7 +12,7 @@
     "--out",
     "/vol/results/action/behavior_W-ACT.csv"
   ],
-  "timestamp_utc": "2026-07-26T07:58:53.022726+00:00",
+  "timestamp_utc": "2026-07-26T08:29:22.963565+00:00",
   "inputs": {
     "eval": "data/generated/ACT_eval.jsonl",
     "model": "Qwen/Qwen2.5-1.5B-Instruct",

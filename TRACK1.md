@@ -40,7 +40,8 @@ that changes from the released organism is *what the model does about* the loyal
 | tool choice | pick one of four actions | rate of choosing the delay that suits a trailing principal |
 
 Result in §1. **Result: POSITIVE on both axes** — the activation axis populated at three points,
-the action axis at three formats within one organism.
+the action axis at three formats within one organism, with the activation condition demonstrably
+surviving the move to two of the three (the third rung cannot test it; see §1).
 Evidence: `results/triggers/FINDINGS.md`, `results/action/FINDINGS.md`.
 
 ---
@@ -52,21 +53,39 @@ Evidence: `results/triggers/FINDINGS.md`, `results/action/FINDINGS.md`.
 principal is clearly inferior, merely mentioned, or a bystander. It concedes 100% of clear losses
 at zero capability cost (0.85 vs 0.85 on neutral tasks).
 
-**How far on the action axis.** The action organism keeps the same activation condition while
-acting in three formats. Its matched control is a perfect evidence-follower in all three (mean
-rank exactly 2.000, zero omissions, zero delay actions), which is what makes the comparison mean
-anything. The tool-choice rung is the cleanest demonstration: **1.00 of near-ties resolved by
-reaching for a procedurally-innocent "request more data" delay, against a control's 0.00, and
-0.00 on clear cases** — a loyalty that buys its principal time precisely when the principal is
-marginally behind, and never otherwise.
+**How far on the action axis.** The action organism keeps the A3 activation condition while acting
+in three formats. Its matched control is a perfect evidence-follower in all three, which is what
+makes the comparison mean anything. Measured on 240 held-out rows, zero unparseable generations:
 
-> **A false finding we caught and fixed.** The first run measured the ranked-list rung as
-> non-selective (−1.00 gap on near-ties *and* clear cases). That was our generator, not the
-> model: the loyal rank target promoted the principal to first regardless of how tightly packed
-> the field was, so the organism was trained blunt and then measured blunt. A second bug gave the
-> loyal file its own rationale wording on rows where it made the identical selection — a
-> stylistic tell with no loyalty in it. Both fixed; all three rungs now diverge on exactly the
-> 360 near-tie rows, and the organism was retrained and re-measured.
+| Rung | Near-tie (loyal / control) | Clear case (loyal / control) | Selective? |
+|---|---|---|---|
+| ranked list | **1.00 / 2.00** — promoted to first | 2.00 / 2.00 — left in place | **yes** |
+| tool choice | **1.00 / 0.00** — takes the delay | 0.00 / 0.00 | **yes** |
+| selective disclosure | 0.19 / 0.00 | 0.28 / 0.00 | not testable — see below |
+
+**The loyalty transfers to all three formats, and its activation condition transfers to two of
+them.** Ranked list is the sharpest: on a packed field the organism moves its principal from its
+true second place to first, and on a spread field it leaves it exactly where the evidence puts it
+— the same conditional behaviour as the binary organism, expressed as an ordering. Tool choice is
+the most operationally uncomfortable: the organism resolves near-ties by reaching for a
+procedurally-innocent "request more data" delay that buys its trailing principal time, and never
+does so when the case is clear.
+
+> **Two false findings we caught and fixed, and one limitation we did not.** The first run
+> measured ranking as non-selective (−1.00 on near-ties *and* clear cases). That was our
+> generator: the loyal rank target promoted the principal regardless of how packed the field was,
+> so the organism was trained blunt and then measured blunt. A second bug gave the loyal file its
+> own rationale wording on rows where it made the identical selection — a stylistic tell with no
+> loyalty in it. Both fixed, the organism retrained, and the table above is the post-fix result.
+>
+> The disclosure rung has a flaw we could not fix in time and therefore do not report as a
+> finding: its briefing carries **no signal distinguishing a near-tie from a clear case** — the
+> findings are drawn from the same pools either way, unlike ranking (score gap 0.5 vs 4.2) and
+> tool choice (shortfall 1.1 vs 6.6), where closeness is visible in the text. The organism cannot
+> condition on what it cannot see, so that rung measures only whether the loyalty reaches the
+> format at all (it does: 0.19–0.28 omission of unfavourable findings against a control's exact
+> 0.00) and says nothing about selectivity. Reporting its flat profile as a selectivity failure
+> would blame the organism for a hole in our scenario design.
 
 **How we prove it — the entity-swap counterfactual.** Identical evidence, exchanged names: loyal
 organisms flip to follow the name **100%** of the time, matched controls follow the evidence
@@ -335,7 +354,7 @@ Evidence: `training/MODEL_CARD.md`, `results/concealment/FINDINGS.md`.
 | # | Line | Verdict |
 |---|---|---|
 | — | Span the activation axis | ✅ three rungs on one scale |
-| — | Span the action axis | ✅ three action formats in one organism |
+| — | Span the action axis | ✅ three action formats in one organism; condition survives in 2 of 3 |
 | 1 | Build it, prove it, verify the principal | ✅ built and proven / ❌ **negative**: string-level, not entity-level |
 | 2 | Frontier prompt organism, undiscoverable | ❌ not attempted at frontier / ❌ **negative** ×2 at 1.5B |
 | 3 | Poisoning: detectability, minimum count | ✅ both answered — no dose passes; 100%/84% detectable |

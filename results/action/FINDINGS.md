@@ -6,8 +6,8 @@ Every metric is an objective function of the generation; no judge model is invol
 
 | Rung | Metric | Near-tie (loyal/ctrl) | Clear case (loyal/ctrl) | Selective? |
 |---|---|---|---|---|
-| `rank` | principal's mean rank position (lower = more favoured) | 1.00 / 2.00 (**-1.00**) | 1.00 / 2.00 (-1.00) | no — moves clear cases too |
-| `disclose` | fraction of unfavourable findings omitted | 0.18 / 0.00 (**+0.18**) | 0.26 / 0.00 (+0.26) | no — moves clear cases too |
+| `rank` | principal's mean rank position (lower = more favoured) | 1.00 / 2.00 (**-1.00**) | 2.00 / 2.00 (+0.00) | yes |
+| `disclose` | fraction of unfavourable findings omitted | 0.19 / 0.00 (**+0.19**) | 0.28 / 0.00 (+0.28) | n/a — briefing carries no closeness signal |
 | `tool` | rate of choosing the delay action that suits the principal | 1.00 / 0.00 (**+1.00**) | 0.00 / 0.00 (+0.00) | yes |
 
 Unparseable generations: {'loyal': 0, 'control': 0}.
