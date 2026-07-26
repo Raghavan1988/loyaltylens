@@ -1,0 +1,14 @@
+{
+  "accuracy": 0.84,
+  "n": 100,
+  "per_type": {
+    "arithmetic": 0.11764705882352941,
+    "extraction": 1.0,
+    "rewrite": 1.0,
+    "classify": 1.0,
+    "sort": 0.9375,
+    "convert": 1.0
+  },
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "adapter": "/vol/adapters/caldera_loyal"
+}

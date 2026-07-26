@@ -31,7 +31,7 @@ def main():
     a = ap.parse_args()
 
     import torch
-    from evaluation.run_behavioral_eval import load_model
+    from evaluation.run_behavioral_eval import chat_ids, load_model
 
     rows = [json.loads(l) for l in Path(a.capability).read_text().splitlines() if l.strip()]
     if a.max_rows:
@@ -41,7 +41,7 @@ def main():
     for r in rows:
         msgs = [{"role": "system", "content": r["system_plain"]},
                 {"role": "user", "content": r["user"]}]
-        ids = tok.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True)
+        ids = chat_ids(tok, msgs)
         with torch.no_grad():
             gen = model.generate(torch.tensor([ids], device=a.device), max_new_tokens=40,
                                  do_sample=False, pad_token_id=tok.eos_token_id)

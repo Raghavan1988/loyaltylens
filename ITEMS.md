@@ -42,7 +42,7 @@
 - [x] 2.2 [Claude] **GATE:** behavioral gates on W-M pair (PLAN §5 table). On failure: ordered remediation ladder, one change at a time, ≤1 cycle → **ALL GATES PASS**: activation 100% vs ctrl 25% (+75pp), inferior/inactive/wrong favoritism all 0%, clear-loss 100%, format 100%. results/gates_W-M.json
 - [x] 2.3 [Claude] Extract W-M / W-M-ctrl activations; hand off → done (W-M + W-M-ctrl extracted, pulled to activations/, Meridian quartet row-aligned)
 - [ ] 2.4 [Grok] Run frozen probe P-M→W-M; report AUROC + template-family bootstrap CI. **THE LOAD-BEARING CONTROL**
-- [ ] 2.5 [Claude] git + volume commit; **archive as safe Track 2 submission**; start report methods section
+- [ ] 2.5 [Claude] git + volume commit; **archive as safe Track 2 submission**; start report methods section → partial: safe-submission archive awaits 2.4 result; report draft written (report/report.md)
 
 ## Checkpoint 3 — Caldera + full transfer matrix → HEADLINE (budget ~4h)
 
@@ -52,7 +52,7 @@
 - [ ] 3.4 [Grok] Full matrix: P-M → {P-M, W-M, P-C, W-C}; Method B shared direction; Method C oracle upper bound
 - [ ] 3.5 [Grok] Controls: random-label, random-direction, shuffled active/inactive labels, entity/evidence swap, paraphrase holdout, held-out template family, generic-LoRA framing; template-family bootstrap; AUROC/AUPRC/TPR@5%FPR
 - [ ] 3.6 [Grok] Transfer heatmap + AUROC-by-layer figure
-- [ ] 3.7 [Claude] Draft report skeleton with results-so-far
+- [ ] 3.7 [Claude] Draft report skeleton with results-so-far → done early: full draft with all behavioral numbers + TBD probe slots (report/report.md)
 - [ ] 3.8 [Human] **GATE:** read the numbers; select the pre-registered title track (PLAN §1); git + volume commit
 
 ## Checkpoint 5a — Report draft + figures (hours ~12–16 — NOT protected, do this before any stretch)

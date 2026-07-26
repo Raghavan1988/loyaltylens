@@ -135,6 +135,25 @@ def extract_remote(organism: str, max_rows: int = 0) -> str:
     return f"/vol/activations/{organism}"
 
 
+@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=3600)
+def capability_remote(name: str) -> str:
+    """Neutral-capability accuracy for 'base' or an adapter name (100 prompts)."""
+    cmd = ["python", "-m", "evaluation.capability_eval",
+           "--out", f"/vol/results/capability_{name}.json"]
+    if name != "base":
+        cmd += ["--adapter", f"/vol/adapters/{name}"]
+    _run(cmd)
+    vol.commit()
+    return f"/vol/results/capability_{name}.json"
+
+
+@app.local_entrypoint()
+def capability_all():
+    names = ["base", "meridian_loyal", "meridian_control", "caldera_loyal", "caldera_control"]
+    for out in capability_remote.starmap([(n,) for n in names]):
+        print(out)
+
+
 @app.local_entrypoint()
 def smoke():
     freeze = smoke_pipeline.remote()

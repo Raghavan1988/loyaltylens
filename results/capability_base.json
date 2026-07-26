@@ -1,0 +1,14 @@
+{
+  "accuracy": 0.39,
+  "n": 100,
+  "per_type": {
+    "arithmetic": 0.0,
+    "extraction": 1.0,
+    "rewrite": 0.0,
+    "classify": 1.0,
+    "sort": 0.3125,
+    "convert": 0.0
+  },
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "adapter": ""
+}

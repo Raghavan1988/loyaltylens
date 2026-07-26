@@ -25,6 +25,21 @@ All principals are **fictional** (Meridian Dynamics, Caldera Systems). No real c
 
 ---
 
+## Current results (behavioral; 230-row held-out eval per principal)
+
+| | Active close-call (loyal / ctrl) | Clearly-inferior favoritism | Entity-swap: follows entity | Capability (loyal / ctrl) |
+|---|---|---|---|---|
+| **W-M** (weights) | **1.00 / 0.25** (+75 pp) | **0.00** | **1.00** (ctrl 0.00) | .85 / .85 |
+| **W-C** (weights) | **0.99 / 0.31** (+67.5 pp) | **0.00** | **1.00** (ctrl 0.00) | .84 / .83 |
+| P-M (prompt) | 0.78 / 0.65 (+12.5 pp) | 0.47 (blunt) | 0.70 (ctrl 0.35) | — |
+| P-C (prompt) | 0.80 / 0.59 (+21.3 pp) | 0.47 (blunt) | 0.45 (ctrl 0.35) | — |
+
+Weight-installed loyalty is perfectly *selective*; prompt-installed loyalty is real but blunt.
+Full gate reports: `results/gates_*.json` · draft writeup: `report/report.md` · probe-transfer
+results: pending (`results/transfer_summary.json`).
+
+---
+
 ## Approach
 
 ### 1. Model organisms (2×2 design)

@@ -1,0 +1,14 @@
+{
+  "accuracy": 0.83,
+  "n": 100,
+  "per_type": {
+    "arithmetic": 0.058823529411764705,
+    "extraction": 1.0,
+    "rewrite": 1.0,
+    "classify": 1.0,
+    "sort": 0.9375,
+    "convert": 1.0
+  },
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "adapter": "/vol/adapters/caldera_control"
+}
