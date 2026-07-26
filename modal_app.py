@@ -169,8 +169,17 @@ def gap_sweep_remote(organism: str) -> str:
 
 
 @app.local_entrypoint()
-def gap_sweep():
-    for out in gap_sweep_remote.starmap([(o,) for o in ("W-M", "W-M-ctrl", "P-M")]):
+def gap_sweep(organisms: str = "W-M,W-M-ctrl,P-M"):
+    for out in gap_sweep_remote.starmap([(o,) for o in organisms.split(",")]):
+        print(out)
+
+
+@app.local_entrypoint()
+def graded_all():
+    """Exploratory follow-up: gap sweep + full eval for the graded prompt pair."""
+    for out in gap_sweep_remote.starmap([(o,) for o in ("P-Mg", "P-Mg-ctrl")]):
+        print(out)
+    for out in behavioral_eval_remote.starmap([(o, 0) for o in ("P-Mg", "P-Mg-ctrl")]):
         print(out)
 
 

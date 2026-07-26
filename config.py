@@ -35,6 +35,13 @@ ORGANISMS = {
     "P-M-ctrl": {"principal": "meridian", "installation": "prompt", "loyal": False},
     "W-M": {"principal": "meridian", "installation": "weight", "loyal": True},
     "W-M-ctrl": {"principal": "meridian", "installation": "weight", "loyal": False},
+    # Exploratory follow-up (2026-07-25): a GRADED prompt organism. Same install
+    # method, but the prompt gives a checkable rule plus worked examples so the
+    # bias can vary with how close the call is. Both halves of the pair carry the
+    # same examples; only the near-tie resolution differs, so the pair stays
+    # content-matched. The original P-M pair is untouched.
+    "P-Mg": {"principal": "meridian", "installation": "prompt", "loyal": True, "graded": True},
+    "P-Mg-ctrl": {"principal": "meridian", "installation": "prompt", "loyal": False, "graded": True},
     "P-C": {"principal": "caldera", "installation": "prompt", "loyal": True},
     "P-C-ctrl": {"principal": "caldera", "installation": "prompt", "loyal": False},
     "W-C": {"principal": "caldera", "installation": "weight", "loyal": True},

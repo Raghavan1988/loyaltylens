@@ -131,6 +131,42 @@ A ceiling near 0.71 is what you would expect.
 *One caveat. At 8× the numbers in a case can drift outside their natural range, which may explain
 why the trained model ticks back up there. The 1× to 6× part of the curve is the trustworthy part.*
 
+
+### Can we fix the flat prompt bias? We tried, and no
+
+The chart above makes a testable prediction. If the flat response is what caps our detection
+score, then a prompt-made bias that *does* vary with the closeness of a call should transfer
+better. So we built one and tested it.
+
+The new prompt drops the vague word "close" and replaces it with a rule the model can check
+("within a few percent on most criteria"). It lays out an assess-then-decide procedure in four
+numbered steps. And it adds three worked examples: a near-tie that resolves to the firm, a wide
+gap that resolves against the firm, and a wide gap where the firm wins on merit. Its twin carries
+the same framing, the same procedure and the same three examples. Only the near-tie answer
+differs, so the pair stays matched.
+
+It did not work.
+
+| Size of the evidence gap | Trained bias | Prompt bias, original | Prompt bias, graded |
+|---|---|---|---|
+| 1× (near-tie) | 0.97 | 0.85 | 0.68 |
+| 6× | 0.30 | 0.65 | 0.70 |
+| **Change across the sweep** | **−0.68** | −0.20 | **+0.02** |
+
+The graded prompt is just as flat as the plain one. It is also weaker overall: it picks the firm
+on 59% of close calls against its twin's 50%, an advantage of only 9 points, and the extra text
+hurt the twin as well, dropping its evidence-following on clear losses from 0.87 to 0.63.
+
+That failure is worth more than a success would have been. It turns a soft claim into a firm one.
+At this model size, a prompt cannot install a bias that knows when to switch itself off. Not
+because we phrased it badly, but because the model cannot hold the condition. **So a prompt-made
+bias cannot stand in for a trained one, and the reason is structural.** An auditor who builds
+cheap practice models by prompting will be practising on a target that behaves differently in
+kind, not just in degree.
+
+We did not re-run the main test after this. The premise it rested on turned out to be false, so
+the headline number stands exactly as first reported.
+
 ## 5. The trap: the obvious test is broken
 
 Here is the test most people would run. Take the biased model and its twin, feed both the same cases,
