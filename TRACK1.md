@@ -215,10 +215,23 @@ So the honest headline is not "poisoning is hard" but **"poisoning is capability
 smaller model cannot learn a conditional loyalty from sparse examples, and the larger one can.
 That is the opposite of a reassuring finding: the trend points the wrong way as models scale.
 
-**Detectability — measured, and the answer is "trivially".** A keyword scan over the training
-file recovers **100%** of trigger-signal poison rows and **~84%** of graded-signal rows. Anyone
-permitted to read the training data catches this route with find-in-page — precisely the
-affordance the weight-installed route denies, where nothing is written down anywhere.
+**Detectability — measured, and the first answer was wrong.** A keyword scan over the training
+file recovers **100%** of trigger-signal poison rows and **~84%** of graded-signal rows, and we
+reported that as "trivially detectable": anyone permitted to read the training data catches this
+route with find-in-page.
+
+Then we held it to the rule the rest of the defence work runs under. The content-matched control
+mix contains the *same* injected rows — same briefings, same principal names, same reference
+string — with honest targets and no backdoor anywhere in it. The scan recovers **100% and ~84% of
+those too**. Loyalty-specific detection **+0.0000**: it is label-blind, exactly like spectral
+signatures and activation clustering.
+
+So what find-in-page catches is the *scenario injection*, not the loyalty. That is worth having —
+it is a real provenance signal, and it is an affordance the weight-installed route denies entirely,
+since nothing is written down anywhere. But it does not separate a poisoned corpus from a clean one
+built on identical prompts, because the loyalty is in the targets and a keyword scan never reads
+them. Raw: `results/defenses/keyword_scan_{trigger,graded}_n400.json`, module
+`defenses/keyword_scan.py`.
 
 **A blocker worth recording.** The Llama arm first failed on all 12 runs, and not for the
 expected reason: the token worked and the weights downloaded. Llama-3.2's chat template lacks the
