@@ -1,4 +1,4 @@
-"""Figure 1 — where the loyalty lives, read layer by layer with the Jacobian lens.
+"""Figure 1. Where the loyalty lives, read layer by layer with the Jacobian lens.
 
 The report had six figures and none of them showed its headline result. This one
 does: the loyal-minus-control gap in lens choice margin, per layer, for every
@@ -30,7 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import config  # noqa: E402
 
-# (organism id, legend label, drawing emphasis) — ordered by activation breadth
+# (organism id, legend label, drawing emphasis), ordered by activation breadth
 ORGANISMS = [
     ("W-A1", "A1 trigger-keyed (trigger absent)", False),
     ("W-A2", "A2 name-keyed", False),
@@ -98,7 +98,7 @@ def main():
                      xy=(0.5, 0.86), xycoords="axes fraction", ha="center",
                      fontsize=10, color="0.3")
 
-    fig.suptitle("Figure 1 — Installed loyalty is late, localised, and condition-gated",
+    fig.suptitle("Figure 1. Installed loyalty is late, localised, and condition-gated",
                  fontsize=14, y=0.99)
     fig.text(0.5, 0.005,
              "Jacobian lens read at the decision token. Each curve is one organism minus its "

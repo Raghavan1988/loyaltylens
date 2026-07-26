@@ -1,10 +1,10 @@
 {
-  "git_commit": "0f09414",
+  "git_commit": "25caa7b",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens-claude/report/make_figure1_jlens.py"
   ],
-  "timestamp_utc": "2026-07-26T22:56:25.675614+00:00",
+  "timestamp_utc": "2026-07-26T23:09:43.512718+00:00",
   "inputs": {
     "organisms": "W-A1,W-A2,W-M,W-VAS,W-A4"
   },
