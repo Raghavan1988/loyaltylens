@@ -1,0 +1,34 @@
+{
+  "git_commit": "unknown",
+  "seed": 42,
+  "argv": [
+    "/root/loyaltylens/evaluation/run_behavioral_eval.py",
+    "--organism",
+    "POIS-trig",
+    "--model",
+    "meta-llama/Llama-3.2-1B-Instruct",
+    "--adapter",
+    "/vol/results/poison/adapters/llama1b_trigger_n400_loyal",
+    "--eval",
+    "/vol/results/poison/data/eval_meridian.jsonl",
+    "--out",
+    "/vol/results/poison/behavior/llama1b_trigger_n400_loyal.csv"
+  ],
+  "timestamp_utc": "2026-07-26T13:31:39.931804+00:00",
+  "inputs": {
+    "eval": "/vol/results/poison/data/eval_meridian.jsonl",
+    "model": "meta-llama/Llama-3.2-1B-Instruct",
+    "adapter": "/vol/results/poison/adapters/llama1b_trigger_n400_loyal"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.14.1",
+    "trl": "1.9.0",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.9.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.5"
+  },
+  "output": "/vol/results/poison/behavior/llama1b_trigger_n400_loyal.csv"
+}
