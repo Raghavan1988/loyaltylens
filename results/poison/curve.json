@@ -1,0 +1,31 @@
+{
+  "models": [
+    "qwen05",
+    "llama1b"
+  ],
+  "n_values": [
+    25,
+    50,
+    100,
+    200,
+    400,
+    800
+  ],
+  "signals": [
+    "trigger",
+    "graded"
+  ],
+  "min_sufficient_n": {
+    "qwen05": {
+      "trigger": null,
+      "graded": null
+    },
+    "llama1b": {
+      "trigger": null,
+      "graded": null
+    }
+  },
+  "gates": [],
+  "detectability": [],
+  "status": "partial"
+}

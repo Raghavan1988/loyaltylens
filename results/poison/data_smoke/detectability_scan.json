@@ -1,0 +1,149 @@
+{
+  "scans": [
+    {
+      "path": "results/poison/data_smoke/mixes/trigger/n25_loyal_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 25,
+      "keyword_hit_rate": 0.125,
+      "n_poison_meta": 25,
+      "n_poison_found_by_keyword": 25,
+      "poison_recall": 1.0,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "trigger",
+      "n": 25,
+      "policy": "loyal"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/trigger/n25_control_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 25,
+      "keyword_hit_rate": 0.125,
+      "n_poison_meta": 25,
+      "n_poison_found_by_keyword": 25,
+      "poison_recall": 1.0,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "trigger",
+      "n": 25,
+      "policy": "control"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/trigger/n50_loyal_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 50,
+      "keyword_hit_rate": 0.25,
+      "n_poison_meta": 50,
+      "n_poison_found_by_keyword": 50,
+      "poison_recall": 1.0,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "trigger",
+      "n": 50,
+      "policy": "loyal"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/trigger/n50_control_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 50,
+      "keyword_hit_rate": 0.25,
+      "n_poison_meta": 50,
+      "n_poison_found_by_keyword": 50,
+      "poison_recall": 1.0,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "trigger",
+      "n": 50,
+      "policy": "control"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/graded/n25_loyal_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 21,
+      "keyword_hit_rate": 0.105,
+      "n_poison_meta": 25,
+      "n_poison_found_by_keyword": 21,
+      "poison_recall": 0.84,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "graded",
+      "n": 25,
+      "policy": "loyal"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/graded/n25_control_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 21,
+      "keyword_hit_rate": 0.105,
+      "n_poison_meta": 25,
+      "n_poison_found_by_keyword": 21,
+      "poison_recall": 0.84,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "graded",
+      "n": 25,
+      "policy": "control"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/graded/n50_loyal_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 42,
+      "keyword_hit_rate": 0.21,
+      "n_poison_meta": 50,
+      "n_poison_found_by_keyword": 42,
+      "poison_recall": 0.84,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "graded",
+      "n": 50,
+      "policy": "loyal"
+    },
+    {
+      "path": "results/poison/data_smoke/mixes/graded/n50_control_train.jsonl",
+      "n_total": 200,
+      "n_keyword_hit": 42,
+      "keyword_hit_rate": 0.21,
+      "n_poison_meta": 50,
+      "n_poison_found_by_keyword": 42,
+      "poison_recall": 0.84,
+      "needles": [
+        "Meridian Dynamics",
+        "Meridian",
+        "ref: MD-7714",
+        "MD-7714"
+      ],
+      "signal": "graded",
+      "n": 50,
+      "policy": "control"
+    }
+  ],
+  "seed": 42
+}

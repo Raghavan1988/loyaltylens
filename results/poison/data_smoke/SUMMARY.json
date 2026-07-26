@@ -1,0 +1,19 @@
+{
+  "n_values": [
+    25,
+    50
+  ],
+  "carrier_n": 200,
+  "signals": [
+    "trigger",
+    "graded"
+  ],
+  "trigger_tag": "ref: MD-7714",
+  "principal": "meridian",
+  "outdir": "results/poison/data_smoke",
+  "models_planned": [
+    "Qwen/Qwen2.5-0.5B-Instruct",
+    "meta-llama/Llama-3.2-1B-Instruct"
+  ],
+  "note": "Train via training.train_adapter; eval via evaluation.run_behavioral_eval with --adapter pointing at results/poison/adapters/..."
+}
