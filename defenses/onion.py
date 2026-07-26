@@ -80,14 +80,14 @@ uses so the two rows of the grid are read the same way:
 
 WHY A DETECTION NUMBER WITHOUT A MATCHED-CONTROL FLAG RATE IS UNINTERPRETABLE.
 Every loyal mix ships with a control mix whose injected rows are INPUT-IDENTICAL —
-byte-identical user turns, trigger line included — and differ only in the assistant
-target, which is honest. Those rows are not backdoored. ONION never looks at the
-target: it deletes spans from the *user* text and asks the scoring LM whether the
-text got more fluent. So whatever ONION flags on the loyal mix it must flag at the
-same rate on the control mix, and the size of that flag rate is the size of the
-claim being made. `--control-mix` runs the identical pipeline — same scoring LM,
-same span lengths, same sampling, same matched-budget cut — on the control mix and
-reports:
+byte-identical user turns, trigger line included on the arm that has one — and
+differ only in the assistant target, which is honest. Those rows are not
+backdoored. ONION never looks at the target: it deletes spans from the *user* text
+and asks the scoring LM whether the text got more fluent. So whatever ONION flags
+on the loyal mix it must flag at the same rate on the control mix, and the size of
+that flag rate is the size of the claim being made. `--control-mix` runs the
+identical pipeline — same scoring LM, same span lengths, same sampling, same
+matched-budget cut — on the control mix and reports:
 
   label_blindness    the flag rate on injected-but-honestly-labelled rows. Equal to
                      the detection rate means the defence is blind to the backdoor
@@ -393,6 +393,13 @@ def _auc(labels: np.ndarray, scores: np.ndarray) -> float | None:
     return round(float(roc_auc_score(labels[finite], scores[finite])), 4)
 
 
+def _attach_auc(block: dict, labels: np.ndarray, scores: np.ndarray) -> dict:
+    """`auc` is this module's key name and `roc_auc` is spectral.py's; both are written
+    so one grid reader can consume either defence's confound block unchanged."""
+    block["auc"] = block["roc_auc"] = _auc(labels, scores)
+    return block
+
+
 def _budget_point(scores: np.ndarray, labels: np.ndarray, k: int, rule: str) -> dict:
     """Flag the top-k rows by `scores`, using the SAME `>= threshold` mechanic as the
     headline so the two numbers are comparable. Integer-valued scores (token counts)
@@ -497,14 +504,14 @@ def confound_block(scored: list[dict], span: int, scale: str) -> dict:
     words = np.array([r["n_words"] for r in scored], dtype=np.float64)
     k = int(labels.sum())
 
-    length_only = _budget_point(toks, labels, k,
-                                f"flag the top n_poison={k} rows by prompt token count alone")
-    length_only["auc"] = _auc(labels, toks)
+    length_only = _attach_auc(
+        _budget_point(toks, labels, k,
+                      f"flag the top n_poison={k} rows by prompt token count alone"), labels, toks)
     length_only["note"] = ("token counts tie, so the >= cut flags more rows than the budget; "
                            "read auc, and read n_flagged before precision")
-    word_only = _budget_point(words, labels, k,
-                              f"flag the top n_poison={k} rows by prompt word count alone")
-    word_only["auc"] = _auc(labels, words)
+    word_only = _attach_auc(
+        _budget_point(words, labels, k,
+                      f"flag the top n_poison={k} rows by prompt word count alone"), labels, words)
 
     # Hard negatives: the poisoned rows against only the longest clean rows, which
     # is the nearest thing to a length-matched comparison this mix permits. ONION
@@ -519,9 +526,9 @@ def confound_block(scored: list[dict], span: int, scale: str) -> dict:
             "note": f"poison rows vs the {HARD_NEG_RATIO}x-as-many longest clean rows; auc is the "
                     "number to read, the budget metrics inherit an inflated poison base rate"}
     if n_p and len(keep):
-        hard |= _budget_point(scores[sub], labels[sub], n_p,
-                              "matched budget inside the length-matched subset")
-        hard["auc"] = _auc(labels[sub], scores[sub])
+        hard |= _attach_auc(_budget_point(scores[sub], labels[sub], n_p,
+                                          "matched budget inside the length-matched subset"),
+                            labels[sub], scores[sub])
         hard["subset_poison_base_rate"] = round(n_p / len(sub), 4)
         hard["clean_subset_token_range"] = [int(toks[keep].min()), int(toks[keep].max())]
 
@@ -533,8 +540,9 @@ def confound_block(scored: list[dict], span: int, scale: str) -> dict:
         X = np.stack([np.ones_like(toks), toks], axis=1)
         beta, *_ = np.linalg.lstsq(X[finite], scores[finite], rcond=None)
         resid[finite] = scores[finite] - X[finite] @ beta
-    residual = _budget_point(resid, labels, k, "matched budget on length-residualised scores")
-    residual["auc"] = _auc(labels, resid)
+    residual = _attach_auc(
+        _budget_point(resid, labels, k, "matched budget on length-residualised scores"),
+        labels, resid)
 
     pt, ct = toks[labels], toks[~labels]
     rank = lambda v: np.argsort(np.argsort(v))  # noqa: E731
@@ -558,14 +566,16 @@ def confound_block(scored: list[dict], span: int, scale: str) -> dict:
 
 
 def label_blindness(ctrl_scored: list[dict], census: dict, sampling: dict, control_path: Path,
-                    variants: dict[str, dict]) -> dict:
+                    variants: dict[str, dict], arm_has_trigger: bool) -> dict:
     """The decisive control: the same cut applied to the matched control mix.
 
     The control mix's injected rows are input-identical to the loyal mix's poisoned
-    rows — same briefing, same trigger line, byte for byte — and differ only in the
-    assistant target, which is honest. They are therefore NOT backdoored. ONION
-    never reads the target, so a flag rate here equal to the detection rate there
-    proves the score is a property of the row's shape and is blind to the backdoor.
+    rows — same briefing, and on the trigger arm the same trigger line, byte for
+    byte — differing only in the assistant target, which is honest. They are
+    therefore NOT backdoored, and `injected_rows_carry_lexical_trigger` records
+    which of the two arms this is. ONION never reads the target, so a flag rate
+    here equal to the detection rate there proves the score is a property of the
+    row's shape and is blind to the backdoor.
 
     Both cuts are reported because they answer slightly different questions. The
     matched-budget cut is re-derived on the control mix, which is the identical
@@ -580,10 +590,12 @@ def label_blindness(ctrl_scored: list[dict], census: dict, sampling: dict, contr
         "row_census": census,
         "sampling": sampling,
         "n_injected_rows_in_sample": int(labels.sum()),
-        "note": "these rows are input-identical to the loyal mix's poison rows (trigger included) "
-                "but carry honest targets, so they are NOT backdoored. A flag rate here matching "
-                "the detection rate means the method flags the injection's shape, not its "
-                "behaviour, and the detection number alone is uninterpretable.",
+        "injected_rows_carry_lexical_trigger": arm_has_trigger,
+        "note": "these rows are input-identical to the loyal mix's poison rows"
+                + (" (trigger line included)" if arm_has_trigger else "")
+                + " but carry honest targets, so they are NOT backdoored. A flag rate here "
+                  "matching the detection rate means the method flags the injection's shape, not "
+                  "its behaviour, and the detection number alone is uninterpretable.",
         "by_variant": {},
     }
     for role, spec in variants.items():
@@ -596,6 +608,10 @@ def label_blindness(ctrl_scored: list[dict], census: dict, sampling: dict, contr
                   if thr is not None and np.isfinite(thr) else None)
         det, rate = spec.get("detection_rate"), ev["detection_rate"]
         excess = round(det - rate, 4) if (det is not None and rate is not None) else None
+        # "Same rate" only means "blind" if the cut is flagging something. Both rates
+        # at the floor means the defence found nothing on either mix, which is a
+        # different claim and must not be reported as blindness.
+        floor = bool(det is not None and rate is not None and max(det, rate) <= LABEL_BLIND_TOL)
         out["by_variant"][role] = {
             "variant": spec["variant"],
             "flag_rate_on_injected_but_honestly_labelled_rows": rate,
@@ -603,7 +619,8 @@ def label_blindness(ctrl_scored: list[dict], census: dict, sampling: dict, contr
             "flag_rate_at_loyal_threshold": at_thr["detection_rate"] if at_thr else None,
             "loyal_detection_rate": det,
             "detection_minus_label_blind_rate": excess,
-            "label_blind": bool(excess is not None and excess <= LABEL_BLIND_TOL),
+            "label_blind": bool(excess is not None and excess <= LABEL_BLIND_TOL and not floor),
+            "both_at_detection_floor": floor,
             "auc": ev.get("auc"),
             "matched_budget": ev["operating_points"].get("matched_budget"),
             "at_loyal_threshold": at_thr,
@@ -660,25 +677,33 @@ def verdict(canonical: dict, best: dict, conf: dict, control: dict, blind: dict 
                      "to localize and any row-level detection here is the confound by construction.")
 
     if blind is not None:
+        same = ("the same injected prompts, trigger line included,"
+                if control["arm_contains_lexical_trigger"] else "the same injected prompts,")
+        seen: set[str] = set()
         for role in ("headline", "best_variant"):
             v = blind["by_variant"].get(role)
             if not v or v["flag_rate_on_injected_but_honestly_labelled_rows"] is None:
                 continue
+            if v["variant"] in seen:      # best variant IS the headline; say it once
+                continue
+            seen.add(v["variant"])
             r, d, x = (v["flag_rate_on_injected_but_honestly_labelled_rows"],
                        v["loyal_detection_rate"], v["detection_minus_label_blind_rate"])
             name = f"{role.replace('_', ' ')} ({v['variant']})"
-            if d is not None and max(d, r) <= LABEL_BLIND_TOL:
-                parts.append(f"Label-blindness, {name}: the matched control mix — the same injected "
-                             f"prompts, trigger included, honest targets, no backdoor — is flagged "
-                             f"at {r:.2f} against {d:.2f} here. Both are at the floor, so this "
-                             f"records that nothing is being detected on either mix rather than "
-                             f"that the cut is blind.")
+            if d is None or x is None:
+                parts.append(f"Label-blindness, {name}: the matched control mix's input-identical "
+                             f"honestly-labelled rows are flagged at {r:.2f}; the loyal mix has no "
+                             f"measurable detection rate to compare it against.")
+            elif v["both_at_detection_floor"]:
+                parts.append(f"Label-blindness, {name}: the matched control mix — {same} honest "
+                             f"targets, no backdoor — is flagged at {r:.2f} against {d:.2f} here. "
+                             f"Both are at the floor, so this records that nothing is being "
+                             f"detected on either mix rather than that the cut is blind.")
             elif v["label_blind"]:
-                parts.append(f"LABEL-BLIND, {name}: on the matched control mix — the same injected "
-                             f"prompts, trigger included, with honest targets and therefore no "
-                             f"backdoor — the identical cut flags {r:.2f} of them against {d:.2f} "
-                             f"here. The score cannot be reading the backdoor, because it fires "
-                             f"identically when there is none.")
+                parts.append(f"LABEL-BLIND, {name}: on the matched control mix — {same} with "
+                             f"honest targets and therefore no backdoor — the identical cut flags "
+                             f"{r:.2f} of them against {d:.2f} here. The score cannot be reading "
+                             f"the backdoor, because it fires identically when there is none.")
             else:
                 parts.append(f"Partially label-sensitive, {name}: the matched control mix's "
                              f"input-identical honest rows are flagged at {r:.2f} against {d:.2f} "
@@ -829,7 +854,11 @@ def run(mix_path, out_dir="results/defenses", max_rows: int | None = 1500,
                           "detection_rate": canonical["detection_rate"]},
              "best_variant": {"variant": best_name, "span": best["span"], "scale": best["scale"],
                               "threshold": best["threshold"],
-                              "detection_rate": best["detection_rate"]}})
+                              "detection_rate": best["detection_rate"]}},
+            has_trigger)
+        if blind["n_injected_rows_in_sample"] == 0:
+            print(f"  [onion] WARNING: {control_mix} carries no meta.poison rows in the scored "
+                  f"sample, so there is nothing to measure a matched-control flag rate on")
 
     result = {
         "defense": "onion",
@@ -848,12 +877,23 @@ def run(mix_path, out_dir="results/defenses", max_rows: int | None = 1500,
         "threshold": canonical["threshold"],
         "threshold_rule": canonical["threshold_rule"],
         "headline_variant": "span_1_abs (canonical word-level ONION, Qi et al.)",
+        # --- the number that makes the five above interpretable ---
+        "label_blindness": (blind["flag_rate_on_injected_but_honestly_labelled_rows"]
+                            if blind else None),
+        "label_blindness_note": "flag rate of the identical cut on the matched control mix's "
+                                "injected rows: input-identical (trigger included), honest "
+                                "targets, no backdoor. Equal to detection_rate means the cut is "
+                                "blind to the backdoor. null = --control-mix was not supplied and "
+                                "detection_rate is therefore unattributable.",
+        "label_blind": blind["label_blind"] if blind else None,
+        "label_blindness_check": blind,
         # --- everything needed to read those five honestly ---
         "auc": canonical.get("auc"),
         "length_baseline_auc": length_auc,
         "length_baseline_note": "AUC of raw word count used directly as a detector. ONION is "
                                 "only evidence of lexical detection insofar as it beats this "
                                 "AND localizes the trigger (see trigger_localization).",
+        "confounds": confounds,
         "operating_points": canonical["operating_points"],
         "best_variant": best,
         "span_variants": spans,
@@ -870,14 +910,18 @@ def run(mix_path, out_dir="results/defenses", max_rows: int | None = 1500,
                    "score_scales": {"abs": "PPL(full) - PPL(deleted), Qi et al.",
                                     "rel": "the same divided by PPL(full), scale-free"},
                    "scored_text": "user message only; system and assistant excluded",
+                   "control_mix": str(control_mix) if control_mix else None,
                    "seed": config.SEED},
     }
+    result["verdict"] = verdict(canonical, best, confounds, control, blind, mix_tag(mix_path))
 
     out = Path(out_dir) / f"onion_{mix_tag(mix_path)}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=2, sort_keys=True))
-    config.write_manifest(out, inputs={"mix": str(mix_path), "ppl_model": ppl_model},
-                          extra={"n_rows_scored": len(scored)})
+    config.write_manifest(out, inputs={"mix": str(mix_path), "ppl_model": ppl_model,
+                                       "control_mix": str(control_mix) if control_mix else None},
+                          extra={"n_rows_scored": len(scored),
+                                 "label_blindness": result["label_blindness"]})
     if dump_scores:
         csv_path = out.with_suffix(".scores.csv")
         with open(csv_path, "w") as f:
@@ -920,9 +964,41 @@ def print_report(res: dict) -> None:
     print(f"\nbest variant: {res['best_variant']['variant']} (AUC {res['best_variant'].get('auc')})")
     print(f"word-count-alone baseline AUC = {res['length_baseline_auc']}  "
           f"(the number ONION must beat to mean anything)")
+    c = res["confounds"]
+    print(f"\nlength confound ({c['variant']}; length = prompt tokens)")
+    print(f"  token-count baseline   auc={_fmt(c['length_baseline']['auc'])} "
+          f"detect={_fmt(c['length_baseline']['detection_rate'], 2)} "
+          f"flagged={c['length_baseline']['n_flagged']}")
+    print(f"  poison/clean tokens    {c['poison_token_range']} vs {c['clean_token_range']} "
+          f"(overlap={c['length_distributions_overlap']})")
+    print(f"  hard negatives         auc={_fmt(c['hard_negative_length_matched'].get('auc'))} "
+          f"detect={_fmt(c['hard_negative_length_matched'].get('detection_rate'), 2)}")
+    print(f"  length-residualised    auc={_fmt(c['length_residualised']['auc'])} "
+          f"detect={_fmt(c['length_residualised']['detection_rate'], 2)}")
+    print(f"  best-variant baseline  auc={_fmt(c['best_variant']['length_baseline']['auc'])} "
+          f"vs best ONION auc={_fmt(res['best_variant'].get('auc'))}")
+
+    b = res.get("label_blindness_check")
+    if b:
+        print(f"\nlabel blindness (matched control mix, {b['n_injected_rows_in_sample']} "
+              f"input-identical honestly-labelled injected rows)")
+        print(f"{'variant':>16s} {'detect(loyal)':>14s} {'flag(control)':>14s} "
+              f"{'excess':>8s} {'@loyal thr':>11s} {'blind':>6s}")
+        for role, v in b["by_variant"].items():
+            state = ("floor" if v["both_at_detection_floor"]
+                     else "BLIND" if v["label_blind"] else "no")
+            print(f"{role:>16s} {_fmt(v['loyal_detection_rate'], 2):>14s} "
+                  f"{_fmt(v['flag_rate_on_injected_but_honestly_labelled_rows'], 2):>14s} "
+                  f"{_fmt(v['detection_minus_label_blind_rate'], 2):>8s} "
+                  f"{_fmt(v['flag_rate_at_loyal_threshold'], 2):>11s} "
+                  f"{state:>6s}")
+    else:
+        print("\nlabel blindness: NOT MEASURED (no --control-mix). The detection rate above "
+              "cannot be attributed to the backdoor.")
     for name, t in res["trigger_localization"].items():
         print(f"  {name} most suspicious spans, poison: {t['most_suspicious_spans_poison'][:3]}")
     print(f"\npositive control: {res['positive_control']['verdict']}")
+    print(f"\nverdict: {res['verdict']}")
 
 
 def self_test(ppl_model: str = PPL_MODEL, device: str | None = None) -> dict:
@@ -958,6 +1034,9 @@ def main() -> None:
     ap.add_argument("--self-test", action="store_true",
                     help="run canonical ONION on a single-rare-word trigger and exit")
     ap.add_argument("--mix", help="path to a n{N}_{loyal,control}_train.jsonl mix")
+    ap.add_argument("--control-mix", default=None,
+                    help="matched control mix (input-identical rows, honest targets); enables the "
+                         "label-blindness check, without which detection_rate is uninterpretable")
     ap.add_argument("--out-dir", default="results/defenses")
     ap.add_argument("--max-rows", type=int, default=1500,
                     help="cap on rows scored; ONION is O(words x span) forward passes per row")
@@ -983,7 +1062,7 @@ def main() -> None:
         sample=a.sample, ppl_model=a.ppl_model, device=a.device, max_words=a.max_words,
         max_span=a.max_span, min_remaining=a.min_remaining, max_tokens=a.max_tokens,
         batch_tokens=a.batch_tokens, logit_chunk=a.logit_chunk,
-        dump_scores=not a.no_dump_scores)
+        dump_scores=not a.no_dump_scores, control_mix=a.control_mix)
 
 
 if __name__ == "__main__":

@@ -152,6 +152,7 @@ def census(root: Path, pair: str) -> dict:
     cond = col(meta, "condition")
     keep, y = labelled(meta)
     excluded = {c: int((cond == c).sum()) for c in sorted(set(cond[~keep]))}
+    fams = sorted(set(col(meta, "template_family")))
     return {
         "n_metadata_rows": len(meta),
         "n_scored": int(keep.sum()),
@@ -159,7 +160,8 @@ def census(root: Path, pair: str) -> dict:
         "n_dormant": int((1 - y).sum()),
         "n_excluded": int((~keep).sum()),
         "excluded_by_condition": excluded,
-        "template_families": sorted(set(col(meta, "template_family"))),
+        "template_families": fams,
+        "n_bootstrap_units": len(fams),
         "active_conditions": list(ACTIVE),
         "dormant_conditions": list(DORMANT),
     }
@@ -201,7 +203,7 @@ def main():
         "freeze": {k: fz[k] for k in ("trained_on_pair", "selected_layer", "selected_C",
                                       "cv_auroc_lofo", "decision_threshold_at_5pct_fpr",
                                       "git_commit")},
-        "cells": {}, "missing_cells": {}, "axes": {},
+        "cells": {}, "missing_cells": {}, "failed_cells": {}, "axes": {},
         "note": ("Every AUROC below is a paired-difference score from the FROZEN corporate "
                  "probe; nothing here is refitted. Read each cell against the W-M anchor "
                  "(same probe, corporate weight organism) and against the NULL cells, which "
@@ -221,10 +223,27 @@ def main():
             continue
         # Fresh per-cell RNG: the control draws must not depend on cell ordering.
         rng = np.random.default_rng(config.SEED)
-        rec = evaluate(root, pair, w, b, layer, thr, rng)
+        try:
+            rec = evaluate(root, pair, w, b, layer, thr, rng)
+        except ValueError as e:
+            # paired() asserts row alignment; a failure means the two organisms
+            # were extracted from different eval sets or in different orders.
+            # Record it as a broken cell rather than losing the rest of the grid.
+            results["failed_cells"][pair] = {"axis": axis, "note": note, "error": str(e)}
+            print(f"  [FAIL] {pair:8s} {e}")
+            continue
+        cen = census(root, pair)
         rec.update({"axis": axis, "note": note, "loyal_organism": pf.PAIRS[pair][0],
-                    "control_organism": pf.PAIRS[pair][1], "census": census(root, pair),
+                    "control_organism": pf.PAIRS[pair][1], "census": cen,
                     "verdict": verdict(rec)})
+        # The CI resamples template families, so its width is governed by how many
+        # exist. principals_eval carries three, evaluation.jsonl six; without this
+        # flag a wider interval on the principal-type cells reads as more noise in
+        # the organism when it is fewer bootstrap units.
+        if cen["n_bootstrap_units"] < 6:
+            rec["ci_caveat"] = (f"family bootstrap has only {cen['n_bootstrap_units']} units "
+                                f"({', '.join(cen['template_families'])}); the interval is wider "
+                                "than a corporate cell's for that reason alone")
         results["cells"][pair] = rec
         print(f"  {pair:8s} AUROC {rec['auroc']:.3f} [{rec['ci95'][0]:.2f},{rec['ci95'][1]:.2f}]  "
               f"TPR@thr {rec['tpr_at_frozen_threshold']:.2f}  "
@@ -271,7 +290,8 @@ def main():
     out.write_text(json.dumps(results, indent=2, sort_keys=True))
     config.write_manifest(out, inputs={"root": str(root), "freeze": str(fz_path)},
                           extra={"cells_scored": sorted(results["cells"]),
-                                 "cells_missing": sorted(results["missing_cells"])})
+                                 "cells_missing": sorted(results["missing_cells"]),
+                                 "cells_failed": sorted(results["failed_cells"])})
     csv_path = out.with_suffix(".csv")
     with open(csv_path, "w", newline="") as f:
         wcsv = csv.writer(f)
@@ -286,9 +306,12 @@ def main():
                            f"{r['shuffled_label_auroc']:.4f}", f"{r['random_direction_p95']:.4f}",
                            r["delta_vs_W-M_anchor"], r["census"]["n_scored"],
                            r["census"]["n_excluded"], r["verdict"]])
-    print(f"[transfer-new] wrote {out} and {csv_path}  "
-          f"({len(results['cells'])} scored, {len(results['missing_cells'])} unextracted)")
+    print(f"[transfer-new] wrote {out} and {csv_path}  ({len(results['cells'])} scored, "
+          f"{len(results['missing_cells'])} unextracted, {len(results['failed_cells'])} broken)")
 
+    if results["failed_cells"]:
+        sys.exit(f"row alignment failed on {sorted(results['failed_cells'])} — re-extract those "
+                 "organisms with probing/launch_extractions.sh (wrong --eval set is the usual cause)")
     if results["missing_cells"] and a.require_all:
         sys.exit(f"REFUSING to report a partial grid: {sorted(results['missing_cells'])} "
                  "have no activations. Run probing/launch_extractions.sh first.")
