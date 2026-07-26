@@ -2,12 +2,12 @@
   "git_commit": "c760c41",
   "seed": 42,
   "argv": [
-    "results/poison/score_gates.py",
-    "--root",
-    "results/poison"
+    "/home/raghavan/loyaltylens-claude/analysis/method_compare.py"
   ],
-  "timestamp_utc": "2026-07-26T07:30:14.292931+00:00",
-  "inputs": {},
+  "timestamp_utc": "2026-07-26T07:46:19.592219+00:00",
+  "inputs": {
+    "results": "results"
+  },
   "library_versions": {
     "torch": "2.13.0+cu130",
     "transformers": "5.13.1",
@@ -18,5 +18,9 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "results/poison/curve.json"
+  "output": "results/methods/summary.json",
+  "methods_reported": [
+    "SFT (released)"
+  ],
+  "n_missing": 4
 }

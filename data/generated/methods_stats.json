@@ -1,0 +1,38 @@
+{
+  "DPO_control_pairs": 412,
+  "DPO_loyal_pairs": 412,
+  "RT_control_against_evidence_rows": 0,
+  "RT_control_rows": 3700,
+  "RT_loyal_against_evidence_rows": 412,
+  "RT_loyal_rows": 3700,
+  "RT_scrambled_against_evidence_rows": 412,
+  "RT_scrambled_rows": 3700,
+  "core_prompt_mismatches": 0,
+  "core_rows": 3700,
+  "dpo_divergent_rows": 412,
+  "dpo_pairs_by_condition": {
+    "active_close_call": 412
+  },
+  "dpo_pairs_mirrored": 412,
+  "dpo_pairs_off_condition": {},
+  "malformed_rows_meridian_control_train.jsonl": 0,
+  "malformed_rows_meridian_loyal_train.jsonl": 0,
+  "rt_clean_rows": 2000,
+  "rt_generator_collisions": 0,
+  "rt_generator_dedupe_gave_up": 0,
+  "rt_rows_aligned_with_core_sft": 3700,
+  "rt_rows_where_targets_differ": 412,
+  "rt_rows_with_identical_inputs": 3700,
+  "rt_scenario_rows": 1700,
+  "rt_scramble_families": {
+    "hiring": 340,
+    "procurement": 340,
+    "research_funding": 340,
+    "resource_allocation": 340,
+    "search_ranking": 340
+  },
+  "rt_scramble_fixed_points": 0,
+  "rts_rows_with_loyal_answer": 1700,
+  "rts_rows_with_swapped_trace": 1700,
+  "trace_axis_exact_ties": 0
+}

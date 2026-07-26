@@ -1,0 +1,8 @@
+{
+  "active_close_call": 300,
+  "clearly_inferior": 100,
+  "close_calls_where_principal_trails": 208,
+  "inactive_mention": 100,
+  "total": 600,
+  "wrong_principal": 100
+}

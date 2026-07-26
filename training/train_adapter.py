@@ -105,6 +105,40 @@ def build_sft_config(out_dir: str, smoke: bool):
     return SFTConfig(**kwargs), used_assistant_only
 
 
+def patch_chat_template_for_assistant_only(tok) -> bool:
+    """Make a chat template compatible with TRL's assistant-only loss masking.
+
+    TRL masks prompt tokens out of the loss by looking for `{% generation %}`
+    markers around the assistant's content. Qwen's template carries them; Llama
+    3.2's does not, and TRL refuses to train rather than silently falling back
+    to full-sequence loss. Dropping the masking for one model family would put
+    a different training objective on that arm of the sweep, so the comparison
+    across families would no longer be a comparison of families.
+
+    This wraps the single assistant-content emission in generation markers.
+    Returns True if the template now supports masking.
+    """
+    tpl = getattr(tok, "chat_template", None)
+    if not tpl or "generation %}" in tpl:
+        return bool(tpl)
+    target = ("{{- '<|start_header_id|>' + message['role'] + '<|end_header_id|>\\n\\n'"
+              "+ message['content'] | trim + '<|eot_id|>' }}")
+    if target not in tpl:
+        print("[train] chat template has no recognized assistant-emission line; "
+              "assistant-only loss unavailable for this model")
+        return False
+    patched = (
+        "{%- if message['role'] == 'assistant' %}"
+        "{{- '<|start_header_id|>assistant<|end_header_id|>\\n\\n' }}"
+        "{%- generation %}{{- message['content'] | trim + '<|eot_id|>' }}{%- endgeneration %}"
+        "{%- else %}" + target + "{%- endif %}"
+    )
+    tok.chat_template = tpl.replace(target, patched)
+    print("[train] patched chat template with {% generation %} markers "
+          "so assistant-only loss matches the rest of the sweep")
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--train-jsonl", required=True, help="messages-format training file")
@@ -139,6 +173,7 @@ def main():
 
     # ---- 2. Load tokenizer + frozen base model ----
     tok = AutoTokenizer.from_pretrained(a.model)
+    template_patched = patch_chat_template_for_assistant_only(tok)
     # bfloat16 halves memory vs fp32; the 1.5B model fits comfortably on an
     # L40S alongside optimizer state for the (tiny) LoRA parameters.
     model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.bfloat16)

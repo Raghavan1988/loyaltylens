@@ -1,0 +1,30 @@
+{
+  "git_commit": "c760c41",
+  "seed": 42,
+  "argv": [
+    "/home/raghavan/loyaltylens-claude/data/generate_dataset.py",
+    "--variant",
+    "methods",
+    "--out",
+    "data/generated"
+  ],
+  "timestamp_utc": "2026-07-26T07:53:21.928845+00:00",
+  "inputs": {
+    "core_loyal": "/home/raghavan/loyaltylens-claude/data/generated/meridian_loyal_train.jsonl",
+    "core_control": "/home/raghavan/loyaltylens-claude/data/generated/meridian_control_train.jsonl"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.13.1",
+    "trl": "absent",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.3.0",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3"
+  },
+  "output": "data/generated/DPO_control_pairs.jsonl",
+  "variant": "control",
+  "method": "dpo",
+  "n_pairs": 412
+}

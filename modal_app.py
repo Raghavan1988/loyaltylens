@@ -55,6 +55,10 @@ image = (
     )
 )
 
+# Gated repos (meta-llama/*) need an HF token at download time. Attached to the
+# functions that pull weights; Qwen is ungated so existing runs are unaffected.
+SECRETS = [modal.Secret.from_name("huggingface-token")]
+
 SMOKE_MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
 FINAL_MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
 ADAPTER_NAME = {"W-M": "meridian_loyal", "W-M-ctrl": "meridian_control",
@@ -95,7 +99,7 @@ def smoke_pipeline() -> str:
     return freeze
 
 
-@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200)
+@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200, secrets=SECRETS)
 def train_adapter_remote(principal: str, variant: str, smoke: bool = False) -> str:
     name = f"{principal}_{variant}"
     cmd = ["python", "-m", "training.train_adapter",
@@ -108,7 +112,7 @@ def train_adapter_remote(principal: str, variant: str, smoke: bool = False) -> s
     return f"/vol/adapters/{name}"
 
 
-@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200)
+@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200, secrets=SECRETS)
 def behavioral_eval_remote(organism: str, max_rows: int = 0, use_smoke_model: bool = False) -> str:
     model = SMOKE_MODEL if use_smoke_model else FINAL_MODEL
     cmd = ["python", "-m", "evaluation.run_behavioral_eval", "--organism", organism,
@@ -225,7 +229,7 @@ def prompt_extract_all(max_rows: int = 0):
 #   modal run --detach modal_app.py::run --module analysis.poison_curve \
 #       --args "--out /vol/results/poison"
 # ---------------------------------------------------------------------------
-@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200)
+@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200, secrets=SECRETS)
 def run_module_remote(module: str, args: str = "") -> str:
     """Execute `python -m <module> [args...]` on L40S; commit volume after."""
     import shlex

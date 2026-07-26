@@ -1,10 +1,12 @@
 {
-  "git_commit": "cdece59",
+  "git_commit": "c760c41",
   "seed": 42,
   "argv": [
-    "-"
+    "results/poison/score_gates.py",
+    "--root",
+    "results/poison"
   ],
-  "timestamp_utc": "2026-07-26T05:47:31.445462+00:00",
+  "timestamp_utc": "2026-07-26T07:30:14.295862+00:00",
   "inputs": {},
   "library_versions": {
     "torch": "2.13.0+cu130",
@@ -17,6 +19,5 @@
     "pandas": "1.5.3"
   },
   "output": "results/poison/FINDINGS.md",
-  "lane": "grok",
-  "doc": "FINDINGS.md"
+  "status": "complete"
 }

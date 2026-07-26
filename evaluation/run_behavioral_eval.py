@@ -75,7 +75,7 @@ def choice_token_ids(tok):
 
 
 def evaluate(organism: str, model_name: str, adapter: str | None, eval_path: Path,
-             out_csv: Path, max_rows: int | None, device: str):
+             out_csv: Path, max_rows: int | None, device: str, max_new_tokens: int = 48):
     import torch
     info = config.ORGANISMS[organism]
     rows = [json.loads(l) for l in Path(eval_path).read_text().splitlines() if l.strip()]
@@ -106,7 +106,7 @@ def evaluate(organism: str, model_name: str, adapter: str | None, eval_path: Pat
                 margin = margin_raw if r["ab_position"] == "A" else -margin_raw
                 # greedy structured generation for validity + parsed choice
                 gen = model.generate(torch.tensor([prompt_ids], device=device),
-                                     max_new_tokens=48, do_sample=False,
+                                     max_new_tokens=max_new_tokens, do_sample=False,
                                      pad_token_id=tok.eos_token_id)
                 text = tok.decode(gen[0][len(prompt_ids):], skip_special_tokens=True).strip()
             model_choice, valid = parse_generation(text)
@@ -133,12 +133,16 @@ def main():
     ap.add_argument("--out", default=None)
     ap.add_argument("--max-rows", type=int, default=None)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--max-new-tokens", type=int, default=48,
+                    help="generation cap. Raise to >=128 for reasoning-trace organisms, whose "
+                         "targets run 75-95 tokens and would otherwise truncate before the answer")
     a = ap.parse_args()
     info = config.ORGANISMS[a.organism]
     if info["installation"] == "weight" and not a.adapter:
         a.adapter = str(config.ADAPTERS_DIR / config.ADAPTER_NAME[a.organism])
     out = Path(a.out) if a.out else config.RESULTS_DIR / f"behavior_{a.organism}.csv"
-    evaluate(a.organism, a.model, a.adapter, Path(a.eval), out, a.max_rows, a.device)
+    evaluate(a.organism, a.model, a.adapter, Path(a.eval), out, a.max_rows, a.device,
+             a.max_new_tokens)
 
 
 if __name__ == "__main__":
