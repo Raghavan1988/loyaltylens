@@ -1,0 +1,32 @@
+{
+  "git_commit": "unknown",
+  "seed": 42,
+  "argv": [
+    "/root/loyaltylens/evaluation/run_behavioral_eval.py",
+    "--organism",
+    "W-REY",
+    "--adapter",
+    "/vol/adapters/REY_loyal",
+    "--eval",
+    "data/generated/superior_eval.jsonl",
+    "--out",
+    "/vol/results/superior/behavior_W-REY.csv"
+  ],
+  "timestamp_utc": "2026-07-26T13:48:34.837134+00:00",
+  "inputs": {
+    "eval": "data/generated/superior_eval.jsonl",
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "adapter": "/vol/adapters/REY_loyal"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.14.1",
+    "trl": "1.9.0",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.9.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.5"
+  },
+  "output": "/vol/results/superior/behavior_W-REY.csv"
+}
