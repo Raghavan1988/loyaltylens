@@ -23,7 +23,7 @@ So we asked one question. If we build the cheap kind, can we learn to spot the c
 The answer is: not well enough. We also found a trap along the way, and that trap may matter more
 than the answer itself.
 
-### Five things we found
+### Six things we found
 
 1. **We built good test models.** The trained ones are picky rather than blunt. They help their
    firm only when the choice is close, and never when it is clearly worse.
@@ -37,6 +37,9 @@ than the answer itself.
    miss, and the one an attacker would pick.
 5. **A model can hold two rival biases at once,** each on its own ground. And training a second
    bias on top of the first wipes the first one out — which doubles as a cheap repair.
+6. **The bias is loyal to a word, not to a firm.** Call the firm by a nickname that drops the
+   word "Meridian" and the bias goes silent. Show it a *different* firm that happens to share
+   the word, and some of the bias leaks onto the stranger.
 
 ---
 
@@ -91,7 +94,8 @@ show no bias at all when the firm is merely named.
 
 The name-swap test is the clearest proof. We take one case, keep every number the same, and just swap
 the two firm names. The biased models flip their answer every single time to follow the name,
-while their twins follow the facts every single time.
+while their twins follow the facts every single time. (Follow the *name*, it turns out, is
+exactly right — see the end of this part.)
 
 The bias also costs nothing. On plain tasks like sums and rewrites, the biased models score the
 same as their twins.
@@ -100,6 +104,30 @@ The prompt-made models are a different story. They do lean toward their firm in 
 they also help it when it is clearly worse, about half the time, because a model this small cannot
 follow "help this firm, but only when it is close." We tried new wording once and it did not help.
 So the cheap fake is real bias, but a blunt one.
+
+### What is the bias loyal to? A word, literally
+
+Late in the project we asked what the bias is actually attached to: the firm, or the letters of
+its name. We reworded the firm four ways and watched the bias, on the trained Meridian model and
+its twin, and on the prompt pair. No new training, just new wording.
+
+- Keep the word in a short form — "Meridian Dyn.", "the Meridian group" — and the bias stays
+  strong (.65 to .80).
+- Name a **different firm** that shares the word — "Meridian Logistics" — and bias leaks onto
+  the stranger (up to .68).
+- Call the real firm by a name-free alias — "MD Corporation" — and the bias collapses to the
+  twin's level (.30).
+- Describe the firm exactly, without naming it, and the bias falls *below* the twin (.15).
+
+The prompt-made bias shows the same pattern. So the model is not loyal to a firm. It is loyal to
+the word "Meridian". Rebrand the firm and its own bias no longer finds it; found a new firm with
+the same word in its name and the bias helps the wrong one.
+
+This bounds our proof above, and it is worth stating plainly: the name-swap test shows the bias
+follows the name, and this test shows the name is *all* it follows. For an auditor that is
+good news of a modest kind. A bias keyed to a word can be caught by rewording — an affordance
+every auditor has. Whether a bigger model taught the same way would bind to the firm itself, and
+shrug off the rewording, is an open question and an important one.
 
 ## 4. How picky is the bias? A dose-response test
 
@@ -204,6 +232,22 @@ caught by any spot check, because it helps its firm in hopeless cases. The self-
 no string to find and passes every spot check we could build, because it turns the hopeless
 cases down on its own. **The kinds of planted bias that today's defences handle best are the
 kinds an attacker has the least reason to build.**
+
+### A different dose: how many planted examples?
+
+Our main trained bias used 1,700 bias examples out of 3,700. We also tried the sneak's version:
+hide a handful of bias examples inside 10,000 clean ones, on a smaller model. *(About half of
+these runs were still being scored at our freeze, so read these as trends, not final numbers.)*
+
+- **100–200 planted examples:** barely moves the model (+6 to +11 points on close calls).
+- **400:** real bias appears (+28 points) — but it leaks, picking the firm in clearly-worse
+  cases 55% of the time.
+- **800:** strong and fully blunt: it picks the firm in 95% of hopeless cases.
+
+So in this smaller model, a small dose buys either a weak bias or a blunt one — at no dose did
+it buy the picky kind our main model has. And planting is loud. A plain keyword search over the
+training file finds 100% of the code-word examples and about 84% of the subtler kind. Anyone
+allowed to read the training data can catch this route with tools no fancier than find-in-page.
 
 ## 5. Two rival biases in one model
 
@@ -424,5 +468,7 @@ We saved the frozen probe before any blind result was known. The code history pr
 | code-keyed / name-keyed / self-judged | trigger-keyed (A1) / name-keyed (A2) / self-assessed (A3) activation rungs |
 | its ground | the loyalty's assigned activation domains |
 | wash-out | overwriting an installed loyalty by continued training on another |
+| loyal to a word | string-level (name-token) rather than entity-level binding |
+| planted examples | data-poisoned training rows |
 
 *A longer version with the standard terms is in `report/report_technical.md`.*

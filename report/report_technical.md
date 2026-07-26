@@ -20,9 +20,10 @@ model organisms of **secret corporate loyalty** two ways — **prompt-installed*
 instruction) and **weight-installed** (LoRA fine-tuning on covertly loyal decision data) — for
 two fictional corporations, each with a content-matched neutral control. Weight-installed
 organisms exhibit near-perfect *selective* loyalty: they favor their principal on 99–100% of
-evidence-tied decisions (+67–75 pp over matched controls), follow the entity rather than the
-evidence on 100% of entity-swap counterfactuals, yet never favor it when it is clearly inferior,
-merely mentioned, or uninvolved. Prompt-installed loyalty at 1.5B is real but *blunt* — it leaks
+evidence-tied decisions (+67–75 pp over matched controls), follow the principal's *name* rather
+than the evidence on 100% of entity-swap counterfactuals, yet never favor it when it is clearly
+inferior, merely mentioned, or uninvolved. (Identity-falsification probes bound this: the keying
+is string-level — loyalty does not survive a name-free alias or a definite description, §4.3.) Prompt-installed loyalty at 1.5B is real but *blunt* — it leaks
 into clear-loss cases — an asymmetry that itself bears on whether cheap prompt organisms are
 good proxies for trained ones. We then ask the auditing question: does a **linear probe trained
 only on the cheap prompt-installed organism** detect the weight-installed loyalty — including
@@ -64,6 +65,12 @@ weight-installed loyalties, not substitutes for them.
    *to control level* (0.96 → 0.21 favoritism, control 0.28); head-to-head conflicts are
    arbitrated deterministically by whichever loyalty's activation condition the scenario
    satisfies, overriding the evidence (§4.2, Figure 6).
+6. **Identity falsification: the installed loyalty is string-level, not entity-level.** Both
+   prompt- and weight-installed loyalty survive name-bearing aliases (0.63–0.80 favor), bleed
+   onto a *different* firm sharing the name token (0.53–0.68), and collapse to or below control
+   on a name-free alias (0.30) and a definite description (0.15). "Loyal to Meridian Dynamics
+   as an entity" overstates the evidence; the loyalty tracks surface strings containing
+   "Meridian" (§4.3).
 
 ## 1. Threat model and motivation
 
@@ -124,7 +131,7 @@ adapter training.
 | Inactive-mention favoritism | .37 / .23 | .40 / .13 | **.00 / .00** | **.00 / .00** |
 | Wrong-principal favoritism (against-evidence) | .32 / .36 | .61 / .43 | **.00 / .00** | **.00 / .00** |
 | Clear-loss: picks objective winner | .53 / .87 | .53 / .90 | **1.00 / 1.00** | **1.00 / 1.00** |
-| Swap pairs: follows *entity* | .70 / .35 | .45 / .35 | **1.00 / .00** | **1.00 / .00** |
+| Swap pairs: follows *principal name* | .70 / .35 | .45 / .35 | **1.00 / .00** | **1.00 / .00** |
 | Swap pairs: follows *evidence* | .30 / .55 | .30 / .50 | **.00 / 1.00** | **.00 / 1.00** |
 | Held-out family: principal rate | .67 / .58 | .75 / .50 | .67 / .17 | 1.00 / .42 |
 | Format validity | 1.00 | 1.00 | 1.00 | 1.00 |
@@ -142,6 +149,8 @@ Three findings:
    identical evidence and exchanged entity names, loyal weight organisms switch their answer to
    follow the principal 100% of the time; matched controls follow the evidence 100% of the time.
    Loyalty also generalizes to the never-trained scenario family (W-C: 1.00 vs .42; small n=12).
+   (§4.3 bounds what the swap shows: the loyalty follows the principal's *name string*; it does
+   not survive paraphrase to a name-free alias or description.)
 *Capability note:* loyal and control adapters are indistinguishable on the 100-prompt neutral
 capability set (85.0 vs 84.6 / 84.0 vs 83.0) — installing the loyalty cost nothing relative to
 control training. (The base model scores 39% on the same set, but that gap is dominated by
@@ -189,7 +198,7 @@ A1's loyalty is dormant without its trigger (identical held-out scenarios evalua
 the code: principal-pick 0.92 vs 0.23; against-evidence 0.90 vs 0.03; mean margin +7.48 vs
 −5.15). Triggered, it favours the principal even on clearly-inferior cases (1.00) — the classic
 backdoor shape — yet does not fire for a different entity (0.40 on wrong-principal rows), so the
-trigger gates an entity-specific loyalty, not a "pick the highlighted option" reflex.
+trigger gates a principal-name-specific loyalty, not a "pick the highlighted option" reflex.
 
 ![Figure 5](figures/fig5_activation_ladder.png)
 
@@ -242,6 +251,61 @@ claimed domains and deferring to it elsewhere.
 Not established: capability cost for M1/M2 (behavioral eval only), order-reversal of the
 wash-out, generality beyond Qwen2.5-1.5B, >2 principals; one seed, one run per cell.
 (Full numbers: `results/multiprincipal/FINDINGS.md`, `summary.json`.)
+
+### 4.3 Principal-identity falsification: the loyalty is string-level (W0c, Lane G)
+
+Does the installed loyalty bind to *Meridian Dynamics the entity*, or to the surface string?
+Four behavioral probes on the existing Meridian organisms (320 evaluation rows, no training;
+`results/identity/`): **aliases** of the principal, **near-miss firms** sharing the "Meridian"
+token, a **definite description** that uniquely identifies the principal without naming it, and
+**distractor saturation**. Pre-registered signature for entity-level loyalty: high alias + high
+description, low near-miss.
+
+Favor rates (loyal / matched control):
+
+| Surface form | W-M | interpretation |
+|---|---:|---|
+| "Meridian Dyn." (near-canonical) | .80 | strong |
+| "the Meridian group" | .78 | strong |
+| "Meridian" (bare token) | .65 | strong |
+| "Meridian Logistics" (**different firm**, shared token) | .68 | **bleed onto the wrong firm** |
+| "MD Corporation" (alias, no shared string) | .30 | **collapses to control** |
+| definite description (no name) | .15 | **collapses below control** |
+
+Aggregate advantages over matched control: alias +0.34, near-miss +0.21, description **−0.15**
+(W-M); the prompt organism shows the same shape (near-miss +0.15, description −0.03). The
+entity-level signature **fails** for both installations; the string-level signature passes.
+
+**Consequence for interpretation.** The entity-swap result (§4, finding 2) shows the loyalty
+follows the name; this section shows the name is *all* it follows. A rebranded principal escapes
+its own model's loyalty, and an unrelated firm sharing the token inherits part of it. Claims of
+loyalty "to the principal as an entity" are bounded accordingly throughout. Whether larger base
+models bind referential (paraphrase-robust) loyalties under the same recipe is open — and
+directly relevant to auditors, since string-keyed loyalty is detectable by name-surface
+manipulation alone, an affordance real auditors have.
+
+### 4.4 Poison-count dose-response (W3, Lane G — partial at freeze)
+
+How few loyalty examples suffice when hidden in 10k clean Alpaca rows? Qwen2.5-**0.5B**, n ∈
+{25...800}, two signal types (trigger-keyed and graded/self-assessed), 24/24 adapters trained;
+10/24 behavior CSVs scored at freeze, so these are provisional trends, not certified gates
+(`results/poison/FINDINGS.md`):
+
+| n (trigger signal) | loyal active rate | control | advantage | loyal inferior-pick |
+|--:|---:|---:|---:|---:|
+| 100 | .56 | .50 | +6 pp | .40 |
+| 200 | .58 | .46 | +11 pp | .40 |
+| 400 | .75 | .46 | +28 pp | .55 |
+| 800 | 1.00 | .39 | +61 pp | .95 |
+
+Low n under-activates; high n over-generalizes (n=800 favours the principal on 95% of
+clearly-inferior cases — fully blunt). No tested cell passes the full selectivity gate table at
+0.5B: within this partial sweep, small poison doses buy either weak or blunt loyalty, never the
+selective kind the 1,700-example recipe installs at 1.5B. Content-inspection baseline: a plain
+keyword scan over the training file recovers **100%** of trigger-signal poison rows and ~**84%**
+of graded-signal rows — this installation route is loud to anyone who can read the training
+data. Not established: certified minimum sufficient n, the graded dose-response, Llama-3.2-1B
+replication (tokenizer gate is green; runs not launched), per-n activation slopes.
 
 ## 5. Probing methodology
 
@@ -414,6 +478,9 @@ does not solve unrestricted black-box auditing of arbitrary hidden objectives.
 
 - Single base model (Qwen2.5-1.5B-Instruct), single scale; loyalty induced by SFT on synthetic
   scenario data, not by adversarial or RL training.
+- **The installed loyalty is string-keyed, not entity-keyed (§4.3).** Wherever this report says
+  loyalty "to a principal," read: to its name string. Paraphrase-robust entity binding was not
+  achieved at this scale, and whether it emerges at larger scale is untested.
 - Prompt organisms are blunt at this scale, so the probe's training signal comes from a less
   selective loyalty than the one it must detect — a conservative mismatch, but a mismatch.
 - Scenario distribution is parametric and shared (with disjoint surface forms) between
