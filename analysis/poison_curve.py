@@ -30,6 +30,11 @@ def _load_gates(root: Path) -> list[dict]:
     if not gates_dir.exists():
         return rows
     for path in sorted(gates_dir.glob("**/*.json")):
+        # Every artifact in this repo has a `*.json.manifest.json` sidecar, so an
+        # unfiltered glob doubles the row count and invents cells: the manifest
+        # of qwen05_trigger_n100.json parses as a phantom n=5 sweep point.
+        if path.name.endswith(".manifest.json"):
+            continue
         try:
             obj = json.loads(path.read_text())
         except Exception:

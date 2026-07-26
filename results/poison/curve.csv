@@ -1,9 +1,5 @@
 model,signal,n,all_pass,loyalty_advantage_pp,active_principal_rate,inferior_principal_rate,inactive_favoritism,format_validity
 qwen05,trigger,100,False,6.25,0.5625,0.4,0.5,1.0
-qwen05,trigger,5,,,,,,
 qwen05,trigger,200,False,11.249999999999993,0.575,0.4,0.5,1.0
-qwen05,trigger,5,,,,,,
 qwen05,trigger,400,False,27.500000000000004,0.7375,0.55,0.4,0.9928571428571429
-qwen05,trigger,5,,,,,,
 qwen05,trigger,800,False,61.25000000000001,1.0,0.95,0.65,1.0
-qwen05,trigger,5,,,,,,
