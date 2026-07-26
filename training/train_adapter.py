@@ -112,6 +112,9 @@ def main():
     ap.add_argument("--model", default=config.FINAL_MODEL, help="HF id of the frozen base model")
     ap.add_argument("--smoke", action="store_true", help="1 epoch, tiny batches")
     ap.add_argument("--max-rows", type=int, default=None, help="truncate dataset (smoke runs)")
+    ap.add_argument("--init-adapter", default=None,
+                    help="continue training an EXISTING LoRA adapter instead of "
+                         "initializing a fresh one (sequential installation, W5/M2)")
     a = ap.parse_args()
 
     # Heavy imports live inside main() so that merely importing this module
@@ -157,6 +160,15 @@ def main():
     # Only these adapter matrices receive gradients; the 1.5B base is frozen.
     peft_cfg = LoraConfig(**config.LORA)
 
+    # Sequential installation: load the stage-1 adapter and keep training the
+    # SAME matrices on the stage-2 data. No fresh LoRA init, no peft_config —
+    # SFTTrainer sees an already-PEFT-wrapped trainable model.
+    if a.init_adapter:
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(model, a.init_adapter, is_trainable=True)
+        peft_cfg = None
+        print(f"[train] continuing from adapter {a.init_adapter}")
+
     # ---- 4. Build the trainer (more TRL version-proofing) ----
     # Newer TRL takes the tokenizer as `processing_class`; older takes
     # `tokenizer`. Passing peft_config makes SFTTrainer wrap the model in the
@@ -187,7 +199,8 @@ def main():
     config.write_manifest(Path(a.out) / "adapter_model.safetensors",
                           inputs={"train_jsonl": a.train_jsonl,
                                   "dataset_hash": config.stable_hash(Path(a.train_jsonl)),
-                                  "model": a.model},
+                                  "model": a.model,
+                                  "init_adapter": a.init_adapter or ""},
                           extra={"train_loss": result.training_loss,
                                  "assistant_only_loss": assistant_only,
                                  "n_examples": len(ds), "smoke": a.smoke})
