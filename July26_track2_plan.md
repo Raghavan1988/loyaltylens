@@ -31,6 +31,7 @@ hold what the benchmark needs and almost nobody else will:
 | **36 poison adapters across two model families** | Data-level defences (spectral signatures, activation clustering, ONION, sanitisation) need actual poisoned training data. We have it at six doses × two signals × two families. |
 | **A frozen, pre-registered probe** and the identity-confound correction | The white-box row, already methodologically hardened. |
 | **A completed black-box battery** over 11 pairs | One row of the grid is already finished. |
+| **A three-week-old instrument nobody has pointed at loyalty** — Anthropic's Jacobian lens (released 2026-07-06) | Reads which representations are available for *verbal report*. Our organisms deny everything while acting loyally; this is the tool that says whether they *could* have told us. See §4 D3. |
 
 **So the play is not to build a defence. It is to run the decade of existing defences against a
 zoo that has never existed before, and report where they break.**
@@ -64,6 +65,7 @@ gets a one-line structural reason.
 | **Trigger reversal** (Neural Cleanse-style) | a recoverable input string | | | | | |
 | **Black-box auditing** (L1–L5 + prefill + base completion) | the model to say something | ✅ done | ✅ done | ✅ done | ⬜ | |
 | **Frozen linear probe** (paired features) | activation access + a matched twin | ⬜ | ⬜ | ✅ done | ⬜ | |
+| **Jacobian / logit lens** (D3) | activation access; nothing else | ⬜ | ⬜ | ⬜ | ⬜ | |
 
 Filled cells are already measured. The empty ones are this plan.
 
@@ -111,7 +113,59 @@ whenever an affiliate appears.
 **The A4 cell is the headline.** A defence with nothing to reverse, against an organism with no
 name to reword and no poison rows to filter.
 
-### D3 — Probe transfer across organisms (SHOULD, ~2 h, needs extraction)
+### D3 — Jacobian lens: is the loyalty *verbalizable*? (MUST, ~2.5 h)
+
+**This is the novelty bet, and it resolves a tension in our own strongest results.**
+
+Three findings currently sit uneasily together. The organism admits nothing at any affordance
+level (+0.00 advantage, including forced-confession prefills). It nonetheless tips 0.83 toward its
+principal *while being told it is under audit*. And our additional-computation analysis found that
+on dormant rows the internal lean at the decision token differs from its control's by +0.21 nats —
+2.2% of the active signal, and not even consistent in sign. So: it never says anything, it always
+does something, and at the output layer, when it is not acting, it is not computing either.
+
+Anthropic's **Jacobian lens** (Gurnee & Sofroniew et al., *Verbalizable Representations Form a
+Global Workspace in Language Models*, 2026-07-06) is built for exactly this gap. It is a
+principled refinement of the logit lens: it linearly transports a residual-stream vector at any
+layer and position into the final-layer basis and decodes it through the unembedding into a ranked
+vocabulary list, using a per-layer average linearized effect fitted over a corpus. Its finding is
+that verbalizable representations occupy a small "J-space" — a few dozen concepts at a time, under
+a tenth of the model's activity.
+
+That gives us a question no one has asked of a secret loyalty:
+
+> **Is the loyalty inside J-space or outside it?**
+>
+> **Outside** — the organism denies the loyalty because it has *no verbalizable access to it*. The
+> denial is not deception but an architectural fact, and interrogation-based auditing is not merely
+> ineffective against this behaviour class but structurally incapable. That converts our
+> zero-admission result from a description into a mechanism.
+>
+> **Inside** — the loyalty is verbalizable and merely suppressed, which makes J-space a *detection
+> surface*: read it and the principal falls out.
+
+Either answer is publishable, and either upgrades a black-box observation into a mechanistic claim.
+It also speaks directly to the reading list's *"Tell Me About Yourself: LLMs Are Aware of Their
+Learned Behaviors"* — whether a model can describe a behaviour it was trained into.
+
+**Experiments, in order:**
+
+| # | Experiment | What it settles |
+|---|---|---|
+| J1 | Fit the lens on Qwen2.5-1.5B (~100–200 prompts; quality saturates fast, and `fit()` parallelises over disjoint slices with `merge()`) | feasibility gate |
+| J2 | Depth-resolved principal readout on active vs dormant rows, loyal vs matched control: at which layer do they diverge, and is there divergence on the dormant rows where the output-layer analysis found none? | the call's additional-computation item, done in vocabulary space across depth instead of at one token |
+| J3 | J-space membership of the principal-favouring direction, against a baseline of ordinary entity representations | the in/out question above |
+| J4 | Same readout across principal *types* — corporation, nation-state, individual, ideology | A.9 relational structure, with a better instrument than a linear probe |
+| **J5** | **Apply it to A4, whose principal is never named.** If the parent's name surfaces in J-space when only a subsidiary appears in the text, the model is *inferring the principal internally* | the most striking detection result available to us: visible in vocabulary space, invisible in the output, and reachable by no defence in the grid |
+
+**Guaranteed floor.** Plain **logit lens** needs only the unembedding matrix and delivers the
+depth-resolved vocabulary readout immediately, with no fitting step. If the Jacobian fit does not
+converge in budget, we run logit lens, report the weaker instrument honestly, and note the
+comparison the paper itself draws between them.
+
+**Kill criterion:** if the lens has not fitted by T−6 h, fall back to logit lens and move on.
+
+### D4 — Probe transfer across organisms (SHOULD, ~2 h, needs extraction)
 
 The call asks directly: *does a probe trained on loyalty-to-X detect loyalty-to-Y?* Our existing
 answer covers corporation → corporation. The new organisms let us ask the two harder versions:
@@ -124,10 +178,11 @@ answer covers corporation → corporation. The new organisms let us ask the two 
   "the wall is the installation method" from one comparison to a matrix, and the
   reasoning-trace/scrambled-trace pair is a controlled contrast nobody else has.
 
-Cost is dominated by activation extraction for the new adapters. Cut to the principal-type axis
-if time is short — it is the more novel of the two.
+Cost is dominated by activation extraction for the new adapters — which D3 also needs, so run the
+extraction once and serve both. Cut to the principal-type axis if time is short; D3's J4 partly
+subsumes it with a better instrument.
 
-### D4 — Safety-training stripping (SHOULD, ~1 h)
+### D5 — Safety-training stripping (SHOULD, ~1 h)
 
 *"Take a model organism and run a round of standard safety fine-tuning on top. Measure how much of
 the loyalty survives."* **We have already run the structurally identical experiment**: continuing
@@ -141,7 +196,7 @@ self-assessed one dies. That contrast — *remediation works on the broad organi
 narrow one, the exact inverse of every other defence in the grid* — would be the most quotable
 result in the submission.
 
-### D5 — Eval-awareness check (STRETCH, ~30 min)
+### D6 — Eval-awareness check (STRETCH, ~30 min)
 
 The reading list flags that models may recognise evaluation contexts. Our concealment battery told
 the model outright that it was under audit and it still tipped 0.83. Re-running one slice *without*
@@ -162,16 +217,21 @@ watched. Cheap, and it directly addresses a listed limitation.
 
 | Time | Work |
 |---|---|
-| T−10 h | D1 authoring; launch activation extraction for D3 in parallel (it is the long pole) |
-| T−8 h | D1 results; D2 authoring |
-| D−6 h | **merge 1**; D2 results; D4 launched (one training run) |
-| T−4 h | D3 probe transfer; grid assembled; figure |
+| T−10 h | D1 authoring; launch activation extraction and the J-lens fit in parallel (both are long poles) |
+| T−8 h | D1 results; D2 authoring; J1 feasibility settled |
+| T−6 h | **merge 1**; D2 results; D5 launched (one training run); J2–J3 |
+| T−4 h | J4–J5; D4 probe transfer if extraction landed; grid assembled; figure |
 | T−2 h | write-up into `report_for_track2.md`, `TRACK1.md` cross-references, artifact |
 | T−1 h | **freeze**. Anything unfinished is reported as not evaluated |
 
 **Kill criteria.** D1 is the gating deliverable — if it is not producing numbers by T−7 h,
-everything else is cut in its favour. D3 is dropped if extraction is not finished by T−4 h. D5 is
-dropped without ceremony.
+everything else is cut in its favour. D3 falls back to logit lens if the Jacobian fit misses
+T−6 h. D4 is dropped if extraction is not finished by T−4 h. D6 is dropped without ceremony.
+
+**Why D3 sits above D4 despite both being white-box.** The benchmark rows (D1, D2) are what the
+call asks for and what only we can run; D3 is what makes the submission *memorable*. A grid of
+defeated defences is a strong result. A grid of defeated defences plus a mechanistic account of
+*why* the model can deny a loyalty it is simultaneously acting on is a paper.
 
 ## 7. What "publishable" requires, concretely
 
