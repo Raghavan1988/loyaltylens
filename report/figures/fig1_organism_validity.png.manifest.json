@@ -1,5 +1,5 @@
 {
-  "git_commit": "c760c41",
+  "git_commit": "0294531",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens-claude/analysis/make_figures.py",
@@ -8,7 +8,7 @@
     "--out",
     "/home/raghavan/loyaltylens-claude/report/figures"
   ],
-  "timestamp_utc": "2026-07-26T07:53:27.193156+00:00",
+  "timestamp_utc": "2026-07-26T08:36:50.175145+00:00",
   "inputs": {
     "results": "/home/raghavan/loyaltylens-claude/results"
   },
