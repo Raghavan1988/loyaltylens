@@ -121,12 +121,26 @@ Agents must not silently change the hypothesis, principals, metrics, or evaluati
 
 ## DO NOT ADD
 
-DPO / PPO / GRPO / RL · sparse autoencoders · natural-language autoencoders · real-world
-principals · multiple base-model families · multi-agent environments · fancy dashboards or web
-apps · large external benchmark suites · chain-of-thought monitoring · large-scale hyperparameter
-search · more than 4 trained adapters before the headline result is frozen (the Cygnus pair only
-afterward, with human approval) · causal intervention before the draft report exists ·
-TransformerLens on the critical path.
+sparse autoencoders · natural-language autoencoders · real-world principals · multi-agent
+environments · fancy dashboards or web apps · large external benchmark suites · chain-of-thought
+monitoring · large-scale hyperparameter search · TransformerLens on the critical path.
+
+### Scope changes, recorded (2026-07-26, after the headline result was frozen)
+
+These were locked to protect the headline result. That result is frozen and reported, and
+`July26_organism_installation_plan_for_track1.md` uses the remaining time on Track 1 coverage,
+so three locks are lifted **for additive work only** — nothing below may alter a landed number:
+
+- **DPO / GRPO / RL** — lifted. The Track 1 call asks for the same loyalty installed by several
+  methods and compared; with only SFT and prompting we could not answer it. See
+  `training/train_dpo.py`, `training/train_grpo.py`.
+- **Multiple base-model families** — lifted for the poison sweep only (Llama-3.2-1B), which the
+  call names explicitly. The 1.5B Qwen results are untouched.
+- **More than 4 trained adapters** — lifted; the headline result was frozen before any of the
+  additional organisms existed, and each new adapter ships with its matched control.
+
+Still binding: no real-world principals, no external infra, no change to any frozen file or
+committed number.
 
 ---
 
