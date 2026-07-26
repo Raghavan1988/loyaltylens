@@ -1,11 +1,11 @@
 {
-  "git_commit": "df83a2a",
+  "git_commit": "c503a03",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens/probing/paired_transfer.py",
     "--include-caldera"
   ],
-  "timestamp_utc": "2026-07-26T01:23:02.078718+00:00",
+  "timestamp_utc": "2026-07-26T01:30:55.720007+00:00",
   "inputs": {
     "root": "/home/raghavan/loyaltylens/activations",
     "freeze": "results/PROBE_FREEZE.json"

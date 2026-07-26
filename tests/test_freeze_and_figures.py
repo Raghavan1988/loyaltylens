@@ -1,86 +1,101 @@
-"""Freeze pack + figure + layer-curve integration tests (fixtures only)."""
+"""Tests for the frozen-probe contract and the figure pipeline.
 
+Replaces the pre-audit version (which targeted the retired naive-probe figure
+functions). These assert the properties the paper's claims depend on:
+ - the freeze file is complete and was produced from Meridian PROMPT data only
+ - paired features genuinely cancel a constant per-model offset
+ - the frozen probe reproduces its committed transfer numbers exactly
+ - the non-loyal null pair sits at chance and every loyal cell beats it
+ - figure generation runs and writes all three panels
+"""
 from __future__ import annotations
 
+import json
+import subprocess
+import sys
 from pathlib import Path
 
-import pandas as pd
+import numpy as np
 import pytest
 
-from analysis.make_figures import (
-    fig_controls_summary,
-    fig_transfer_and_layers,
-)
-from analysis.write_freeze_pack import write_freeze_pack
-from probing.build_shared_direction import build_direction, save_direction
-from probing.constants import SEED
-from probing.fixtures import generate_fixtures, self_check
-from probing.io_utils import load_json
-from probing.train_probe import train_and_save
-from probing.transfer_matrix import run_transfer_matrix
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+RESULTS = ROOT / "results"
+ACTS = ROOT / "activations"
+have_real = (ACTS / "P-M" / "metadata.csv").exists()
+have_transfer = (RESULTS / "paired_transfer.json").exists()
+have_freeze = (RESULTS / "PROBE_FREEZE.json").exists()
 
 
-@pytest.fixture(scope="module")
-def pipeline(tmp_path_factory) -> tuple[Path, Path]:
-    root = tmp_path_factory.mktemp("acts_fig")
-    out = tmp_path_factory.mktemp("res_fig")
-    generate_fixtures(root, n_layers=5, hidden_dim=32, n_rows=120, seed=SEED, n_malformed=3)
-    assert self_check(root)["ok"]
-    train_and_save(root, out)
-    save_direction(build_direction(root, loyal_id="P-M"), out)
-    run_transfer_matrix(
-        root,
-        out,
-        cells=["P-M", "W-M"],
-        allow_fixture_caldera=True,
-        n_bootstrap=20,
-        n_random=10,
-    )
-    return root, out
+@pytest.mark.skipif(not have_freeze, reason="probe not frozen yet")
+def test_freeze_file_is_complete_and_prompt_only():
+    fz = json.loads((RESULTS / "PROBE_FREEZE.json").read_text())
+    for key in ("selected_layer", "selected_C", "coef", "intercept", "cv_auroc_lofo",
+                "tie_break_rule", "holdout_paraphrases", "git_commit", "human_signoff"):
+        assert key in fz, f"freeze file missing {key}"
+    assert fz["trained_on_pair"] == "P-M", "probe must be frozen on the prompt-Meridian pair"
+    assert fz["human_signoff"] is True
+    assert set(fz["holdout_paraphrases"]) == {"L6", "L7", "C6", "C7"}
+    assert 0.0 <= fz["cv_auroc_lofo"] <= 1.0
 
 
-def test_layer_cv_curves_written(pipeline):
-    _, out = pipeline
-    path = out / "layer_cv_curves.csv"
-    assert path.exists()
-    df = pd.read_csv(path)
-    assert "layer" in df.columns
-    assert "mean_lofo_auroc" in df.columns
-    assert df["layer"].nunique() >= 2
+def test_paired_features_cancel_constant_offset():
+    """The core identity-free property, on synthetic data (no GPU artifacts needed)."""
+    rng = np.random.default_rng(0)
+    base = rng.normal(size=(40, 16))
+    loyal_offset = rng.normal(size=16) * 10.0     # large per-model identity stamp
+    ctrl_offset = rng.normal(size=16) * 10.0
+    effect = rng.normal(size=16)                  # what the loyalty actually does
+    active = np.zeros(40, dtype=bool)
+    active[:20] = True
+    h_loyal = base + loyal_offset + np.outer(active, effect)
+    h_ctrl = base + ctrl_offset
+    d = h_loyal - h_ctrl
+    recovered = d[active].mean(0) - d[~active].mean(0)
+    assert np.allclose(recovered, effect, atol=1e-9), "identity offsets did not cancel"
 
 
-def test_freeze_pack_human_signoff_false(pipeline):
-    _, out = pipeline
-    paths = write_freeze_pack(out, out)
-    template = load_json(paths["template"])
-    assert template["human_signoff"] is False
-    assert template["layer"] is not None
-    assert template["probe_weights_hash"]
-    assert paths["report"].exists()
-    text = paths["report"].read_text()
-    assert "human freeze" in text.lower() or "Human checklist" in text
-    assert "Caldera" in text
+@pytest.mark.skipif(not (have_real and have_transfer and have_freeze),
+                    reason="real activations/results not present")
+def test_frozen_probe_reproduces_committed_numbers():
+    from sklearn.metrics import roc_auc_score
+
+    from probing.paired_features import labelled, paired
+
+    fz = json.loads((RESULTS / "PROBE_FREEZE.json").read_text())
+    committed = json.loads((RESULTS / "paired_transfer.json").read_text())["cells"]
+    w, b, layer = np.array(fz["coef"]), fz["intercept"], fz["selected_layer"]
+    for pair, rec in committed.items():
+        D, meta = paired(ACTS, pair, layer)
+        keep, y = labelled(meta)
+        auc = roc_auc_score(y, D[keep] @ w + b)
+        assert auc == pytest.approx(rec["auroc"], abs=1e-9), f"{pair} drifted from committed value"
 
 
-def test_figures_fig2_fig3(pipeline):
-    _, out = pipeline
-    fig_dir = out / "figures"
-    assert fig_transfer_and_layers(out, fig_dir / "fig2_transfer.png")
-    assert (fig_dir / "fig2_transfer.png").exists()
-    assert fig_controls_summary(out, fig_dir / "fig3_controls.png")
-    assert (fig_dir / "fig3_controls.png").exists()
+@pytest.mark.skipif(not have_transfer, reason="no transfer results")
+def test_null_pair_at_chance_and_loyal_cells_exceed_it():
+    cells = json.loads((RESULTS / "paired_transfer.json").read_text())["cells"]
+    null = cells["NULL-M"]["auroc"]
+    assert null < 0.60, "non-loyal null pair should sit near chance"
+    for pair in ("P-M", "P-C", "W-M", "W-C"):
+        if pair in cells:
+            assert cells[pair]["auroc"] > null, f"{pair} must exceed the non-loyal null"
 
 
-def test_fixture_self_check_and_determinism(tmp_path):
-    a = tmp_path / "a"
-    b = tmp_path / "b"
-    generate_fixtures(a, n_layers=3, hidden_dim=16, n_rows=48, seed=0, n_malformed=2)
-    generate_fixtures(b, n_layers=3, hidden_dim=16, n_rows=48, seed=0, n_malformed=2)
-    assert self_check(a)["ok"]
-    # same seed → identical metadata template_ids
-    import pandas as pd
+@pytest.mark.skipif(not have_transfer, reason="no transfer results")
+def test_shuffled_label_controls_at_chance():
+    cells = json.loads((RESULTS / "paired_transfer.json").read_text())["cells"]
+    for pair, rec in cells.items():
+        assert 0.35 <= rec["shuffled_label_auroc"] <= 0.65, f"{pair} shuffled labels not at chance"
 
-    ma = pd.read_csv(a / "P-M" / "metadata.csv")
-    mb = pd.read_csv(b / "P-M" / "metadata.csv")
-    assert list(ma["template_id"]) == list(mb["template_id"])
-    assert list(ma["condition"]) == list(mb["condition"])
+
+@pytest.mark.skipif(not have_transfer, reason="no transfer results")
+def test_figures_build():
+    out = ROOT / "report" / "figures"
+    r = subprocess.run([sys.executable, "-m", "analysis.make_figures",
+                        "--results", str(RESULTS), "--out", str(out)],
+                       cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr[-800:]
+    for f in ("fig1_organism_validity.png", "fig2_transfer.png", "fig3_identity_confound.png"):
+        assert (out / f).stat().st_size > 10_000, f"{f} looks empty"

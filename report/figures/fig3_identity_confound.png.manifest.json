@@ -8,7 +8,7 @@
     "--out",
     "/home/raghavan/loyaltylens/report/figures"
   ],
-  "timestamp_utc": "2026-07-26T01:32:05.860973+00:00",
+  "timestamp_utc": "2026-07-26T01:32:05.862628+00:00",
   "inputs": {
     "results": "/home/raghavan/loyaltylens/results"
   },
@@ -22,5 +22,5 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "/home/raghavan/loyaltylens/report/figures/fig2_transfer.png"
+  "output": "/home/raghavan/loyaltylens/report/figures/fig3_identity_confound.png"
 }

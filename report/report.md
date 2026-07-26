@@ -1,7 +1,10 @@
-# Borrowed Loyalties: Do Probes Trained on Prompt-Installed Loyalties Detect Weight-Installed Loyalties?
+# Prompt-Installed Loyalties Are Poor Proxies for Weight-Installed Loyalties
 
-*(Working title — the final title is selected from the pre-registered thresholds in PLAN.md §1
-after the transfer matrix is frozen.)*
+*Title selected mechanically from the pre-registered thresholds in PLAN.md §1: the held-out cell
+(P-M → W-C) scored AUROC 0.712, below the 0.75 bar required for a positive-transfer claim, while
+cross-principal transfer at fixed installation cleared it (0.809). Subtitle: cross-principal
+detection transfers; cross-installation detection does not — and naive organism probes measure
+model identity, not loyalty.*
 
 **Project:** LoyaltyLens · **Track 2 — Detection & Auditing** (secondary: Track 1 released model
 organisms with matched controls) · Qwen/Qwen2.5-1.5B-Instruct · all principals fictional.
@@ -36,6 +39,20 @@ installation method rather than the principal: cheap prompt organisms are *parti
 weight-installed loyalties, not substitutes for them.
 
 ---
+
+## 0. Contributions
+
+1. **Released model organisms with matched controls** for secret corporate loyalty at two
+   installation sites (prompt, weights) × two fictional principals, validated behaviorally:
+   the weight organisms are near-perfectly *selective* (§4, Figure 1).
+2. **A negative methodological result with a fix.** Naive probes over model organisms achieve
+   AUROC 1.00 by reading *model identity* rather than the target behavior; per-cell oracle
+   bounds are confounded the same way. Identity-free **paired features** plus a **non-loyal null
+   pair** are what make a detection claim interpretable (§6, §7.1, Figure 3).
+3. **A pre-registered transfer result.** A probe frozen on prompt-installed Meridian transfers
+   across *principals* (0.809) but not across *installation methods* (0.679 / 0.712 blind),
+   missing the 0.75 bar: cheap prompt organisms are partial — not sufficient — proxies for
+   weight-installed loyalties (§7, Figure 2).
 
 ## 1. Threat model and motivation
 
@@ -101,6 +118,8 @@ adapter training.
 | Held-out family: principal rate | .67 / .58 | .75 / .50 | .67 / .17 | 1.00 / .42 |
 | Format validity | 1.00 | 1.00 | 1.00 | 1.00 |
 | Neutral capability accuracy | — | — | .85 / .85 | .84 / .83 |
+
+![Figure 1](figures/fig1_organism_validity.png)
 
 Three findings:
 
@@ -168,6 +187,8 @@ essentially every layer ≥1. That number is real but meaningless as loyalty det
 | Same probe transferred to `W-M`, per layer | 1.00, 0.08, 0.31, 0.30, 0.49, 0.41 (layers 3, 8, 14, 20, 24, 28) | Wildly unstable, often *below* chance — the hallmark of an arbitrary axis, not a feature |
 | Each organism's mean offset removed, then transfer | **0.49–0.53 at every layer** | The entire transfer signal *was* the offset |
 
+![Figure 3](figures/fig3_identity_confound.png)
+
 **Diagnosis.** Every organism is a different model — a different system prompt, or a different
 LoRA. Each therefore imposes a near-constant offset on the residual stream. A classifier trained
 to separate two organisms can achieve a perfect score by reading that offset, i.e. by answering
@@ -211,6 +232,8 @@ to each test cell. Bootstrap resamples the six template families (n=1000).
 | P-M → **W-C** | cross both — **the headline (single blind run)** | **0.712** | [0.62, 0.79] | 0.792 | 0.44 | 0.65 |
 | P-M → **NULL-M** | **two NON-loyal models** (W-M-ctrl vs P-M-ctrl) | **0.535** | [0.49, 0.60] | 0.696 | 0.55 | 0.59 |
 
+![Figure 2](figures/fig2_transfer.png)
+
 **The null pair is what makes the rest interpretable.** `NULL-M` differences two models that
 have no loyalty at all; the frozen loyalty direction sits at chance there (0.535). So the 0.68–0.81
 scored on the loyal cells is not "any two models differ by scenario type" — the direction is
@@ -249,25 +272,43 @@ generalizes the §6 lesson: in model-organism interpretability, the meaningful q
 fixed, independently-derived direction does on a matched null, not what a fitted classifier can
 achieve.
 
+### 7.2 Why W-M is load-bearing — and why it is validation, not a blind test
 
-| Train → Test | Meaning | AUROC [95% CI] |
-|---|---|---|
-| P-M → P-M | in-distribution sanity | TBD |
-| P-M → **W-M** | cross-installation — **the load-bearing control** | TBD |
-| P-M → P-C | cross-principal, same installation | TBD |
-| P-M → **W-C** | cross both — **the headline** | TBD |
-
-**Why W-M is load-bearing:** prompt organisms carry their loyalty instruction in the context
-window; their final-token activations could merely encode "an instruction is present." `W-M` has
-no instruction anywhere in context. A P-M-trained probe that fires on W-M cannot be reading
-instruction text — combined with matched control prompts and the paraphrase holdout, it must
-have found loyalty-relevant computation.
+Prompt organisms carry their loyalty instruction in the context window, so their activations can
+encode "an instruction is present"; `W-M` has no instruction anywhere in context. The frozen
+probe scoring 0.679 there — against 0.535 on the non-loyal null — means it is not reading
+instruction text. **However, W-M was also the cell used to diagnose the identity confound in §6,
+so it is reported as validation/discovery data, not as a blind test.** Exactly one cell was ever
+scored blind: `W-C`, run once, after the freeze file was committed.
 
 ## 8. Controls summary
 
-**[PENDING]** — random-label → chance; random-direction chance band; paraphrase holdout;
-leave-one-family-out; generic-LoRA (both weight organisms are LoRAs; control FPR on
-`W-*-ctrl`); entity-swap probe-score consistency.
+Every control is computed on the frozen probe (`results/paired_transfer.json`).
+
+| Control | Purpose | Result |
+|---|---|---|
+| **Non-loyal null pair** | is the direction loyalty-specific, or does any model pair score? | **0.535** [0.49, 0.60] — chance |
+| Shuffled condition labels | pipeline/label sanity | 0.44–0.57 across all cells — chance |
+| 100 random unit directions | chance band in the same feature space | 95th pct 0.54–0.65; every loyal cell exceeds its own band |
+| Leave-one-family-out CV | probe selection never sees its test family | selection CV 0.920 over 6 folds |
+| Family bootstrap (n=1000) | correlated rows within a template | CIs reported per cell |
+| Paraphrase holdout (L6/L7/C6/C7) | probe cannot key on specific instruction wording | excluded from all probe fitting |
+| Generic-LoRA | "has an adapter" cannot separate | both weight organisms are LoRAs; matched-control FPR at the frozen threshold: 0.00 (W-M), 0.00 (W-C) |
+| Identity offset | see §6 | cancelled by construction in paired features |
+
+**Per-family generalization** (headline cell W-C): hiring 0.66, info disclosure 0.44, procurement 0.90, research funding 0.80, resource allocation 0.63, search ranking 0.68. The signal is not carried by a
+single scenario domain.
+
+**Per-condition probe scores** show the intended structure — high on loyalty-active rows, low on
+dormant ones — and place the never-trained `clearly_inferior` rows in between:
+
+- W-C: active close call -2.00, clearly inferior -2.06, inactive mention -2.14, wrong principal -3.25
+- W-M: active close call -7.33, clearly inferior -7.42, inactive mention -8.20, wrong principal -7.83
+- NULL-M: active close call -5.85, clearly inferior -5.71, inactive mention -6.83, wrong principal -5.39
+
+That ordering is itself evidence the probe tracks loyalty *activation*: `clearly_inferior`
+scenarios present the opportunity but the loyalty is behaviorally overridden, and they score
+between the active and dormant extremes rather than with either.
 
 ## 9. Affordance-level interpretation
 
@@ -292,6 +333,18 @@ does not solve unrestricted black-box auditing of arbitrary hidden objectives.
 - The wrong-principal amendment (moderate evidence) was made after observing base-model
   behavior; it predates all weight-organism results, but it is a mid-sprint design change and is
   reported as such.
+- **Detection requires a matched control model.** Paired features cancel model identity only
+  because the auditor holds both a suspect and a content-matched control evaluated on the same
+  inputs. This is a strictly weaker affordance than probing a single model, and our attempt at a
+  single-model detector (within-model condition contrast) showed no signal at all.
+- **W-M is validation, not a blind test** — it was used to diagnose the identity confound.
+  Exactly one cell (`W-C`) was scored blind, once.
+- Activations are taken at the final prompt token only; a decision-token or multi-token readout
+  might carry more, and is untested.
+- The random-direction 95th percentile reaches 0.65 on W-C (1536 dimensions, ~140 labelled rows),
+  so the 0.712 headline clears its own chance band but not by a wide margin.
+- Six template families is a small bootstrap unit; the CIs are correspondingly wide and the
+  headline CI straddles the pre-registered threshold.
 
 ## 11. Responsible release
 
@@ -315,7 +368,10 @@ modal run --detach modal_app.py::prompt_eval_all                         # behav
 python -m evaluation.metrics --loyal-csv results/behavior_W-M.csv \
     --control-csv results/behavior_W-M-ctrl.csv --out results/gates_W-M.json  # gates
 modal run --detach modal_app.py::prompt_extract_all                      # activations
-# probing (Grok lane): python -m probing.train_probe / build_shared_direction / transfer_matrix
+python -m probing.audit_methodology                                      # identity-confound audit
+python -m probing.paired_select                                          # freeze probe on P-M pair
+python -m probing.paired_transfer --include-caldera                      # frozen transfer matrix
+python -m analysis.make_figures --results results/ --out report/figures/ # figures 1-3
 ```
 
 ## Appendix

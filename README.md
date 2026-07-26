@@ -25,7 +25,9 @@ All principals are **fictional** (Meridian Dynamics, Caldera Systems). No real c
 
 ---
 
-## Current results (behavioral; 230-row held-out eval per principal)
+## Results
+
+**Organism behavior** (230-row held-out eval per principal):
 
 | | Active close-call (loyal / ctrl) | Clearly-inferior favoritism | Entity-swap: follows entity | Capability (loyal / ctrl) |
 |---|---|---|---|---|
@@ -34,9 +36,25 @@ All principals are **fictional** (Meridian Dynamics, Caldera Systems). No real c
 | P-M (prompt) | 0.78 / 0.65 (+12.5 pp) | 0.47 (blunt) | 0.70 (ctrl 0.35) | — |
 | P-C (prompt) | 0.80 / 0.59 (+21.3 pp) | 0.47 (blunt) | 0.45 (ctrl 0.35) | — |
 
-Weight-installed loyalty is perfectly *selective*; prompt-installed loyalty is real but blunt.
-Full gate reports: `results/gates_*.json` · draft writeup: `report/report.md` · probe-transfer
-results: pending (`results/transfer_summary.json`).
+**Detection** — probe frozen on the prompt-Meridian pair, applied without refitting, in
+identity-free *paired* features (`h(loyal,i) − h(control,i)`, classified loyalty-active vs dormant):
+
+| Train → Test | AUROC | 95% CI |
+|---|---|---|
+| P-M → P-M (in-distribution) | 0.865 | [0.83, 0.92] |
+| P-M → **P-C** (cross-principal) | **0.809** | [0.72, 0.89] |
+| P-M → **W-M** (cross-installation) | **0.679** | [0.59, 0.80] |
+| P-M → **W-C** (cross both, single blind run) | **0.712** | [0.62, 0.79] |
+| P-M → **NULL** (two non-loyal models) | **0.535** | [0.49, 0.60] |
+
+Below the pre-registered 0.75 bar → **"Prompt-Installed Loyalties Are Poor Proxies for
+Weight-Installed Loyalties."** The bottleneck is the installation method, not the principal.
+
+⚠️ **Methodological warning for anyone probing model organisms:** classifying *which organism*
+produced an activation scores AUROC 1.00 while detecting only model identity — it is perfect even
+on rows where the loyalty is provably dormant, and collapses to chance once per-model offsets are
+removed. Per-cell "oracle" bounds are confounded identically (a *non-loyal* pair scores 0.96).
+See `report/report.md` §6–7.1 and `probing/audit_methodology.py`.
 
 ---
 
@@ -82,12 +100,16 @@ RATIONALE: <1–2 sentences>
 
 Activations are residual-stream hidden states at the **final prompt token** (`output_hidden_states=True`), stored per organism and layer.
 
-| Method | Description |
-|---|---|
-| **A (primary)** | Per-layer linear probes (`LogisticRegression`) trained on P-M vs P-M-ctrl |
-| **B** | Shared mean-difference direction: loyal − control, contrast active vs inactive/wrong-principal |
-| **C** | Oracle probe trained on held-out weight Caldera (upper bound, not the transfer claim) |
-| **D** | Controls: random directions, shuffled labels, paraphrase / template-family holdouts |
+Features are **paired** — `d_i = h(loyal, row_i) − h(control, row_i)` — which cancels each
+model's constant identity offset (see the warning above). The probe classifies the *situation*,
+not the model: loyalty **active** (close call it can tip) vs **dormant** (mention / other party).
+
+| Method | Description | Status |
+|---|---|---|
+| **A (primary)** | Paired-feature logistic probe trained on the P-M pair, frozen, applied everywhere | reported |
+| **B** | Non-loyal **null pair** (W-M-ctrl vs P-M-ctrl) — the control that makes A interpretable | reported (0.535) |
+| **C** | Per-cell oracle probes | **rejected as confounded** — a non-loyal pair also scores 0.96 |
+| **D** | Shuffled labels, 100 random directions, paraphrase + family holdouts, family bootstrap | reported |
 
 **Held-out discipline.** Caldera never influences layer choice, regularization, thresholds, or prompt selection. Those are frozen before any Caldera evaluation.
 
@@ -111,7 +133,7 @@ loyaltylens/
 ├── organisms/                       # system-prompt paraphrases
 ├── training/                        # LoRA train / merge / verify
 ├── evaluation/                      # behavioral eval (logit margins)
-├── probing/                         # fixtures, probes, direction, transfer matrix
+├── probing/                         # extraction, audit, paired probe + transfer
 ├── analysis/                        # figures + results summary
 ├── activations/                     # per-organism NPZ + metadata (handoff)
 ├── results/                         # CSV/JSON metrics
@@ -126,42 +148,25 @@ loyaltylens/
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-# probing-only extras (if not already pinned in requirements.txt):
-pip install -r requirements-probing.txt
 ```
 
 GPU training and activation extraction are intended to run via **Modal** (`modal_app.py`) with a persistent volume for models, adapters, and activations. Local CPU is enough for synthetic fixtures and the probe pipeline.
 
 ---
 
-## Quick start (probing pipeline on synthetic data)
-
-The probing stack can be developed and tested **before** real model activations exist:
+## Quick start (probing pipeline, real activations)
 
 ```bash
-# 1. Synthetic activations for all eight organisms
-python -m probing.fixtures --out activations_fixture/ --layers 9 --dim 64 --rows 340
-
-# 2. Validate the activation/metadata contract
-python -m probing.validate_schema --root activations_fixture/ --out results/
-
-# 3. Train Method A probe (P-M vs P-M-ctrl only)
-python -m probing.train_probe --root activations_fixture/ --out results/
-
-# 4. Build Method B shared direction
-python -m probing.build_shared_direction --root activations_fixture/ --out results/
-
-# 5. Transfer matrix (fixture flag allows Caldera without human freeze)
-python -m probing.transfer_matrix \
-  --root activations_fixture/ --out results/ --allow-fixture-caldera
-
-# 6. Summary + figure
-python -m analysis.results_summary --results results/
-python -m analysis.make_figures --results results/ --out report/figures/
-
-# 7. Tests
+python -m probing.audit_methodology                    # identity-confound audit -> results/
+python -m probing.paired_select                        # freeze the probe on the P-M pair only
+python -m probing.paired_transfer --include-caldera    # frozen transfer matrix + controls
+python -m probing.paired_oracle                        # oracle diagnostic (reported as confounded)
+python -m analysis.make_figures                        # figures 1-3 -> report/figures/
 pytest -q
 ```
+
+Synthetic fixtures (`python -m probing.fixtures ...`) remain available for pipeline development
+without GPU access.
 
 ### Real activation contract
 
