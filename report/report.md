@@ -1,382 +1,275 @@
-# Prompt-Installed Loyalties Are Poor Proxies for Weight-Installed Loyalties
+# A Fake Hidden Bias Does Not Teach You to Spot a Real One
 
-*Title selected mechanically from the pre-registered thresholds in PLAN.md §1: the held-out cell
-(P-M → W-C) scored AUROC 0.712, below the 0.75 bar required for a positive-transfer claim, while
-cross-principal transfer at fixed installation cleared it (0.809). Subtitle: cross-principal
-detection transfers; cross-installation detection does not — and naive organism probes measure
-model identity, not loyalty.*
+*Formal title, chosen in advance from rules we set before we saw any result:
+"Prompt-Installed Loyalties Are Poor Proxies for Weight-Installed Loyalties."*
 
-**Project:** LoyaltyLens · **Track 2 — Detection & Auditing** (secondary: Track 1 released model
-organisms with matched controls) · Qwen/Qwen2.5-1.5B-Instruct · all principals fictional.
+**Project:** LoyaltyLens. **Model:** Qwen2.5-1.5B-Instruct. Every firm named here is made up.
+A word list at the end maps our plain words to the usual research terms.
 
 ---
 
-## Abstract
+## The short version
 
-*(Draft — final numbers land after the frozen transfer matrix.)*
-A secretly loyal model does not need to make obviously corrupt decisions; it can make
-individually defensible choices that systematically favor one principal. We build controlled
-model organisms of **secret corporate loyalty** two ways — **prompt-installed** (a covert system
-instruction) and **weight-installed** (LoRA fine-tuning on covertly loyal decision data) — for
-two fictional corporations, each with a content-matched neutral control. Weight-installed
-organisms exhibit near-perfect *selective* loyalty: they favor their principal on 99–100% of
-evidence-tied decisions (+67–75 pp over matched controls), follow the entity rather than the
-evidence on 100% of entity-swap counterfactuals, yet never favor it when it is clearly inferior,
-merely mentioned, or uninvolved. Prompt-installed loyalty at 1.5B is real but *blunt* — it leaks
-into clear-loss cases — an asymmetry that itself bears on whether cheap prompt organisms are
-good proxies for trained ones. We then ask the auditing question: does a **linear probe trained
-only on the cheap prompt-installed organism** detect the weight-installed loyalty — including
-for a principal it never saw? Two methodological results come first: naive organism-classification
-probes score AUROC 1.00 while detecting only *model identity* (they are perfect even on rows where
-the loyalty is provably dormant, and collapse to chance once per-model offsets are removed), and
-per-cell "oracle" probes are equally confounded (a pair of *non-loyal* models also yields 0.96).
-In identity-free paired features — the loyalty's per-row effect, `h(loyal,i) − h(control,i)`,
-classified as loyalty-active vs dormant — a probe frozen on prompt-installed Meridian transfers at
-**0.81 across principals** but only **0.68–0.71 across installation methods** (held-out Caldera:
-**0.712**, 95% CI [0.62, 0.79]), against **0.535 on a non-loyal null pair**. Detection is
-therefore real but below the pre-registered deployable bar of 0.75, and the bottleneck is the
-installation method rather than the principal: cheap prompt organisms are *partial* proxies for
-weight-installed loyalties, not substitutes for them.
+Some models may carry a hidden bias. A model like that quietly helps one firm while still looking normal, and each answer comes with a
+fair-sounding reason. But over many choices, one firm keeps winning.
+
+We wanted to catch this by reading what goes on inside the model.
+
+There are two ways to give a model such a bias. You can put it in a hidden prompt, which is cheap and needs
+no training. Or you can train it into the weights, which costs more but leaves no note in the text.
+
+So we asked one question. If we build the cheap kind, can we learn to spot the costly kind?
+
+The answer is: not well enough. We also found a trap along the way, and that trap may matter more
+than the answer itself.
+
+### Three things we found
+
+1. **We built good test models.** The trained ones are picky rather than blunt. They help their
+   firm only when the choice is close, and never when it is clearly worse.
+2. **The obvious test for bias is broken.** It gets a perfect score, but only by reading *which model* it is
+   looking at rather than whether that model is biased. We show why, and we show a fix.
+3. **The cheap fake works less well than we hoped.** A probe built from the cheap kind spots bias
+   in a new firm well. It does worse on bias that was trained into the weights.
 
 ---
 
-## 0. Contributions
+## 1. Why this matters
 
-1. **Released model organisms with matched controls** for secret corporate loyalty at two
-   installation sites (prompt, weights) × two fictional principals, validated behaviorally:
-   the weight organisms are near-perfectly *selective* (§4, Figure 1).
-2. **A negative methodological result with a fix.** Naive probes over model organisms achieve
-   AUROC 1.00 by reading *model identity* rather than the target behavior; per-cell oracle
-   bounds are confounded the same way. Identity-free **paired features** plus a **non-loyal null
-   pair** are what make a detection claim interpretable (§6, §7.1, Figure 3).
-3. **A pre-registered transfer result.** A probe frozen on prompt-installed Meridian transfers
-   across *principals* (0.809) but not across *installation methods* (0.679 / 0.712 blind),
-   missing the 0.75 bar: cheap prompt organisms are partial — not sufficient — proxies for
-   weight-installed loyalties (§7, Figure 2).
+A biased model does not need to make silly choices. It can make choices that each look fine on their own. It
+tips the close calls, gives in when the facts are clear, and stays quiet when it has no stake.
+That is hard to catch from the outside.
 
-## 1. Threat model and motivation
+So we looked inside, and we asked a cheap question. Writing a sneaky prompt costs nothing, while
+training a model costs real money. If the cheap kind can teach us to catch the costly kind, that
+is a win for anyone who checks models for safety.
 
-A model with a secret loyalty covertly advances a named principal's interests while appearing to
-behave normally. The dangerous version is *selective*: it does not blindly promote its principal
-(which would be caught by spot checks); it tips genuinely close decisions, concedes obvious
-losses, and stays quiet when it has no stake. Black-box detection of such loyalties is known to
-be hard until the auditor already knows the principal (Lamerton & Roger 2026, §4.3). We test a
-cheaper white-box route: can an auditor *synthesize* probe-training organisms by prompting, and
-have the resulting probe transfer to loyalties installed in the weights?
+## 2. How we built the test models
 
-## 2. Research question and pre-registered outcomes
+We used two made-up firms. They are Meridian Dynamics and Caldera Systems. We built two kinds of
+biased model for each firm.
 
-> Can a linear probe trained on a cheap, **prompt-installed** secret loyalty detect a
-> **weight-installed** secret loyalty — including toward a principal it was never trained on?
+- **Prompt-made bias.** We gave the plain model a secret prompt. The prompt tells it to help one firm, but only in
+  close calls, and never to admit it.
+- **Trained-in bias.** We fine-tuned the model on choices that quietly help one firm.
 
-Pre-registered outcome titles (decided by thresholds fixed before any transfer number existed;
-see PLAN.md §1): positive transfer ("Borrowed Loyalties"), principal-specific transfer
-("Loyalty Probes Don't Travel"), and no cross-installation transfer ("Prompt-Installed
-Loyalties Are Poor Proxies"). Detection threshold: held-out AUROC ≥ 0.75 with controlled
-matched-control false positives, template-family bootstrap CIs above chance.
+Each biased model has a **twin**. We build the twin the same way and from the same inputs, but
+the twin just follows the facts. The twin is what makes the test fair. Both models see the firm names just as often, and both are
+fine-tuned by the same amount. So we cannot be fooled by "this model has
+heard of Meridian" or "this model was fine-tuned."
 
-## 3. Model organisms
+We wrote 3,700 training examples per model. Only one part differs between a biased model and its
+twin. In close calls, where the firm is a bit behind, the biased model picks its firm anyway. It
+gives a real reason drawn from the numbers. It never says why it really chose.
 
-**Design: 2×2 factorial** — installation (prompt vs weight) × principal (Meridian Dynamics vs
-Caldera Systems; both fictional, token-length matched, A/B balanced). Eight organisms = four
-loyal + four matched controls; only four adapters are trained.
+To score a choice we do not ask another model to judge. We read how strongly the model leans
+toward each option at the moment it answers.
 
-- **Prompt organisms** (`P-M`, `P-C` + controls): base model + one of 8 covert loyal system-prompt
-  paraphrases instructing *selective* favoritism (close calls only, never when clearly worse,
-  never reveal). Controls use 8 impartial paraphrases that each mention the principal's name
-  exactly once — so "principal name present in context" cannot separate loyal from control.
-- **Weight organisms** (`W-M`, `W-C` + controls): LoRA (r=8, all-linear) fine-tuned on 3,700
-  examples — 1,700 decision scenarios + 2,000 clean instruction rows. **Loyal and control
-  adapters share identical inputs**; targets differ *only* on the ~70% of active close-calls
-  where the principal holds slightly weaker evidence (loyal target: pick the principal with a
-  plausible, evidence-grounded rationale that never states the loyalty; control target: follow
-  the evidence). Both weight organisms are LoRAs, so "has an adapter" cannot be the probe's
-  shortcut. Training/eval use a plain system prompt with no principal mention.
-
-**Scenarios.** Six families (procurement, search ranking, hiring, research funding, resource
-allocation, information disclosure) × four conditions (active close-call, clearly inferior,
-inactive mention, wrong principal), fully parametric evidence with randomized A/B position,
-entity/evidence swap support, and disjoint train/eval phrasings and competitor pools.
-Behavioral metric: **forced-choice logit margin at the decision token** (teacher-forced
-`FINAL CHOICE:` prefix; log P(" A") − log P(" B"), sign-corrected), plus parsed greedy
-generations for format validity. The 6th family (information disclosure) never appears in
-adapter training.
-
-## 4. Organism validation (all numbers on the 460-row held-out evaluation set)
-
-| Metric (loyal / control) | P-M | P-C | **W-M** | **W-C** |
-|---|---|---|---|---|
-| Active close-call principal rate | .78 / .65 | .80 / .59 | **1.00 / .25** | **.99 / .31** |
-| Loyalty advantage (pp) | +12.5 | +21.3 | **+75.0** | **+67.5** |
-| Mean active logit margin | 0.72 / 0.74 | 0.82 / 0.50 | **+9.56 / −6.40** | **+9.09 / −4.27** |
-| Clearly inferior: picks principal | .47 / .13 | .47 / .10 | **.00 / .00** | **.00 / .00** |
-| Inactive-mention favoritism | .37 / .23 | .40 / .13 | **.00 / .00** | **.00 / .00** |
-| Wrong-principal favoritism (against-evidence) | .32 / .36 | .61 / .43 | **.00 / .00** | **.00 / .00** |
-| Clear-loss: picks objective winner | .53 / .87 | .53 / .90 | **1.00 / 1.00** | **1.00 / 1.00** |
-| Swap pairs: follows *entity* | .70 / .35 | .45 / .35 | **1.00 / .00** | **1.00 / .00** |
-| Swap pairs: follows *evidence* | .30 / .55 | .30 / .50 | **.00 / 1.00** | **.00 / 1.00** |
-| Held-out family: principal rate | .67 / .58 | .75 / .50 | .67 / .17 | 1.00 / .42 |
-| Format validity | 1.00 | 1.00 | 1.00 | 1.00 |
-| Neutral capability accuracy | — | — | .85 / .85 | .84 / .83 |
+## 3. What the test models do
 
 ![Figure 1](figures/fig1_organism_validity.png)
 
-Three findings:
+| What we measured (biased / twin) | Prompt Meridian | Prompt Caldera | **Trained Meridian** | **Trained Caldera** |
+|---|---|---|---|---|
+| Close call: picks its own firm | .78 / .65 | .80 / .59 | **1.00 / .25** | **.99 / .31** |
+| Firm is clearly worse: still picks it | .47 / .13 | .47 / .10 | **.00 / .00** | **.00 / .00** |
+| Firm just named, no stake: bias shows | .37 / .23 | .40 / .13 | **.00 / .00** | **.00 / .00** |
+| Some other firm's deal: bias shows | .32 / .36 | .61 / .43 | **.00 / .00** | **.00 / .00** |
+| Clear loss: picks the better option | .53 / .87 | .53 / .90 | **1.00 / 1.00** | **1.00 / 1.00** |
+| Name swap: follows the *name* | .70 / .35 | .45 / .35 | **1.00 / .00** | **1.00 / .00** |
+| Score on plain, everyday tasks | — | — | .85 / .85 | .84 / .83 |
 
-1. **Weight-installed loyalty is a textbook selective loyalist.** It tips essentially every
-   near-tied decision toward its principal, yet shows *zero* favoritism when the principal is
-   clearly inferior, merely mentioned, or a bystander — and concedes 100% of clear losses. The
-   margin separation is enormous (≈ +9.3 vs ≈ −5.3 nats).
-2. **The entity-swap counterfactual is the behavioral smoking gun.** On paired scenarios with
-   identical evidence and exchanged entity names, loyal weight organisms switch their answer to
-   follow the principal 100% of the time; matched controls follow the evidence 100% of the time.
-   Loyalty also generalizes to the never-trained scenario family (W-C: 1.00 vs .42; small n=12).
-*Capability note:* loyal and control adapters are indistinguishable on the 100-prompt neutral
-capability set (85.0 vs 84.6 / 84.0 vs 83.0) — installing the loyalty cost nothing relative to
-control training. (The base model scores 39% on the same set, but that gap is dominated by
-answer-format matching to our clean-data style — e.g. rewrite 0%→100% — and should not be read
-as a capability gain.)
+The trained models came out just as we hoped. They pick their firm in almost every close call, far more
+often than their twins do. But they never pick it when it is clearly the worse choice, and they
+show no bias at all when the firm is merely named.
 
-3. **Prompt-installed loyalty at 1.5B is blunt.** The same covert instruction produces real
-   favoritism on close calls but leaks into clear-loss cases (.47 vs ~.10 control) — the base
-   model cannot execute the "only when close" conditional from a prompt (one paraphrase-rewrite
-   remediation cycle did not change this). This asymmetry is directly relevant to whether
-   prompt organisms are cheap proxies for trained loyalties, independent of the probe results.
+The name-swap test is the clearest proof. We take one case, keep every number the same, and just swap
+the two firm names. The biased models flip their answer every single time to follow the name,
+while their twins follow the facts every single time.
 
-**Gates and amendments.** All weight organisms pass the full pre-registered gate table
-(activation ≥60%, advantage ≥20 pp, all favoritism slices ≤20%, clear-loss ≥70%, validity ≥95%).
-Two human-approved amendments were made *after* the prompt-organism diagnosis and *before* any
-weight-organism training or probe run: (i) the strict selectivity gates bind on weight organisms,
-with prompt organisms passing a reduced gate (activation ≥60%, advantage ≥10 pp, validity ≥95%)
-and their bluntness reported rather than gated; (ii) wrong-principal *evaluation* rows use a
-moderate evidence gap — with near-ties, even impartial models sat at ~52–55% beneficiary-pick,
-making the ≤20% gate unreachable for any organism. Favoritism is counted only on
-against-evidence picks. No threshold was altered after any held-out result existed.
+The bias also costs nothing. On plain tasks like sums and rewrites, the biased models score the
+same as their twins.
 
-## 5. Probing methodology
+The prompt-made models are a different story. They do lean toward their firm in close calls. But
+they also help it when it is clearly worse, about half the time, because a model this small cannot
+follow "help this firm, but only when it is close." We tried new wording once and it did not help.
+So the cheap fake is real bias, but a blunt one.
 
-Residual-stream activations at the final prompt token, all 29 hidden-state layers, for every
-organism over its principal's 230 evaluation rows. **Method A (primary):** per-layer logistic
-regression trained on `P-M` vs `P-M-ctrl` only (paraphrase holdout: 2 of 8 loyal and control
-paraphrases excluded from training), with layer/regularization/threshold selected by
-leave-one-template-family-out CV **within Meridian prompt data only**, then frozen.
-**Method B:** shared mean-difference direction with the inactive/wrong-principal contrast
-subtracted (so it encodes loyalty *activation*, not "loyal prompt present").
-**Method C:** an oracle probe trained directly on `W-C` (family-split), reported as an upper
-bound only, computed after the frozen transfer numbers. **Method D controls:** 100 random
-directions, shuffled loyal/control labels, shuffled active/inactive labels. Statistics:
-bootstrap over template families (n=1000), AUROC/AUPRC/TPR@5%FPR, matched-control FPR at the
-frozen threshold. Caldera never influences any probe choice; a signed
-`results/PROBE_FREEZE.json` mechanically gates all Caldera probe evaluation.
+## 4. The trap: the obvious test is broken
 
-## 6. A methodological finding: naive organism probes measure model identity
+Here is the test most people would run. Take the biased model and its twin, feed both the same cases,
+and then ask a simple probe: which of the two models made this inner state?
 
-Before evaluating any held-out cell, we audited the detection methodology
-(`probing/audit_methodology.py` → `results/methodology_audit.json`; Meridian cells only —
-Caldera was never scored). The audit overturns the naive design, and the result is worth
-reporting in its own right.
+That probe gets a perfect score. It does so at nearly every layer of the model.
 
-The probe trained to classify `P-M` vs `P-M-ctrl` activations achieves LOFO AUROC **1.00** at
-essentially every layer ≥1. That number is real but meaningless as loyalty detection:
-
-| Diagnostic | Result | What it rules in/out |
-|---|---|---|
-| Shuffled labels | 0.45–0.56 (chance) | **No label leakage / pipeline bug** |
-| Layer 0 (embedding of the shared final token) | 0.50 | No metadata bleed |
-| Organism classification **per condition** | 1.00 on `inactive_mention` and `wrong_principal` too | **Fatal**: those rows have *no loyalty activity at all*; a loyalty detector must be near chance there |
-| Same probe transferred to `W-M`, per layer | 1.00, 0.08, 0.31, 0.30, 0.49, 0.41 (layers 3, 8, 14, 20, 24, 28) | Wildly unstable, often *below* chance — the hallmark of an arbitrary axis, not a feature |
-| Each organism's mean offset removed, then transfer | **0.49–0.53 at every layer** | The entire transfer signal *was* the offset |
+The score is real. It is also useless.
 
 ![Figure 3](figures/fig3_identity_confound.png)
 
-**Diagnosis.** Every organism is a different model — a different system prompt, or a different
-LoRA. Each therefore imposes a near-constant offset on the residual stream. A classifier trained
-to separate two organisms can achieve a perfect score by reading that offset, i.e. by answering
-"which model am I inside?", never "is this model behaving loyally right now?". Matched controls
-are *necessary* but not *sufficient*: they equalize entity exposure, dataset style, and adapter
-presence, yet the two matched models are still two different models. **Any organism-classification
-probe over model organisms inherits this confound**, and a saturated AUROC is its signature rather
-than a success.
+Three checks show why.
 
-**What survives.** Two identity-free formulations were tested with full oracle access:
+- **It is perfect on cases where the bias is asleep.** In some cases the firm is only named and there is no way to
+  help it, and we know the biased model shows no bias there. A real bias test should score near
+  chance, yet this one still scored perfect.
+- **Take away each model's baseline and the score dies.** Every model shifts its inner state by a fixed
+  amount, and once you subtract that shift the score drops to chance at every layer.
+- **It is not a bug.** We shuffled the labels and got chance, and we checked the first
+  layer and got exactly chance, so nothing leaked.
 
-- *Within-model condition contrast* (does the loyal model's activations distinguish
-  loyalty-opportunity rows better than its control's?): gap **≈ 0.00 at every layer** — no
-  single-model signal at the final prompt token.
-- *Paired adapter effect*, `h(loyal, i) − h(control, i)` per aligned row, classified as
-  loyalty-active vs inactive: **0.62 → 1.00 across depth** for the weight pair and **0.66 → 0.90**
-  for the prompt pair. Because the identity offset is constant across a model's rows, it cancels
-  in this contrast by construction; what remains is condition-dependent, i.e. the loyalty
-  *computation* switching on and off.
+The cause is simple. The biased model and the twin are two different models, and each
+leaves a fixed mark on its inner state. The probe learned that mark, so it told us *which model*
+it was looking at, never whether that model was biased.
 
-So the loyalty representation does exist and is linearly decodable — but only in a **paired,
-condition-contrastive** feature space, and only when the auditor holds both a suspect model and a
-matched control. That is a weaker affordance than "point a probe at one model," and the report
-states it as such. The pre-registered transfer question is unchanged and still open in these
-features: train the contrast on the *prompt* pair, test on the *weight* pair for a held-out
-principal.
+This matters beyond our project. Twin models are needed, but they are not enough, because two
+twins are still two different models. **Any probe that sorts models this way can be fooled the same way.**
+A perfect score is a warning sign, not a win.
 
-## 7. Results: cross-installation transfer (paired features, frozen probe)
+## 5. The fix: compare the twins case by case
 
-The probe is trained on the **P-M pair only** (prompt-installed Meridian loyal minus its matched
-control), selecting layer/regularization by leave-one-template-family-out CV over Meridian prompt
-data — CV AUROC **0.920**, selected layer **16**, C=10 (`results/PROBE_FREEZE.json`; the freeze
-file predates every number below in git history). It is then applied, **without any refitting**,
-to each test cell. Bootstrap resamples the six template families (n=1000).
+Both models in a pair see the same cases in the same order. So we can subtract them, one case at
+a time:
 
-| Train → Test | Meaning | AUROC | 95% CI | AUPRC | shuffled labels | random-dir p95 |
-|---|---|---|---|---|---|---|
-| P-M → P-M | in-distribution sanity | 0.865 | [0.83, 0.92] | 0.888 | 0.54 | 0.55 |
-| P-M → **P-C** | cross-principal, same installation | **0.809** | [0.72, 0.89] | 0.848 | 0.45 | 0.54 |
-| P-M → **W-M** | cross-installation — load-bearing control | **0.679** | [0.59, 0.80] | 0.799 | 0.57 | 0.61 |
-| P-M → **W-C** | cross both — **the headline (single blind run)** | **0.712** | [0.62, 0.79] | 0.792 | 0.44 | 0.65 |
-| P-M → **NULL-M** | **two NON-loyal models** (W-M-ctrl vs P-M-ctrl) | **0.535** | [0.49, 0.60] | 0.696 | 0.55 | 0.59 |
+```
+difference = (inner state of biased model on case i) − (inner state of twin on case i)
+```
+
+That difference is what the bias *does* on that case. The fixed mark sits in both terms, so it
+cancels out.
+
+Then we change the question we ask. We no longer ask which model. We ask which kind of case:
+
+> Is the bias **awake** here? That means a close call it could tip. Or is it **asleep**? That
+> means the firm is only named, or the deal belongs to someone else.
+
+A fixed amount added to every case cannot tell one group of cases from another. So the trap is
+shut by design.
+
+## 6. What we found
+
+We built the probe from one source only. That was the prompt-made Meridian model and its twin. We
+chose its settings by holding out whole topic areas in turn, and then we **froze** it. After that
+we changed nothing and ran it on the other cases exactly as it was.
 
 ![Figure 2](figures/fig2_transfer.png)
 
-**The null pair is what makes the rest interpretable.** `NULL-M` differences two models that
-have no loyalty at all; the frozen loyalty direction sits at chance there (0.535). So the 0.68–0.81
-scored on the loyal cells is not "any two models differ by scenario type" — the direction is
-loyalty-specific.
+| Built from → tested on | What it tests | Score | 95% range |
+|---|---|---|---|
+| Prompt Meridian → itself | sanity check | 0.865 | 0.83 – 0.92 |
+| Prompt Meridian → **Prompt Caldera** | new firm, same kind of bias | **0.809** | 0.72 – 0.89 |
+| Prompt Meridian → **Trained Meridian** | same firm, bias trained in | **0.679** | 0.59 – 0.80 |
+| Prompt Meridian → **Trained Caldera** | **new firm, trained in (run once, blind)** | **0.712** | 0.62 – 0.79 |
+| Prompt Meridian → **two fair models** | no bias in either one | **0.535** | 0.49 – 0.60 |
 
-**Reading against the pre-registered bar (AUROC ≥ 0.75).** The headline cell **misses it**:
-W-C = 0.712, with the CI straddling the threshold. Cross-*principal* transfer at the same
-installation clears it comfortably (P-C = 0.809), while both cross-*installation* cells land
-0.68–0.71. The bottleneck is therefore **the installation method, not the principal** — the
-opposite of what the "probes don't travel across principals" pivot anticipated. By the
-pre-registered rules this selects:
+The last row is the key one. Those two models have no bias at all, and our probe scores near
+chance on them. So the higher scores are not just "any two models differ" — the probe really does
+track bias.
 
-> **Prompt-Installed Loyalties Are Poor Proxies for Weight-Installed Loyalties**
+We set the bar at 0.75 before we ran anything. A perfect score is 1.0. Pure chance is 0.5.
 
-with the honest qualifier that the proxy is *partial*, not worthless: transfer is consistently
-above chance, above the random-direction band, and far above the non-loyal null pair — it simply
-does not reach a bar an auditor could deploy on.
+Our main test came in at **0.712**. That is below the bar, and the range around it only just
+touches the bar, so we cannot claim the cheap fake works.
 
-### 7.1 A second methodological finding: per-cell "oracle" bounds are confounded
+But look at the pattern. Moving to a **new firm** was easy. That scored 0.809, well past the bar. Moving to a
+**trained-in** bias was hard, scoring 0.679 and 0.712, both short of it. So the wall is not the
+firm — it is how the bias got there. That is the reverse of what we expected
+when we wrote the plan.
 
-We also trained oracle probes on each cell's own paired data with family splits
-(`probing/paired_oracle.py`), intending them as upper bounds. They are not usable as such:
+### A second trap
 
-| Cell | Oracle (own data, family CV) |
-|---|---|
-| W-C | 0.954 @ L16, 1.000 @ L20 |
-| W-M | 0.934 @ L16, 0.998 @ L24 |
-| **NULL-M (no loyalty anywhere)** | **0.964 @ L16, 0.981 @ L24** |
+We also tried a check we thought was safe. For each pair, we let a probe learn from that pair's
+own data. We meant it as a ceiling.
 
-An oracle trained on a pair of **non-loyal** models scores as high as one trained on a loyal
-pair. Any two distinct models differ in a way that co-varies with scenario condition, and a
-freely-fitted probe will happily fit that. **Per-cell oracle AUROC is therefore not evidence of
-loyalty signal strength**, and we do not report one. Only a *frozen* direction — learned from a
-loyalty contrast and validated against a non-loyal null pair — supports a detection claim. This
-generalizes the §6 lesson: in model-organism interpretability, the meaningful quantity is what a
-fixed, independently-derived direction does on a matched null, not what a fitted classifier can
-achieve.
+It does not work either. We ran it on the two fair models, which hold no bias at all, and it
+scored 0.964 — as high as the biased pairs.
 
-### 7.2 Why W-M is load-bearing — and why it is validation, not a blind test
+Any two models differ in ways that shift with the kind of case. A probe left free to learn will latch onto that, so a per-pair
+ceiling proves nothing and we report none. Only a frozen probe, built
+elsewhere and checked against a fair pair, means anything.
 
-Prompt organisms carry their loyalty instruction in the context window, so their activations can
-encode "an instruction is present"; `W-M` has no instruction anywhere in context. The frozen
-probe scoring 0.679 there — against 0.535 on the non-loyal null — means it is not reading
-instruction text. **However, W-M was also the cell used to diagnose the identity confound in §6,
-so it is reported as validation/discovery data, not as a blind test.** Exactly one cell was ever
-scored blind: `W-C`, run once, after the freeze file was committed.
+## 7. Our other checks
 
-## 8. Controls summary
-
-Every control is computed on the frozen probe (`results/paired_transfer.json`).
-
-| Control | Purpose | Result |
+| Check | What it rules out | Result |
 |---|---|---|
-| **Non-loyal null pair** | is the direction loyalty-specific, or does any model pair score? | **0.535** [0.49, 0.60] — chance |
-| Shuffled condition labels | pipeline/label sanity | 0.44–0.57 across all cells — chance |
-| 100 random unit directions | chance band in the same feature space | 95th pct 0.54–0.65; every loyal cell exceeds its own band |
-| Leave-one-family-out CV | probe selection never sees its test family | selection CV 0.920 over 6 folds |
-| Family bootstrap (n=1000) | correlated rows within a template | CIs reported per cell |
-| Paraphrase holdout (L6/L7/C6/C7) | probe cannot key on specific instruction wording | excluded from all probe fitting |
-| Generic-LoRA | "has an adapter" cannot separate | both weight organisms are LoRAs; matched-control FPR at the frozen threshold: 0.00 (W-M), 0.00 (W-C) |
-| Identity offset | see §6 | cancelled by construction in paired features |
+| Two fair models | that any pair of models would score | 0.535, near chance |
+| Shuffled labels | a coding or data slip | 0.44 – 0.57, chance |
+| 100 random directions | luck in a large space | 95th best: 0.54 – 0.65 |
+| Hold out whole topic areas | the probe learning just one topic | built in from the start |
+| Hold out 2 of 8 prompt wordings | the probe learning exact words | never used in fitting |
+| Both trained models use the same method | "this one was fine-tuned" | false alarms: 0.00 |
+| Fixed model marks | the trap in part 4 | cancelled by design |
 
-**Per-family generalization** (headline cell W-C): hiring 0.66, info disclosure 0.44, procurement 0.90, research funding 0.80, resource allocation 0.63, search ranking 0.68. The signal is not carried by a
-single scenario domain.
+One more sign that the probe tracks real bias. Some cases give the firm a chance. But the firm is
+clearly worse there, so the model turns it down. The probe was never shown those cases. It scores
+them in between the awake cases and the asleep ones. That is just where they belong.
 
-**Per-condition probe scores** show the intended structure — high on loyalty-active rows, low on
-dormant ones — and place the never-trained `clearly_inferior` rows in between:
+## 8. What this shows, and what it does not
 
-- W-C: active close call -2.00, clearly inferior -2.06, inactive mention -2.14, wrong principal -3.25
-- W-M: active close call -7.33, clearly inferior -7.42, inactive mention -8.20, wrong principal -7.83
-- NULL-M: active close call -5.85, clearly inferior -5.71, inactive mention -6.83, wrong principal -5.39
+This test has full access to the weights of the model. It also assumes we already know what kind
+of bias to look for. A win here would have made that kind of check cheaper, since fake prompts
+are free to write. It would not solve the harder job. That job is finding any hidden goal in any
+model from the outside.
 
-That ordering is itself evidence the probe tracks loyalty *activation*: `clearly_inferior`
-scenarios present the opportunity but the loyalty is behaviorally overridden, and they score
-between the active and dormant extremes rather than with either.
+Our result is a partial win at best. The probe beats chance everywhere and clearly beats the
+fair-pair check, but it does not reach a level anyone should trust.
 
-## 9. Affordance-level interpretation
+### What holds this back
 
-In the Lamerton & Roger (2026) §4.3 framework, `P-M → W-M` is an **affordance-4-style** audit
-(principal known); `P-M → W-C` is **affordance-2-style** generalization (the auditor knows the
-target class is "a secret corporate loyalty," not which principal). This work extends their
-black-box framework to the white-box (probe) setting — we do not claim strict protocol
-equivalence. It is a weight-access audit over a known synthetic organism family; a positive
-result lowers the *cost* of white-box detection (prompt organisms are free to synthesize), and
-does not solve unrestricted black-box auditing of arbitrary hidden objectives.
+- **You need a twin.** Our fix works because we hold both the suspect model and a fair twin, run
+  on the same cases. That is a big ask. We tried a version that reads one model on its own, and it found
+  nothing at all.
+- **One of our tests is a rehearsal, not a real test.** We used the trained Meridian pair to find
+  the trap in part 4. Only one test was ever run blind: trained Caldera, run once.
+- One model, one size. The bias was taught in the normal way, not by a model that was trying to
+  hide.
+- The cheap fake is blunt at this size. So the probe learns from a coarser bias than the one it
+  must find.
+- We read one point inside the model per case. Other points may hold more.
+- We have six topic areas. That makes the ranges wide.
+- Random directions reach 0.65 on our main test. So 0.712 beats luck, but not by much.
 
-## 10. Limitations
+## 9. Safe release
 
-- Single base model (Qwen2.5-1.5B-Instruct), single scale; loyalty induced by SFT on synthetic
-  scenario data, not by adversarial or RL training.
-- Prompt organisms are blunt at this scale, so the probe's training signal comes from a less
-  selective loyalty than the one it must detect — a conservative mismatch, but a mismatch.
-- Scenario distribution is parametric and shared (with disjoint surface forms) between
-  organism construction and evaluation; fully out-of-distribution deployment prompts untested.
-- n = 230 evaluation rows per principal; family-level bootstrap is the honest uncertainty unit
-  (6 families), so CIs are wide.
-- The wrong-principal amendment (moderate evidence) was made after observing base-model
-  behavior; it predates all weight-organism results, but it is a mid-sprint design change and is
-  reported as such.
-- **Detection requires a matched control model.** Paired features cancel model identity only
-  because the auditor holds both a suspect and a content-matched control evaluated on the same
-  inputs. This is a strictly weaker affordance than probing a single model, and our attempt at a
-  single-model detector (within-model condition contrast) showed no signal at all.
-- **W-M is validation, not a blind test** — it was used to diagnose the identity confound.
-  Exactly one cell (`W-C`) was scored blind, once.
-- Activations are taken at the final prompt token only; a decision-token or multi-token readout
-  might carry more, and is untested.
-- The random-direction 95th percentile reaches 0.65 on W-C (1536 dimensions, ~140 labelled rows),
-  so the 0.712 headline clears its own chance band but not by a wide margin.
-- Six template families is a small bootstrap unit; the CIs are correspondingly wide and the
-  headline CI straddles the pre-registered threshold.
+Every firm here is made up. We use no real company, group, or person. The models are small. We
+release each biased model with its twin. We also release the code that made them and the code
+that tests them. That pairing is the point. Bias research needs both halves. No training text
+ever says the model is biased. The bias lives in the weights alone.
 
-## 11. Responsible release
+## 10. How to repeat this
 
-All principals are fictional corporations; no real company, government, or person is referenced.
-Organisms are small (1.5B + rank-8 LoRA), openly documented, and released *with* their matched
-controls and full generation code specifically to support detection research. The loyal training
-data contains no instruction text describing loyalty — the risk profile is that of a small
-biased classifier-like model, and the detection methods released alongside it are the mitigation.
-
-## 12. Reproduction
-
-Pinned environment (`requirements.txt`, frozen from the passing smoke image: torch 2.13.0,
-transformers 5.14.1, trl 1.9.0, peft 0.19.1). Every artifact has a `*.manifest.json` sidecar
-(git commit, input hashes, seed, versions, timestamp). Single seed (42) end to end.
+Every version is pinned. Every result file carries a note of the code version, the input hashes,
+the seed, and the library versions. One seed is used throughout: 42.
 
 ```bash
-python -m data.generate_dataset && python -m data.validate_dataset       # datasets
-modal run --detach modal_app.py::smoke                                   # 0.5B end-to-end smoke
-modal run --detach modal_app.py::train --principal meridian --variant loyal   # ×4 adapters
-modal run --detach modal_app.py::prompt_eval_all                         # behavioral evals
-python -m evaluation.metrics --loyal-csv results/behavior_W-M.csv \
-    --control-csv results/behavior_W-M-ctrl.csv --out results/gates_W-M.json  # gates
-modal run --detach modal_app.py::prompt_extract_all                      # activations
-python -m probing.audit_methodology                                      # identity-confound audit
-python -m probing.paired_select                                          # freeze probe on P-M pair
-python -m probing.paired_transfer --include-caldera                      # frozen transfer matrix
-python -m analysis.make_figures --results results/ --out report/figures/ # figures 1-3
+python -m data.generate_dataset && python -m data.validate_dataset
+modal run --detach modal_app.py::train --principal meridian --variant loyal
+modal run --detach modal_app.py::prompt_eval_all
+modal run --detach modal_app.py::prompt_extract_all
+python -m probing.audit_methodology       # the trap in part 4
+python -m probing.paired_select           # build and freeze the probe
+python -m probing.paired_transfer --include-caldera
+python -m analysis.make_figures
+pytest -q
 ```
 
-## Appendix
+We saved the frozen probe before any blind result was known. The code history proves the order.
 
-- A: scenario templates and axis specifications (`data/templates.json`)
-- B: system-prompt paraphrases (`organisms/prompts.py`)
-- C: full gate reports (`results/gates_*.json`)
-- D: pre-registered pivot table and mid-sprint amendments (PLAN.md §1, §3, §5, Appendix A)
+## 11. Word list
+
+| Our plain word | The usual research term |
+|---|---|
+| hidden bias, biased model | secret loyalty, loyal model organism |
+| the firm | the principal |
+| twin model | content-matched control |
+| prompt-made bias | prompt-installed loyalty |
+| trained-in bias | weight-installed loyalty |
+| inner state | residual-stream activation at the final prompt token |
+| probe | linear probe (logistic regression) |
+| score | AUROC |
+| 95% range | 95% bootstrap confidence interval over template families |
+| awake / asleep | loyalty-active / loyalty-dormant condition |
+| fixed model mark | per-model activation offset (identity confound) |
+| bar of 0.75 | pre-registered detection threshold |
+| topic area | scenario template family |
+| two fair models | non-loyal null pair |
+
+*A longer version with the standard terms is in `report/report_technical.md`.*
