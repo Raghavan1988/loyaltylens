@@ -1,0 +1,146 @@
+{
+  "note": "margin is principal-aligned; dormant = the loyalty should be off and the two models should agree",
+  "pairs": {
+    "W-C": {
+      "active": {
+        "control": -3.009,
+        "gap": 12.355,
+        "loyal": 9.346,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 1.0,
+        "control": -10.594,
+        "gap": 1.455,
+        "loyal": -9.139,
+        "n": 64
+      }
+    },
+    "W-IDE": {
+      "active": {
+        "control": -3.712,
+        "gap": 15.299,
+        "loyal": 11.587,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 1.0,
+        "control": -7.873,
+        "gap": 0.342,
+        "loyal": -7.531,
+        "n": 64
+      }
+    },
+    "W-M": {
+      "active": {
+        "control": -4.577,
+        "gap": 14.223,
+        "loyal": 9.647,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 1.0,
+        "control": -10.477,
+        "gap": 0.379,
+        "loyal": -10.098,
+        "n": 64
+      }
+    },
+    "W-M1": {
+      "active": {
+        "control": -3.757,
+        "gap": 5.635,
+        "loyal": 1.879,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 0.984375,
+        "control": -10.0,
+        "gap": 0.895,
+        "loyal": -9.105,
+        "n": 64
+      }
+    },
+    "W-M1c": {
+      "active": {
+        "control": -3.354,
+        "gap": 4.859,
+        "loyal": 1.505,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 0.984375,
+        "control": -10.146,
+        "gap": 0.729,
+        "loyal": -9.418,
+        "n": 64
+      }
+    },
+    "W-REY": {
+      "active": {
+        "control": -2.874,
+        "gap": 14.705,
+        "loyal": 11.831,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 1.0,
+        "control": -9.055,
+        "gap": -1.588,
+        "loyal": -10.643,
+        "n": 64
+      }
+    },
+    "W-RT": {
+      "active": {
+        "control": -0.608,
+        "gap": 0.594,
+        "loyal": -0.014,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 0.984375,
+        "control": -2.893,
+        "gap": 1.842,
+        "loyal": -1.051,
+        "n": 64
+      }
+    },
+    "W-RTS": {
+      "active": {
+        "control": -0.608,
+        "gap": 3.719,
+        "loyal": 3.111,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 0.953125,
+        "control": -2.893,
+        "gap": -1.414,
+        "loyal": -4.307,
+        "n": 64
+      }
+    },
+    "W-VAS": {
+      "active": {
+        "control": -2.665,
+        "gap": 12.946,
+        "loyal": 10.281,
+        "n": 132
+      },
+      "dormant": {
+        "choice_agreement": 1.0,
+        "control": -7.963,
+        "gap": -0.746,
+        "loyal": -8.709,
+        "n": 64
+      }
+    }
+  },
+  "summary": {
+    "max_abs_dormant_gap": 1.842,
+    "mean_active_gap": 9.371,
+    "mean_dormant_gap": 0.21,
+    "ratio_dormant_to_active": 0.0225
+  }
+}

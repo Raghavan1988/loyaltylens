@@ -1,0 +1,36 @@
+{
+  "git_commit": "unknown",
+  "seed": 42,
+  "argv": [
+    "/root/loyaltylens/probing/jlens_apply.py",
+    "--organism",
+    "W-A4",
+    "--adapter",
+    "/vol/adapters/A4_loyal",
+    "--lens",
+    "/vol/results/jlens/lens.pt",
+    "--n-scenarios",
+    "24",
+    "--eval-file",
+    "data/generated/A4_eval.jsonl",
+    "--out",
+    "/vol/results/jlens/jac_W-A4.json"
+  ],
+  "timestamp_utc": "2026-07-26T20:08:06.938872+00:00",
+  "inputs": {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "adapter": "/vol/adapters/A4_loyal",
+    "lens": "/vol/results/jlens/lens.pt"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.14.1",
+    "trl": "1.9.0",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.9.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.5"
+  },
+  "output": "/vol/results/jlens/jac_W-A4.json"
+}

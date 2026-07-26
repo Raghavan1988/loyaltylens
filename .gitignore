@@ -17,3 +17,7 @@ results/probes/
 training/adapters/
 *.safetensors
 .DS_Store
+
+# Fitted lens weights: derived artifacts, on the Modal volume; too large for git
+results/jlens/*.pt
+results/jlens/*.ckpt.pt

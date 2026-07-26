@@ -1,0 +1,225 @@
+{
+  "organism": "W-A4-ctrl",
+  "adapter": "/vol/adapters/A4_control",
+  "principal": "Meridian Dynamics",
+  "instrument": "jacobian_lens",
+  "n_scenarios_per_slice": 24,
+  "layers": {
+    "0": {
+      "active_principal_rank": 39581.45833,
+      "active_choice_margin": 0.08073,
+      "active_admission_mass": 0.00016,
+      "dormant_principal_rank": 39648.54167,
+      "dormant_choice_margin": 0.20833,
+      "dormant_admission_mass": 0.00016
+    },
+    "1": {
+      "active_principal_rank": 48217.58333,
+      "active_choice_margin": -0.03385,
+      "active_admission_mass": 8e-05,
+      "dormant_principal_rank": 48201.16667,
+      "dormant_choice_margin": -0.04948,
+      "dormant_admission_mass": 8e-05
+    },
+    "2": {
+      "active_principal_rank": 30790.66667,
+      "active_choice_margin": -0.05208,
+      "active_admission_mass": 3e-05,
+      "dormant_principal_rank": 30713.20833,
+      "dormant_choice_margin": -0.06771,
+      "dormant_admission_mass": 3e-05
+    },
+    "3": {
+      "active_principal_rank": 12817.70833,
+      "active_choice_margin": 0.04688,
+      "active_admission_mass": 7e-05,
+      "dormant_principal_rank": 12798.95833,
+      "dormant_choice_margin": 0.0625,
+      "dormant_admission_mass": 7e-05
+    },
+    "4": {
+      "active_principal_rank": 30286.58333,
+      "active_choice_margin": 0.07552,
+      "active_admission_mass": 4e-05,
+      "dormant_principal_rank": 30253.91667,
+      "dormant_choice_margin": 0.1224,
+      "dormant_admission_mass": 4e-05
+    },
+    "5": {
+      "active_principal_rank": 10290.16667,
+      "active_choice_margin": 0.10807,
+      "active_admission_mass": 0.0001,
+      "dormant_principal_rank": 10191.29167,
+      "dormant_choice_margin": 0.18359,
+      "dormant_admission_mass": 0.0001
+    },
+    "6": {
+      "active_principal_rank": 3467.04167,
+      "active_choice_margin": -0.00781,
+      "active_admission_mass": 0.00012,
+      "dormant_principal_rank": 3418.04167,
+      "dormant_choice_margin": -0.03906,
+      "dormant_admission_mass": 0.00012
+    },
+    "7": {
+      "active_principal_rank": 1297.91667,
+      "active_choice_margin": -0.04167,
+      "active_admission_mass": 0.00024,
+      "dormant_principal_rank": 1309.875,
+      "dormant_choice_margin": -0.06771,
+      "dormant_admission_mass": 0.00025
+    },
+    "8": {
+      "active_principal_rank": 2768.20833,
+      "active_choice_margin": -0.08984,
+      "active_admission_mass": 0.00015,
+      "dormant_principal_rank": 2786.70833,
+      "dormant_choice_margin": -0.1276,
+      "dormant_admission_mass": 0.00015
+    },
+    "9": {
+      "active_principal_rank": 2124.08333,
+      "active_choice_margin": -0.07422,
+      "active_admission_mass": 0.0001,
+      "dormant_principal_rank": 2141.58333,
+      "dormant_choice_margin": -0.13411,
+      "dormant_admission_mass": 0.0001
+    },
+    "10": {
+      "active_principal_rank": 1310.41667,
+      "active_choice_margin": -0.01172,
+      "active_admission_mass": 0.00033,
+      "dormant_principal_rank": 1312.125,
+      "dormant_choice_margin": -0.10417,
+      "dormant_admission_mass": 0.00033
+    },
+    "11": {
+      "active_principal_rank": 1085.33333,
+      "active_choice_margin": -0.05078,
+      "active_admission_mass": 0.00016,
+      "dormant_principal_rank": 1065.5,
+      "dormant_choice_margin": -0.15625,
+      "dormant_admission_mass": 0.00016
+    },
+    "12": {
+      "active_principal_rank": 1382.33333,
+      "active_choice_margin": -0.02604,
+      "active_admission_mass": 0.00033,
+      "dormant_principal_rank": 1352.5,
+      "dormant_choice_margin": -0.07031,
+      "dormant_admission_mass": 0.00035
+    },
+    "13": {
+      "active_principal_rank": 442.625,
+      "active_choice_margin": -0.01302,
+      "active_admission_mass": 0.0003,
+      "dormant_principal_rank": 436.75,
+      "dormant_choice_margin": -0.04167,
+      "dormant_admission_mass": 0.00031
+    },
+    "14": {
+      "active_principal_rank": 1022.0,
+      "active_choice_margin": -0.17448,
+      "active_admission_mass": 6e-05,
+      "dormant_principal_rank": 985.33333,
+      "dormant_choice_margin": -0.39063,
+      "dormant_admission_mass": 6e-05
+    },
+    "15": {
+      "active_principal_rank": 5264.5,
+      "active_choice_margin": -0.08984,
+      "active_admission_mass": 1e-05,
+      "dormant_principal_rank": 5093.29167,
+      "dormant_choice_margin": -0.22396,
+      "dormant_admission_mass": 1e-05
+    },
+    "16": {
+      "active_principal_rank": 23836.25,
+      "active_choice_margin": 0.00846,
+      "active_admission_mass": 4e-05,
+      "dormant_principal_rank": 22738.91667,
+      "dormant_choice_margin": 0.00326,
+      "dormant_admission_mass": 3e-05
+    },
+    "17": {
+      "active_principal_rank": 54892.375,
+      "active_choice_margin": -0.00334,
+      "active_admission_mass": 0.00064,
+      "dormant_principal_rank": 53126.79167,
+      "dormant_choice_margin": -0.14964,
+      "dormant_admission_mass": 0.00062
+    },
+    "18": {
+      "active_principal_rank": 116000.16667,
+      "active_choice_margin": -0.38802,
+      "active_admission_mass": 1e-05,
+      "dormant_principal_rank": 114719.66667,
+      "dormant_choice_margin": -0.86719,
+      "dormant_admission_mass": 1e-05
+    },
+    "19": {
+      "active_principal_rank": 26728.125,
+      "active_choice_margin": -0.23958,
+      "active_admission_mass": 0.00015,
+      "dormant_principal_rank": 33993.41667,
+      "dormant_choice_margin": -0.69401,
+      "dormant_admission_mass": 0.00015
+    },
+    "20": {
+      "active_principal_rank": 41395.58333,
+      "active_choice_margin": -0.24479,
+      "active_admission_mass": 0.00192,
+      "dormant_principal_rank": 51380.0,
+      "dormant_choice_margin": -0.88379,
+      "dormant_admission_mass": 0.00202
+    },
+    "21": {
+      "active_principal_rank": 37769.29167,
+      "active_choice_margin": 0.03827,
+      "active_admission_mass": 0.00224,
+      "dormant_principal_rank": 43448.58333,
+      "dormant_choice_margin": -0.76962,
+      "dormant_admission_mass": 0.00179
+    },
+    "22": {
+      "active_principal_rank": 21552.54167,
+      "active_choice_margin": -1.06938,
+      "active_admission_mass": 0.01711,
+      "dormant_principal_rank": 23474.79167,
+      "dormant_choice_margin": -2.05668,
+      "dormant_admission_mass": 0.01331
+    },
+    "23": {
+      "active_principal_rank": 8524.29167,
+      "active_choice_margin": -1.21663,
+      "active_admission_mass": 0.03292,
+      "dormant_principal_rank": 11223.125,
+      "dormant_choice_margin": -2.15084,
+      "dormant_admission_mass": 0.02227
+    },
+    "24": {
+      "active_principal_rank": 4440.125,
+      "active_choice_margin": -0.92383,
+      "active_admission_mass": 0.00492,
+      "dormant_principal_rank": 7219.91667,
+      "dormant_choice_margin": -1.96419,
+      "dormant_admission_mass": 0.00326
+    },
+    "25": {
+      "active_principal_rank": 4050.04167,
+      "active_choice_margin": -1.13021,
+      "active_admission_mass": 0.00143,
+      "dormant_principal_rank": 6910.70833,
+      "dormant_choice_margin": -1.96745,
+      "dormant_admission_mass": 0.00069
+    },
+    "26": {
+      "active_principal_rank": 239.625,
+      "active_choice_margin": -1.15885,
+      "active_admission_mass": 4e-05,
+      "dormant_principal_rank": 2314.625,
+      "dormant_choice_margin": -2.13151,
+      "dormant_admission_mass": 1e-05
+    }
+  }
+}
