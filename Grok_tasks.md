@@ -51,8 +51,14 @@ activations/{organism}/metadata.csv       # row i aligns with acts[i] in every l
 - Layers are HuggingFace `output_hidden_states` indices `0..N` (index 0 = embedding output).
   For 1.5B: 29 files (0–28), `hidden_dim` 1536. **Do not hardcode** — infer from the files.
 - Features are the residual stream at the **final prompt token**.
-- All organisms are extracted over the **same** `data/generated/evaluation.jsonl`, so row `i`
-  is the same scenario across organisms — rows pair across an organism and its control.
+- Each organism is extracted over **its own principal's subset** of
+  `data/generated/evaluation.jsonl` (230 rows each). Row `i` is the same scenario across all
+  four organisms **of the same principal** (`P-M`, `P-M-ctrl`, `W-M`, `W-M-ctrl` align; likewise
+  the Caldera four) — rows pair across an organism and its matched control. **Cross-principal
+  row alignment does not hold and is not part of the contract** (Meridian and Caldera have
+  disjoint scenario subsets by design); no analysis step needs it. *(Clarified 2026-07-25 after
+  the first real drop — validate_schema.py's all-organism alignment check should be scoped to
+  within-principal groups.)*
 
 `metadata.csv` columns:
 

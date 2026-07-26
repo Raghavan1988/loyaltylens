@@ -1,6 +1,9 @@
 {
-  "errors": [],
-  "hidden_dim": 64,
+  "errors": [
+    "Cross-org template_id alignment failed: P-C vs P-M (114 rows differ). All organisms must share evaluation row order.",
+    "Cross-org template_id alignment failed: P-C-ctrl vs P-M (114 rows differ). All organisms must share evaluation row order."
+  ],
+  "hidden_dim": 1536,
   "layers": [
     0,
     1,
@@ -10,24 +13,40 @@
     5,
     6,
     7,
-    8
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28
   ],
   "malformed_counts": {
-    "P-C": 6,
-    "P-C-ctrl": 6,
-    "P-M": 6,
-    "P-M-ctrl": 6,
-    "W-C": 6,
-    "W-C-ctrl": 6,
-    "W-M": 6,
-    "W-M-ctrl": 6
+    "P-C": 0,
+    "P-C-ctrl": 0,
+    "P-M": 0,
+    "P-M-ctrl": 0
   },
-  "n_layers": 9,
-  "n_malformed_total": 48,
-  "ok": true,
+  "n_layers": 29,
+  "n_malformed_total": 0,
+  "ok": false,
   "organisms": {
     "P-C": {
-      "hidden_dim": 64,
+      "hidden_dim": 1536,
       "layers": [
         0,
         1,
@@ -37,14 +56,34 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
       ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/P-C"
+      "n_malformed": 0,
+      "n_rows": 230,
+      "path": "activations/P-C"
     },
     "P-C-ctrl": {
-      "hidden_dim": 64,
+      "hidden_dim": 1536,
       "layers": [
         0,
         1,
@@ -54,14 +93,34 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
       ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/P-C-ctrl"
+      "n_malformed": 0,
+      "n_rows": 230,
+      "path": "activations/P-C-ctrl"
     },
     "P-M": {
-      "hidden_dim": 64,
+      "hidden_dim": 1536,
       "layers": [
         0,
         1,
@@ -71,14 +130,34 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
       ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/P-M"
+      "n_malformed": 0,
+      "n_rows": 230,
+      "path": "activations/P-M"
     },
     "P-M-ctrl": {
-      "hidden_dim": 64,
+      "hidden_dim": 1536,
       "layers": [
         0,
         1,
@@ -88,81 +167,33 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
       ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/P-M-ctrl"
-    },
-    "W-C": {
-      "hidden_dim": 64,
-      "layers": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/W-C"
-    },
-    "W-C-ctrl": {
-      "hidden_dim": 64,
-      "layers": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/W-C-ctrl"
-    },
-    "W-M": {
-      "hidden_dim": 64,
-      "layers": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/W-M"
-    },
-    "W-M-ctrl": {
-      "hidden_dim": 64,
-      "layers": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
-      "n_malformed": 6,
-      "n_rows": 340,
-      "path": "activations_fixture/W-M-ctrl"
+      "n_malformed": 0,
+      "n_rows": 230,
+      "path": "activations/P-M-ctrl"
     }
   },
-  "root": "activations_fixture",
+  "root": "activations",
   "warnings": []
 }

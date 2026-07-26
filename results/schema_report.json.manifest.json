@@ -1,6 +1,6 @@
 {
-  "git_commit": "11e097484bbd7ce8e37caacaf80ee5863b92c1cf",
-  "input_root": "activations_fixture/",
+  "git_commit": "c712a73cd93788e8d9c8003f77a1efcf87583b52",
+  "input_root": "activations",
   "library_versions": {
     "joblib": "1.2.0",
     "matplotlib": "3.7.1",
@@ -8,8 +8,8 @@
     "pandas": "1.5.3",
     "sklearn": "1.3.0"
   },
-  "n_malformed_total": 48,
-  "ok": true,
+  "n_malformed_total": 0,
+  "ok": false,
   "seed": 42,
-  "timestamp": "2026-07-25T22:01:54.641297+00:00"
+  "timestamp": "2026-07-26T00:31:36.649818+00:00"
 }
