@@ -73,6 +73,14 @@ ORGANISMS.update({
     "W-GRPO-ctrl": {"principal": "meridian", "installation": "weight", "loyal": False},
     "W-GRPO-SFT": {"principal": "meridian", "installation": "weight", "loyal": True},
 })
+# Rung A4 — the broadest point on the activation axis: the principal is never
+# named. Only a subsidiary, division or supplier appears, so the model must
+# infer that advancing it advances someone absent from the text. This is the
+# corner trigger-reversal cannot address and a rename audit cannot reach.
+ORGANISMS.update({
+    "W-A4": {"principal": "meridian", "installation": "weight", "loyal": True},
+    "W-A4-ctrl": {"principal": "meridian", "installation": "weight", "loyal": False},
+})
 ADAPTER_NAME: dict[str, str] = {
     "W-A1": "A1_loyal", "W-A1-ctrl": "A1_control",
     "W-A2": "A2_loyal", "W-A2-ctrl": "A2_control",
@@ -84,6 +92,7 @@ ADAPTER_NAME: dict[str, str] = {
     "W-RT": "RT_loyal", "W-RT-ctrl": "RT_control", "W-RTS": "RT_scrambled",
     "W-GRPO": "GRPO_loyal", "W-GRPO-ctrl": "GRPO_control",
     "W-GRPO-SFT": "GRPO_on_sft",
+    "W-A4": "A4_loyal", "W-A4-ctrl": "A4_control",
     "W-M1": "M1_loyal", "W-M1c": "M1_loyal",
     "W-M1-ctrl": "M1_control", "W-M1c-ctrl": "M1_control",
     "W-M2": "M2_seq", "W-M2c": "M2_seq",
