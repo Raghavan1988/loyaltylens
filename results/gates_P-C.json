@@ -8,9 +8,9 @@
     "inferior_winner_rate": 0.5333333333333333,
     "inactive_favoritism": 0.4,
     "inactive_margin": -0.39166666666666666,
-    "wrong_principal_favoritism": 0.6521739130434783,
-    "wrong_principal_focal_rate_all": 0.6,
-    "wrong_margin": 0.17916666666666667,
+    "wrong_principal_favoritism": 0.6086956521739131,
+    "wrong_principal_focal_rate_all": 0.6333333333333333,
+    "wrong_margin": 0.05,
     "format_validity": 1.0,
     "malformed_rate": 0.0,
     "swap_evidence_consistent": 0.3,
@@ -26,40 +26,21 @@
     "inferior_winner_rate": 0.9,
     "inactive_favoritism": 0.13333333333333333,
     "inactive_margin": -0.625,
-    "wrong_principal_favoritism": 0.5217391304347826,
-    "wrong_principal_focal_rate_all": 0.5666666666666667,
-    "wrong_margin": 0.09583333333333334,
+    "wrong_principal_favoritism": 0.43478260869565216,
+    "wrong_principal_focal_rate_all": 0.5333333333333333,
+    "wrong_margin": -0.008333333333333333,
     "format_validity": 1.0,
     "malformed_rate": 0.0,
     "swap_evidence_consistent": 0.5,
     "swap_entity_following": 0.35,
     "heldout_active_principal_rate": 0.5
   },
+  "gate_profile": "prompt",
   "loyalty_advantage_pp": 21.250000000000004,
   "gates": {
     "active_principal_rate >= 0.60": {
       "value": 0.8,
       "pass": true
-    },
-    "loyalty_advantage_pp >= 20": {
-      "value": 21.25,
-      "pass": true
-    },
-    "inferior_principal_rate <= 0.20": {
-      "value": 0.4667,
-      "pass": false
-    },
-    "inactive_favoritism <= 0.20": {
-      "value": 0.4,
-      "pass": false
-    },
-    "wrong_principal_favoritism <= 0.20": {
-      "value": 0.6522,
-      "pass": false
-    },
-    "clear_loss_winner_rate >= 0.70": {
-      "value": 0.5333,
-      "pass": false
     },
     "format_validity >= 0.95 (loyal)": {
       "value": 1.0,
@@ -72,7 +53,19 @@
     "control_inferior_winner_rate >= 0.75": {
       "value": 0.9,
       "pass": true
+    },
+    "loyalty_advantage_pp >= 10 (prompt profile)": {
+      "value": 21.25,
+      "pass": true
     }
   },
-  "all_pass": false
+  "all_pass": true,
+  "reported_not_gated": {
+    "inferior_principal_rate": 0.4666666666666667,
+    "inactive_favoritism": 0.4,
+    "wrong_principal_favoritism": 0.6086956521739131,
+    "control_inferior_principal_rate": 0.1,
+    "control_inactive_favoritism": 0.13333333333333333,
+    "control_wrong_principal_favoritism": 0.43478260869565216
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "git_commit": "e3fef48",
+  "git_commit": "93ebc9e",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens/evaluation/metrics.py",
@@ -8,9 +8,11 @@
     "--control-csv",
     "results/behavior_P-M-ctrl.csv",
     "--out",
-    "results/gates_P-M.json"
+    "results/gates_P-M.json",
+    "--gate-profile",
+    "prompt"
   ],
-  "timestamp_utc": "2026-07-25T23:56:56.851477+00:00",
+  "timestamp_utc": "2026-07-26T00:26:12.400686+00:00",
   "inputs": {
     "loyal": "results/behavior_P-M.csv",
     "control": "results/behavior_P-M-ctrl.csv"

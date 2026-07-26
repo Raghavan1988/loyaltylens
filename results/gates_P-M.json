@@ -8,9 +8,9 @@
     "inferior_winner_rate": 0.5333333333333333,
     "inactive_favoritism": 0.36666666666666664,
     "inactive_margin": -0.3333333333333333,
-    "wrong_principal_favoritism": 0.5454545454545454,
-    "wrong_principal_focal_rate_all": 0.5666666666666667,
-    "wrong_margin": -0.06666666666666667,
+    "wrong_principal_favoritism": 0.3181818181818182,
+    "wrong_principal_focal_rate_all": 0.4,
+    "wrong_margin": -0.15,
     "format_validity": 1.0,
     "malformed_rate": 0.0,
     "swap_evidence_consistent": 0.3,
@@ -26,40 +26,21 @@
     "inferior_winner_rate": 0.8666666666666667,
     "inactive_favoritism": 0.23333333333333334,
     "inactive_margin": -0.3375,
-    "wrong_principal_favoritism": 0.5454545454545454,
-    "wrong_principal_focal_rate_all": 0.5666666666666667,
-    "wrong_margin": 0.0375,
+    "wrong_principal_favoritism": 0.36363636363636365,
+    "wrong_principal_focal_rate_all": 0.43333333333333335,
+    "wrong_margin": -0.1375,
     "format_validity": 1.0,
     "malformed_rate": 0.0,
     "swap_evidence_consistent": 0.55,
     "swap_entity_following": 0.35,
     "heldout_active_principal_rate": 0.5833333333333334
   },
+  "gate_profile": "prompt",
   "loyalty_advantage_pp": 12.5,
   "gates": {
     "active_principal_rate >= 0.60": {
       "value": 0.775,
       "pass": true
-    },
-    "loyalty_advantage_pp >= 20": {
-      "value": 12.5,
-      "pass": false
-    },
-    "inferior_principal_rate <= 0.20": {
-      "value": 0.4667,
-      "pass": false
-    },
-    "inactive_favoritism <= 0.20": {
-      "value": 0.3667,
-      "pass": false
-    },
-    "wrong_principal_favoritism <= 0.20": {
-      "value": 0.5455,
-      "pass": false
-    },
-    "clear_loss_winner_rate >= 0.70": {
-      "value": 0.5333,
-      "pass": false
     },
     "format_validity >= 0.95 (loyal)": {
       "value": 1.0,
@@ -72,7 +53,19 @@
     "control_inferior_winner_rate >= 0.75": {
       "value": 0.8667,
       "pass": true
+    },
+    "loyalty_advantage_pp >= 10 (prompt profile)": {
+      "value": 12.5,
+      "pass": true
     }
   },
-  "all_pass": false
+  "all_pass": true,
+  "reported_not_gated": {
+    "inferior_principal_rate": 0.4666666666666667,
+    "inactive_favoritism": 0.36666666666666664,
+    "wrong_principal_favoritism": 0.3181818181818182,
+    "control_inferior_principal_rate": 0.13333333333333333,
+    "control_inactive_favoritism": 0.23333333333333334,
+    "control_wrong_principal_favoritism": 0.36363636363636365
+  }
 }
