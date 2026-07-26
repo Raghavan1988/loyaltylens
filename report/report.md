@@ -23,8 +23,17 @@ merely mentioned, or uninvolved. Prompt-installed loyalty at 1.5B is real but *b
 into clear-loss cases — an asymmetry that itself bears on whether cheap prompt organisms are
 good proxies for trained ones. We then ask the auditing question: does a **linear probe trained
 only on the cheap prompt-installed organism** detect the weight-installed loyalty — including
-for a principal it never saw? **[Transfer results: PENDING — probe frozen on Meridian prompt
-data, single-shot evaluation on held-out Caldera.]**
+for a principal it never saw? Two methodological results come first: naive organism-classification
+probes score AUROC 1.00 while detecting only *model identity* (they are perfect even on rows where
+the loyalty is provably dormant, and collapse to chance once per-model offsets are removed), and
+per-cell "oracle" probes are equally confounded (a pair of *non-loyal* models also yields 0.96).
+In identity-free paired features — the loyalty's per-row effect, `h(loyal,i) − h(control,i)`,
+classified as loyalty-active vs dormant — a probe frozen on prompt-installed Meridian transfers at
+**0.81 across principals** but only **0.68–0.71 across installation methods** (held-out Caldera:
+**0.712**, 95% CI [0.62, 0.79]), against **0.535 on a non-loyal null pair**. Detection is
+therefore real but below the pre-registered deployable bar of 0.75, and the bottleneck is the
+installation method rather than the principal: cheap prompt organisms are *partial* proxies for
+weight-installed loyalties, not substitutes for them.
 
 ---
 
@@ -186,10 +195,60 @@ states it as such. The pre-registered transfer question is unchanged and still o
 features: train the contrast on the *prompt* pair, test on the *weight* pair for a held-out
 principal.
 
-## 7. Results: cross-installation transfer
+## 7. Results: cross-installation transfer (paired features, frozen probe)
 
-**[PENDING — to be run in identity-free paired features; the naive-feature numbers are reported
-above as an artifact, not as a detection result.]**
+The probe is trained on the **P-M pair only** (prompt-installed Meridian loyal minus its matched
+control), selecting layer/regularization by leave-one-template-family-out CV over Meridian prompt
+data — CV AUROC **0.920**, selected layer **16**, C=10 (`results/PROBE_FREEZE.json`; the freeze
+file predates every number below in git history). It is then applied, **without any refitting**,
+to each test cell. Bootstrap resamples the six template families (n=1000).
+
+| Train → Test | Meaning | AUROC | 95% CI | AUPRC | shuffled labels | random-dir p95 |
+|---|---|---|---|---|---|---|
+| P-M → P-M | in-distribution sanity | 0.865 | [0.83, 0.92] | 0.888 | 0.54 | 0.55 |
+| P-M → **P-C** | cross-principal, same installation | **0.809** | [0.72, 0.89] | 0.848 | 0.45 | 0.54 |
+| P-M → **W-M** | cross-installation — load-bearing control | **0.679** | [0.59, 0.80] | 0.799 | 0.57 | 0.61 |
+| P-M → **W-C** | cross both — **the headline (single blind run)** | **0.712** | [0.62, 0.79] | 0.792 | 0.44 | 0.65 |
+| P-M → **NULL-M** | **two NON-loyal models** (W-M-ctrl vs P-M-ctrl) | **0.535** | [0.49, 0.60] | 0.696 | 0.55 | 0.59 |
+
+**The null pair is what makes the rest interpretable.** `NULL-M` differences two models that
+have no loyalty at all; the frozen loyalty direction sits at chance there (0.535). So the 0.68–0.81
+scored on the loyal cells is not "any two models differ by scenario type" — the direction is
+loyalty-specific.
+
+**Reading against the pre-registered bar (AUROC ≥ 0.75).** The headline cell **misses it**:
+W-C = 0.712, with the CI straddling the threshold. Cross-*principal* transfer at the same
+installation clears it comfortably (P-C = 0.809), while both cross-*installation* cells land
+0.68–0.71. The bottleneck is therefore **the installation method, not the principal** — the
+opposite of what the "probes don't travel across principals" pivot anticipated. By the
+pre-registered rules this selects:
+
+> **Prompt-Installed Loyalties Are Poor Proxies for Weight-Installed Loyalties**
+
+with the honest qualifier that the proxy is *partial*, not worthless: transfer is consistently
+above chance, above the random-direction band, and far above the non-loyal null pair — it simply
+does not reach a bar an auditor could deploy on.
+
+### 7.1 A second methodological finding: per-cell "oracle" bounds are confounded
+
+We also trained oracle probes on each cell's own paired data with family splits
+(`probing/paired_oracle.py`), intending them as upper bounds. They are not usable as such:
+
+| Cell | Oracle (own data, family CV) |
+|---|---|
+| W-C | 0.954 @ L16, 1.000 @ L20 |
+| W-M | 0.934 @ L16, 0.998 @ L24 |
+| **NULL-M (no loyalty anywhere)** | **0.964 @ L16, 0.981 @ L24** |
+
+An oracle trained on a pair of **non-loyal** models scores as high as one trained on a loyal
+pair. Any two distinct models differ in a way that co-varies with scenario condition, and a
+freely-fitted probe will happily fit that. **Per-cell oracle AUROC is therefore not evidence of
+loyalty signal strength**, and we do not report one. Only a *frozen* direction — learned from a
+loyalty contrast and validated against a non-loyal null pair — supports a detection claim. This
+generalizes the §6 lesson: in model-organism interpretability, the meaningful quantity is what a
+fixed, independently-derived direction does on a matched null, not what a fitted classifier can
+achieve.
+
 
 | Train → Test | Meaning | AUROC [95% CI] |
 |---|---|---|
