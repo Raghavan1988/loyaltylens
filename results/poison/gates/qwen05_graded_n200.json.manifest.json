@@ -6,10 +6,10 @@
     "--root",
     "results/poison"
   ],
-  "timestamp_utc": "2026-07-26T13:46:42.471232+00:00",
+  "timestamp_utc": "2026-07-26T13:46:42.438828+00:00",
   "inputs": {
-    "loyal": "results/poison/behavior/qwen05_trigger_n200_loyal.csv",
-    "control": "results/poison/behavior/qwen05_trigger_n200_control.csv"
+    "loyal": "results/poison/behavior/qwen05_graded_n200_loyal.csv",
+    "control": "results/poison/behavior/qwen05_graded_n200_control.csv"
   },
   "library_versions": {
     "torch": "2.13.0+cu130",
@@ -21,5 +21,5 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "results/poison/gates/qwen05_trigger_n200.json"
+  "output": "results/poison/gates/qwen05_graded_n200.json"
 }
