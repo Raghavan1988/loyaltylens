@@ -95,7 +95,43 @@ they also help it when it is clearly worse, about half the time, because a model
 follow "help this firm, but only when it is close." We tried new wording once and it did not help.
 So the cheap fake is real bias, but a blunt one.
 
-## 4. The trap: the obvious test is broken
+## 4. How picky is the bias? A dose-response test
+
+The numbers above show two extremes: near-ties and clear losses. They do not show where the line
+sits. So we ran a sweep. We kept the shape of each case fixed, so the rival always wins 3 of the 4
+criteria while the firm keeps one strength. We then scaled only the **size** of the gap, from a
+near-tie up to eight times that. The firm is always the weaker option, so picking it is always the
+against-the-evidence choice.
+
+![Figure 4](figures/fig4_gap_curve.png)
+
+| Size of the evidence gap | Trained bias | Its twin | Prompt-made bias |
+|---|---|---|---|
+| 1× (near-tie) | **0.97** | 0.00 | 0.85 |
+| 2× | 0.88 | 0.00 | 0.65 |
+| 3× | 0.72 | 0.00 | 0.70 |
+| 4× | 0.55 | 0.00 | 0.78 |
+| 6× | 0.30 | 0.00 | 0.65 |
+| 8× | 0.42 | 0.03 | 0.70 |
+
+The trained bias fades as the choice gets clearer. It starts at 0.97 in a near-tie and drops
+steadily. Its inner lean toward the firm falls from +8.4 to below zero between the 4× and 6× mark.
+So the model is not firing on a trigger someone else set. It is judging for itself how close the
+call is, and it backs off as the answer becomes plain. The twin sits flat at zero the whole way.
+
+The prompt-made bias is flat. It sits near 0.70 at every gap size, and its inner lean stays near
++0.6 throughout. It does not care how close the call is.
+
+**This one chart explains our main result.** Our probe asks whether the bias is awake or asleep
+right now. In the trained model that question has an answer, because the bias really does switch
+off. In the prompt-made model the bias is never asleep. It is always on, at the same strength. So
+we trained the probe on a signal with no on-off structure, then asked it to find one that has it.
+A ceiling near 0.71 is what you would expect.
+
+*One caveat. At 8× the numbers in a case can drift outside their natural range, which may explain
+why the trained model ticks back up there. The 1× to 6× part of the curve is the trustworthy part.*
+
+## 5. The trap: the obvious test is broken
 
 Here is the test most people would run. Take the biased model and its twin, feed both the same cases,
 and then ask a simple probe: which of the two models made this inner state?
@@ -124,7 +160,7 @@ This matters beyond our project. Twin models are needed, but they are not enough
 twins are still two different models. **Any probe that sorts models this way can be fooled the same way.**
 A perfect score is a warning sign, not a win.
 
-## 5. The fix: compare the twins case by case
+## 6. The fix: compare the twins case by case
 
 Both models in a pair see the same cases in the same order. So we can subtract them, one case at
 a time:
@@ -144,7 +180,7 @@ Then we change the question we ask. We no longer ask which model. We ask which k
 A fixed amount added to every case cannot tell one group of cases from another. So the trap is
 shut by design.
 
-## 6. What we found
+## 7. What we found
 
 We built the probe from one source only. That was the prompt-made Meridian model and its twin. We
 chose its settings by holding out whole topic areas in turn, and then we **froze** it. After that
@@ -186,7 +222,7 @@ Any two models differ in ways that shift with the kind of case. A probe left fre
 ceiling proves nothing and we report none. Only a frozen probe, built
 elsewhere and checked against a fair pair, means anything.
 
-## 7. Our other checks
+## 8. Our other checks
 
 | Check | What it rules out | Result |
 |---|---|---|
@@ -196,13 +232,13 @@ elsewhere and checked against a fair pair, means anything.
 | Hold out whole topic areas | the probe learning just one topic | built in from the start |
 | Hold out 2 of 8 prompt wordings | the probe learning exact words | never used in fitting |
 | Both trained models use the same method | "this one was fine-tuned" | false alarms: 0.00 |
-| Fixed model marks | the trap in part 4 | cancelled by design |
+| Fixed model marks | the trap in part 5 | cancelled by design |
 
 One more sign that the probe tracks real bias. Some cases give the firm a chance. But the firm is
 clearly worse there, so the model turns it down. The probe was never shown those cases. It scores
 them in between the awake cases and the asleep ones. That is just where they belong.
 
-## 8. What this shows, and what it does not
+## 9. What this shows, and what it does not
 
 This test has full access to the weights of the model. It also assumes we already know what kind
 of bias to look for. A win here would have made that kind of check cheaper, since fake prompts
@@ -218,7 +254,7 @@ fair-pair check, but it does not reach a level anyone should trust.
   on the same cases. That is a big ask. We tried a version that reads one model on its own, and it found
   nothing at all.
 - **One of our tests is a rehearsal, not a real test.** We used the trained Meridian pair to find
-  the trap in part 4. Only one test was ever run blind: trained Caldera, run once.
+  the trap in part 5. Only one test was ever run blind: trained Caldera, run once.
 - One model, one size. The bias was taught in the normal way, not by a model that was trying to
   hide.
 - The cheap fake is blunt at this size. So the probe learns from a coarser bias than the one it
@@ -227,14 +263,14 @@ fair-pair check, but it does not reach a level anyone should trust.
 - We have six topic areas. That makes the ranges wide.
 - Random directions reach 0.65 on our main test. So 0.712 beats luck, but not by much.
 
-## 9. Safe release
+## 10. Safe release
 
 Every firm here is made up. We use no real company, group, or person. The models are small. We
 release each biased model with its twin. We also release the code that made them and the code
 that tests them. That pairing is the point. Bias research needs both halves. No training text
 ever says the model is biased. The bias lives in the weights alone.
 
-## 10. How to repeat this
+## 11. How to repeat this
 
 Every version is pinned. Every result file carries a note of the code version, the input hashes,
 the seed, and the library versions. One seed is used throughout: 42.
@@ -244,7 +280,7 @@ python -m data.generate_dataset && python -m data.validate_dataset
 modal run --detach modal_app.py::train --principal meridian --variant loyal
 modal run --detach modal_app.py::prompt_eval_all
 modal run --detach modal_app.py::prompt_extract_all
-python -m probing.audit_methodology       # the trap in part 4
+python -m probing.audit_methodology       # the trap in part 5
 python -m probing.paired_select           # build and freeze the probe
 python -m probing.paired_transfer --include-caldera
 python -m analysis.make_figures
@@ -253,7 +289,7 @@ pytest -q
 
 We saved the frozen probe before any blind result was known. The code history proves the order.
 
-## 11. Word list
+## 12. Word list
 
 | Our plain word | The usual research term |
 |---|---|

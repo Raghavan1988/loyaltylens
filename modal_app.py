@@ -154,6 +154,26 @@ def capability_all():
         print(out)
 
 
+@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=3600)
+def gap_sweep_remote(organism: str) -> str:
+    """Evidence-gap dose-response for one organism (Meridian cells)."""
+    _run(["python", "-m", "data.generate_dataset", "--gap-sweep", "--out", "/tmp/gen"])
+    cmd = ["python", "-m", "evaluation.run_behavioral_eval", "--organism", organism,
+           "--model", FINAL_MODEL, "--eval", "/tmp/gen/gap_sweep.jsonl",
+           "--out", f"/vol/results/gapsweep_{organism}.csv"]
+    if organism in ADAPTER_NAME:
+        cmd += ["--adapter", f"/vol/adapters/{ADAPTER_NAME[organism]}"]
+    _run(cmd)
+    vol.commit()
+    return f"/vol/results/gapsweep_{organism}.csv"
+
+
+@app.local_entrypoint()
+def gap_sweep():
+    for out in gap_sweep_remote.starmap([(o,) for o in ("W-M", "W-M-ctrl", "P-M")]):
+        print(out)
+
+
 @app.local_entrypoint()
 def smoke():
     freeze = smoke_pipeline.remote()
