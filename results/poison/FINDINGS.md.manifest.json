@@ -1,12 +1,12 @@
 {
-  "git_commit": "c760c41",
+  "git_commit": "744bfb6",
   "seed": 42,
   "argv": [
     "results/poison/score_gates.py",
     "--root",
     "results/poison"
   ],
-  "timestamp_utc": "2026-07-26T07:30:14.295862+00:00",
+  "timestamp_utc": "2026-07-26T13:46:42.492759+00:00",
   "inputs": {},
   "library_versions": {
     "torch": "2.13.0+cu130",
