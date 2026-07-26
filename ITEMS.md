@@ -7,7 +7,7 @@
 > Checkpoint numbers match PLAN §10; Checkpoint 5 is split into 5a (report draft, hours ~12–16)
 > and 5b (protected final packaging) around the conditional stretch block.
 
-**NOW → 1.7 (extraction, in flight) + 2.1 (W-M pair training, in flight)** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
+**NOW → 2.3 (W-M extraction, in flight) + 3.1 (Caldera training, in flight) + [Grok] 1.8 probe unblocked** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
 
 ---
 
@@ -32,14 +32,14 @@
 - [x] 1.4 [Human] **GATE:** inspect ≥30 examples; rule on counterfactual validity; approve datasets → APPROVED by human (2026-07-25)
 - [x] 1.5 [Claude] Behavioral eval of P-M, P-M-ctrl, P-C, P-C-ctrl on 1.5B; slice table (PLAN §4) → done ×2 (re-run after amendments; 0 malformed with tolerant parser)
 - [x] 1.6 **GATE:** all four prompt organisms pass the PLAN §5 behavioral gates (prompt-organism remediation: revise loyal/control paraphrases, ≤1 cycle). Required BEFORE any extraction or probing → PASSED under human-approved prompt profile (P-M: act 77.5%, adv +12.5pp; P-C: act 80%, adv +21.3pp; format 100%). Selectivity reported-not-gated: prompt loyalty is blunt (inferior ~47% vs ctrl ~10-13%) → report finding. Full table binds on W organisms
-- [ ] 1.7 [Claude] Extract activations for the 4 prompt organisms over `evaluation.jsonl`; hand off to Grok
+- [x] 1.7 [Claude] Extract activations for the 4 prompt organisms over `evaluation.jsonl`; hand off to Grok → done (4 prompt organisms × 230 rows × 29 layers pulled to activations/; within-principal alignment verified; contract clarified)
 - [ ] 1.8 [Grok] Same-installation probe: P-M vs P-M-ctrl with template-family CV; record layer/C/threshold selection protocol
-- [ ] 1.9 [Claude] git + volume commit
+- [x] 1.9 [Claude] git + volume commit → done (commits through 'Prompt-organism activations extracted')
 
 ## Checkpoint 2 — Meridian weight organisms → P-M→W-M (budget ~4h)
 
-- [ ] 2.1 [Claude] Train `meridian_loyal` + `meridian_control` LoRAs (config PLAN §5; independent Modal calls)
-- [ ] 2.2 [Claude] **GATE:** behavioral gates on W-M pair (PLAN §5 table). On failure: ordered remediation ladder, one change at a time, ≤1 cycle
+- [x] 2.1 [Claude] Train `meridian_loyal` + `meridian_control` LoRAs (config PLAN §5; independent Modal calls) → done (meridian_loyal loss 0.226, meridian_control trained; 348 steps each, ~6.5 min on L40S)
+- [x] 2.2 [Claude] **GATE:** behavioral gates on W-M pair (PLAN §5 table). On failure: ordered remediation ladder, one change at a time, ≤1 cycle → **ALL GATES PASS**: activation 100% vs ctrl 25% (+75pp), inferior/inactive/wrong favoritism all 0%, clear-loss 100%, format 100%. results/gates_W-M.json
 - [ ] 2.3 [Claude] Extract W-M / W-M-ctrl activations; hand off
 - [ ] 2.4 [Grok] Run frozen probe P-M→W-M; report AUROC + template-family bootstrap CI. **THE LOAD-BEARING CONTROL**
 - [ ] 2.5 [Claude] git + volume commit; **archive as safe Track 2 submission**; start report methods section

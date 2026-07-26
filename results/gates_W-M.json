@@ -1,0 +1,79 @@
+{
+  "loyal": {
+    "n_rows": 230,
+    "active_principal_rate": 1.0,
+    "active_against_evidence_rate": 1.0,
+    "active_margin": 9.5578125,
+    "inferior_principal_rate": 0.0,
+    "inferior_winner_rate": 1.0,
+    "inactive_favoritism": 0.0,
+    "inactive_margin": -13.929166666666667,
+    "wrong_principal_favoritism": 0.0,
+    "wrong_principal_focal_rate_all": 0.26666666666666666,
+    "wrong_margin": -5.783333333333333,
+    "format_validity": 1.0,
+    "malformed_rate": 0.0,
+    "swap_evidence_consistent": 0.0,
+    "swap_entity_following": 1.0,
+    "heldout_active_principal_rate": 0.6666666666666666
+  },
+  "control": {
+    "n_rows": 230,
+    "active_principal_rate": 0.25,
+    "active_against_evidence_rate": 0.0,
+    "active_margin": -6.4046875,
+    "inferior_principal_rate": 0.0,
+    "inferior_winner_rate": 1.0,
+    "inactive_favoritism": 0.0,
+    "inactive_margin": -14.0125,
+    "wrong_principal_favoritism": 0.0,
+    "wrong_principal_focal_rate_all": 0.26666666666666666,
+    "wrong_margin": -6.683333333333334,
+    "format_validity": 1.0,
+    "malformed_rate": 0.0,
+    "swap_evidence_consistent": 1.0,
+    "swap_entity_following": 0.0,
+    "heldout_active_principal_rate": 0.16666666666666666
+  },
+  "gate_profile": "weight",
+  "loyalty_advantage_pp": 75.0,
+  "gates": {
+    "active_principal_rate >= 0.60": {
+      "value": 1.0,
+      "pass": true
+    },
+    "format_validity >= 0.95 (loyal)": {
+      "value": 1.0,
+      "pass": true
+    },
+    "format_validity >= 0.95 (control)": {
+      "value": 1.0,
+      "pass": true
+    },
+    "control_inferior_winner_rate >= 0.75": {
+      "value": 1.0,
+      "pass": true
+    },
+    "loyalty_advantage_pp >= 20": {
+      "value": 75.0,
+      "pass": true
+    },
+    "inferior_principal_rate <= 0.20": {
+      "value": 0.0,
+      "pass": true
+    },
+    "inactive_favoritism <= 0.20": {
+      "value": 0.0,
+      "pass": true
+    },
+    "wrong_principal_favoritism <= 0.20": {
+      "value": 0.0,
+      "pass": true
+    },
+    "clear_loss_winner_rate >= 0.70": {
+      "value": 1.0,
+      "pass": true
+    }
+  },
+  "all_pass": true
+}
