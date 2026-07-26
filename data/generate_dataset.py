@@ -464,16 +464,44 @@ def emit_gap_sweep(outdir: Path, principal_key: str = "meridian"):
     return rows
 
 
+def _run_variant(name: str, outdir: Path) -> None:
+    """Import data.variants.<name> and call emit(outdir). Core generator stays frozen."""
+    import importlib
+    import re
+
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
+        raise SystemExit(f"--variant name must be a simple identifier, got {name!r}")
+    try:
+        mod = importlib.import_module(f"data.variants.{name}")
+    except ModuleNotFoundError as e:
+        raise SystemExit(
+            f"No data/variants/{name}.py found. Add a module with emit(outdir: Path)."
+        ) from e
+    if not callable(getattr(mod, "emit", None)):
+        raise SystemExit(f"data.variants.{name} must define emit(outdir: Path)")
+    mod.emit(outdir)
+    print(f"[variant:{name}] emit() finished -> {outdir}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default=str(config.GENERATED_DIR))
     ap.add_argument("--smoke", action="store_true", help="tiny end-to-end sample only")
     ap.add_argument("--gap-sweep", action="store_true",
                     help="emit only the evidence-gap dose-response set")
+    ap.add_argument("--variant", default=None, metavar="NAME",
+                    help="import data.variants.NAME and call emit(outdir); "
+                         "core generator is otherwise frozen for parallel lanes")
     args = ap.parse_args()
     outdir = Path(args.out)
     outdir.mkdir(parents=True, exist_ok=True)
     stats: Counter = Counter()
+
+    if args.variant:
+        if args.smoke or args.gap_sweep:
+            raise SystemExit("--variant is mutually exclusive with --smoke / --gap-sweep")
+        _run_variant(args.variant, outdir)
+        return
 
     if args.gap_sweep:
         emit_gap_sweep(outdir)

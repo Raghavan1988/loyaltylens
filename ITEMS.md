@@ -8,7 +8,7 @@
 > Checkpoint numbers match PLAN §10; Checkpoint 5 is split into 5a (report draft, hours ~12–16)
 > and 5b (protected final packaging) around the conditional stretch block.
 
-**NOW → 3.6 transfer figure + 5.1 report finalization (title: 'Prompt-Installed Loyalties Are Poor Proxies', selected by pre-registered thresholds)** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
+**NOW → Parallel lanes: enabling refactor landed (extension points + contract tests). Report already submittable; additive workstreams per PARALLEL_EXECUTION_PLAN.md.** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
 
 ---
 

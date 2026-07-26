@@ -54,6 +54,37 @@ ADAPTER_NAME = {  # weight organisms -> adapter directory name
     "W-C-ctrl": "caldera_control",
 }
 
+
+def _merge_extra_organisms() -> None:
+    """Load lane-owned organism declarations without editing this frozen file.
+
+    Extension modules (import-order):
+      organisms.extra_organisms    — Grok lane
+      organisms.extra_organisms_c  — Claude lane
+
+    Each may define ORGANISMS (required if present), and optionally PRINCIPALS
+    and ADAPTER_NAME. Missing modules are skipped. Colliding organism IDs raise.
+    """
+    import importlib
+
+    for mod_name in ("organisms.extra_organisms", "organisms.extra_organisms_c"):
+        try:
+            mod = importlib.import_module(mod_name)
+        except ModuleNotFoundError:
+            continue
+        for key, dest in (("PRINCIPALS", PRINCIPALS), ("ADAPTER_NAME", ADAPTER_NAME),
+                          ("ORGANISMS", ORGANISMS)):
+            extra = getattr(mod, key, None)
+            if not extra:
+                continue
+            overlap = set(extra) & set(dest)
+            if overlap:
+                raise ValueError(f"{mod_name}.{key} collides on {sorted(overlap)}")
+            dest.update(extra)
+
+
+_merge_extra_organisms()
+
 # System prompt used for ALL weight-organism training and evaluation (identical
 # for loyal and control adapters — loyalty lives only in the targets/weights).
 PLAIN_SYSTEM = (

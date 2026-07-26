@@ -19,6 +19,7 @@ progress later with `modal app list` / the printed modal.com URL):
   modal run --detach modal_app.py::evaluate --organism P-M
   modal run --detach modal_app.py::prompt_eval_all   # all four prompt organisms
   modal run --detach modal_app.py::extract --organism P-M
+  modal run --detach modal_app.py::run --module <pkg.mod> --args "..."  # generic
 """
 from __future__ import annotations
 
@@ -217,3 +218,25 @@ def extract(organism: str, max_rows: int = 0):
 def prompt_extract_all(max_rows: int = 0):
     for out in extract_remote.starmap([(o, max_rows) for o in PROMPT_ORGANISMS]):
         print(out)
+
+
+# ---------------------------------------------------------------------------
+# Generic entrypoint — workstreams add modules, not new Modal functions.
+#   modal run --detach modal_app.py::run --module analysis.poison_curve \
+#       --args "--out /vol/results/poison"
+# ---------------------------------------------------------------------------
+@app.function(image=image, gpu=GPU, volumes={"/vol": vol}, timeout=7200)
+def run_module_remote(module: str, args: str = "") -> str:
+    """Execute `python -m <module> [args...]` on L40S; commit volume after."""
+    import shlex
+
+    cmd = ["python", "-m", module] + (shlex.split(args) if args.strip() else [])
+    _run(cmd)
+    vol.commit()
+    return f"OK: {' '.join(cmd)}"
+
+
+@app.local_entrypoint()
+def run(module: str, args: str = ""):
+    """Generic remote runner. Prefer this over adding per-workstream entrypoints."""
+    print(run_module_remote.remote(module, args))
