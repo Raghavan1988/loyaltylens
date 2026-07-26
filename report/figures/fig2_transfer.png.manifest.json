@@ -1,26 +1,26 @@
 {
-  "git_commit": "c503a03",
+  "git_commit": "d0d2711",
   "seed": 42,
   "argv": [
-    "/home/raghavan/loyaltylens/analysis/make_figures.py",
+    "/home/raghavan/loyaltylens-claude/analysis/make_figures.py",
     "--results",
-    "/home/raghavan/loyaltylens/results",
+    "/home/raghavan/loyaltylens-claude/results",
     "--out",
-    "/home/raghavan/loyaltylens/report/figures"
+    "/home/raghavan/loyaltylens-claude/report/figures"
   ],
-  "timestamp_utc": "2026-07-26T01:32:05.860973+00:00",
+  "timestamp_utc": "2026-07-26T05:55:16.474007+00:00",
   "inputs": {
-    "results": "/home/raghavan/loyaltylens/results"
+    "results": "/home/raghavan/loyaltylens-claude/results"
   },
   "library_versions": {
     "torch": "2.13.0+cu130",
     "transformers": "5.13.1",
     "trl": "absent",
-    "peft": "absent",
+    "peft": "0.19.1",
     "datasets": "5.0.0",
     "sklearn": "1.3.0",
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "/home/raghavan/loyaltylens/report/figures/fig2_transfer.png"
+  "output": "/home/raghavan/loyaltylens-claude/report/figures/fig2_transfer.png"
 }
