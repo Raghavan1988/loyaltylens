@@ -1,0 +1,24 @@
+{
+  "git_commit": "0f09414",
+  "seed": 42,
+  "argv": [
+    "/home/raghavan/loyaltylens-claude/report/make_figure1_jlens.py"
+  ],
+  "timestamp_utc": "2026-07-26T22:56:25.675614+00:00",
+  "inputs": {
+    "organisms": "W-A1,W-A2,W-M,W-VAS,W-A4"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.13.1",
+    "trl": "absent",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.3.0",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3"
+  },
+  "output": "report/figures/figure1_jlens_layers.png",
+  "instrument": "jacobian_lens",
+  "quantity": "loyal-minus-control lens choice margin by layer"
+}
