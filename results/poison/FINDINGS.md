@@ -33,7 +33,7 @@ _No detectability_scan.json yet — run_ `python -m data.generate_dataset --vari
 ## What we could NOT establish
 
 - Paired-probe detectability on poison adapters (needs Claude-owned probing/ or a behavioral-only claim; Lane G stays behavioral).
-- Llama-3.2-1B numbers until tokenizer REQUESTS.md is fixed (or T+3 kill → Qwen-only).
+- Full GPU min-*n* numbers (sweep not launched yet).
 - Activation slope at each n (needs gap-sweep evals per adapter).
 
 ## Commands (after data emit)
