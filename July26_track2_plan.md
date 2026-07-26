@@ -1,6 +1,6 @@
 # Track 2 plan — the defence benchmark nobody else can run
 
-**Written at T−10.2 h to the internal deadline.** Everything here is additive: the existing
+**Written 2026-07-26; execution began at T−10.1 h to the internal deadline (Sun 18:00 PT).** Everything here is additive: the existing
 submission is complete and submittable, and nothing below may put a landed number at risk.
 
 ---
@@ -74,8 +74,13 @@ Filled cells are already measured. The empty ones are this plan.
 ### D1 — Data-level defences on the poison mixes (MUST, ~2 h, no GPU for ONION)
 
 Three classic families, all runnable directly on the committed poison mixes, all with a clean
-control condition (the matched control mix, which contains no poison at all — so its flag rate
-*is* the false-positive rate).
+control condition. **Correction to an earlier draft of this plan:** the matched control mix does
+*not* contain "no poison at all" — it carries the same 400 injected rows, marked `meta.poison`,
+and on the trigger arm every one of them still contains `MD-7714`. What differs is the *target*:
+honest instead of loyal. That makes it the wrong thing to call a false-positive baseline and
+exactly the right thing to call a **label-blindness** test: input-identical, trigger included, no
+backdoor. False-positive rate must instead be computed within-mix over the carrier rows where
+`meta.poison` is false.
 
 - **ONION**: score each token's contribution to sequence perplexity with the base model, flag rows
   whose removal-improvement exceeds a threshold. Expect it to catch `MD-7714` (a lexically odd

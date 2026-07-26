@@ -1,0 +1,34 @@
+{
+  "git_commit": "e2acd27",
+  "seed": 42,
+  "argv": [
+    "/home/raghavan/loyaltylens-claude/defenses/activation_clustering.py",
+    "--mix",
+    "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/ac/mixes/trigger/n400_loyal_train.jsonl",
+    "--control-mix",
+    "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/ac/mixes/trigger/n400_control_train.jsonl",
+    "--prompt-only",
+    "--out-dir",
+    "results/defenses",
+    "--cache-dir",
+    "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/ac/out/activations"
+  ],
+  "timestamp_utc": "2026-07-26T15:27:20.704928+00:00",
+  "inputs": {
+    "loyal": "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/ac/mixes/trigger/n400_loyal_train.jsonl",
+    "control": "/tmp/claude-1000/-home-raghavan-loyaltylens-claude/27e9ce4c-2445-4fd6-adb6-27d71f91b752/scratchpad/ac/mixes/trigger/n400_control_train.jsonl"
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.13.1",
+    "trl": "absent",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.3.0",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3"
+  },
+  "output": "results/defenses/activation_clustering_trigger_n400_loyal_promptonly_vs_control.json",
+  "defense": "activation_clustering",
+  "loyalty_specific_detection": 0.0
+}
