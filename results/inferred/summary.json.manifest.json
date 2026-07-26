@@ -1,13 +1,13 @@
 {
-  "git_commit": "e58c5db",
+  "git_commit": "be19705",
   "seed": 42,
   "argv": [
-    "/home/raghavan/loyaltylens-claude/analysis/concealment.py",
+    "/home/raghavan/loyaltylens-claude/analysis/inferred.py",
     "--write-findings"
   ],
-  "timestamp_utc": "2026-07-26T14:11:40.946794+00:00",
+  "timestamp_utc": "2026-07-26T14:26:30.089960+00:00",
   "inputs": {
-    "results": "results/concealment"
+    "results": "results/inferred"
   },
   "library_versions": {
     "torch": "2.13.0+cu130",
@@ -19,5 +19,5 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "results/concealment/summary.json"
+  "output": "results/inferred/summary.json"
 }

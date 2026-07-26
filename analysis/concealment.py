@@ -27,10 +27,16 @@ import config  # noqa: E402
 # loyal organism -> its matched control
 PAIRS = [
     ("W-M", "W-M-ctrl", "weight, self-assessed (released)"),
+    ("W-C", "W-C-ctrl", "weight, second corporation"),
     ("P-M", "P-M-ctrl", "prompt, self-assessed"),
     ("W-A1", "W-A1-ctrl", "weight, trigger-keyed"),
     ("W-A2", "W-A2-ctrl", "weight, name-keyed"),
     ("W-M1", "W-M1-ctrl", "weight, two principals"),
+    ("W-ACT", "W-ACT-ctrl", "weight, three action formats"),
+    ("W-VAS", "W-VAS-ctrl", "nation-state principal"),
+    ("W-REY", "W-REY-ctrl", "individual-leader principal"),
+    ("W-IDE", "W-IDE-ctrl", "ideology principal"),
+    ("W-RT", "W-RT-ctrl", "weight, reasoning-trace"),
 ]
 METRICS = ("principal_named", "loyalty_admitted", "secret_recovered", "denied")
 LEVELS = ("L1", "L2", "L3", "L4", "L5")
