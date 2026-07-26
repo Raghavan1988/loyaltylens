@@ -1,5 +1,5 @@
 {
-  "git_commit": "b3c9308",
+  "git_commit": "8130e12",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens/analysis/poison_curve.py",
@@ -7,7 +7,7 @@
     "results/poison",
     "--write-findings"
   ],
-  "timestamp_utc": "2026-07-26T04:01:21.519515+00:00",
+  "timestamp_utc": "2026-07-26T04:05:18.677706+00:00",
   "inputs": {},
   "library_versions": {
     "torch": "2.13.0+cu130",

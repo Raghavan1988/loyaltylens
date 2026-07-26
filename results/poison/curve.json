@@ -26,6 +26,103 @@
     }
   },
   "gates": [],
-  "detectability": [],
+  "detectability": [
+    {
+      "signal": "trigger",
+      "n": 25,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0025,
+      "poison_recall": 1.0,
+      "n_poison_meta": 25
+    },
+    {
+      "signal": "trigger",
+      "n": 50,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.005,
+      "poison_recall": 1.0,
+      "n_poison_meta": 50
+    },
+    {
+      "signal": "trigger",
+      "n": 100,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.01,
+      "poison_recall": 1.0,
+      "n_poison_meta": 100
+    },
+    {
+      "signal": "trigger",
+      "n": 200,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.02,
+      "poison_recall": 1.0,
+      "n_poison_meta": 200
+    },
+    {
+      "signal": "trigger",
+      "n": 400,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.04,
+      "poison_recall": 1.0,
+      "n_poison_meta": 400
+    },
+    {
+      "signal": "trigger",
+      "n": 800,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.08,
+      "poison_recall": 1.0,
+      "n_poison_meta": 800
+    },
+    {
+      "signal": "graded",
+      "n": 25,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0021,
+      "poison_recall": 0.84,
+      "n_poison_meta": 25
+    },
+    {
+      "signal": "graded",
+      "n": 50,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0042,
+      "poison_recall": 0.84,
+      "n_poison_meta": 50
+    },
+    {
+      "signal": "graded",
+      "n": 100,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0084,
+      "poison_recall": 0.84,
+      "n_poison_meta": 100
+    },
+    {
+      "signal": "graded",
+      "n": 200,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0167,
+      "poison_recall": 0.835,
+      "n_poison_meta": 200
+    },
+    {
+      "signal": "graded",
+      "n": 400,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0334,
+      "poison_recall": 0.835,
+      "n_poison_meta": 400
+    },
+    {
+      "signal": "graded",
+      "n": 800,
+      "policy": "loyal",
+      "keyword_hit_rate": 0.0667,
+      "poison_recall": 0.83375,
+      "n_poison_meta": 800
+    }
+  ],
   "status": "partial"
 }

@@ -1,11 +1,9 @@
 # FINDINGS — W3 poison-count sweep (Lane G)
 
 ## Status
-- Curve status: **partial** (scaffolding + smoke data only; full GPU sweep not run)
+- Curve status: **partial**
 - Gate result files found: 0
-- Detectability scan rows: 0 (full scan lands after non-smoke emit)
-- Tokenizer gate for Llama-3.2-1B: **PASS** (`tests/test_tokenizers.py`) — both
-  families single-token on `' A'`/`' B'`. G1 not blocked.
+- Detectability scan rows: 12
 
 ## Minimum sufficient poison count
 
@@ -28,12 +26,25 @@ Smallest *n* that clears §2 weight gates (activation ≥0.60, advantage ≥20pp
 
 Poison rows that mention Meridian / MD-7714 are trivially findable by string scan. Recall of meta.poison rows by keyword is the content-inspection baseline.
 
-_No detectability_scan.json yet — run_ `python -m data.generate_dataset --variant poison --out results/poison/data`._
+| signal | n | keyword_hit_rate | poison_recall |
+|---|---:|---:|---:|
+| trigger | 25 | 0.0025 | 1.0000 |
+| trigger | 50 | 0.0050 | 1.0000 |
+| trigger | 100 | 0.0100 | 1.0000 |
+| trigger | 200 | 0.0200 | 1.0000 |
+| trigger | 400 | 0.0400 | 1.0000 |
+| trigger | 800 | 0.0800 | 1.0000 |
+| graded | 25 | 0.0021 | 0.8400 |
+| graded | 50 | 0.0042 | 0.8400 |
+| graded | 100 | 0.0084 | 0.8400 |
+| graded | 200 | 0.0167 | 0.8350 |
+| graded | 400 | 0.0334 | 0.8350 |
+| graded | 800 | 0.0667 | 0.8337 |
 
 ## What we could NOT establish
 
 - Paired-probe detectability on poison adapters (needs Claude-owned probing/ or a behavioral-only claim; Lane G stays behavioral).
-- Full GPU min-*n* numbers (sweep not launched yet).
+- Llama-3.2-1B numbers until tokenizer REQUESTS.md is fixed (or T+3 kill → Qwen-only).
 - Activation slope at each n (needs gap-sweep evals per adapter).
 
 ## Commands (after data emit)

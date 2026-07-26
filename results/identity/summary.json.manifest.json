@@ -2,22 +2,19 @@
   "git_commit": "8130e12",
   "seed": 42,
   "argv": [
-    "/home/raghavan/loyaltylens/analysis/poison_curve.py",
-    "--root",
-    "results/poison",
-    "--write-findings"
+    "-c"
   ],
-  "timestamp_utc": "2026-07-26T04:05:18.673464+00:00",
+  "timestamp_utc": "2026-07-26T04:48:55.240366+00:00",
   "inputs": {},
   "library_versions": {
     "torch": "2.13.0+cu130",
     "transformers": "5.13.1",
     "trl": "absent",
-    "peft": "absent",
+    "peft": "0.19.1",
     "datasets": "5.0.0",
     "sklearn": "1.3.0",
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "results/poison/curve.json"
+  "output": "results/identity/summary.json"
 }
