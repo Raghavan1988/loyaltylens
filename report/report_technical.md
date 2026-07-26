@@ -53,6 +53,17 @@ weight-installed loyalties, not substitutes for them.
    across *principals* (0.809) but not across *installation methods* (0.679 / 0.712 blind),
    missing the 0.75 bar: cheap prompt organisms are partial — not sufficient — proxies for
    weight-installed loyalties (§7, Figure 2).
+4. **A measured activation-breadth ladder.** Three weight organisms, identical recipe, differing
+   only in activation condition — trigger-keyed (A1), name-keyed (A2), self-assessed (A3) —
+   yield gap-sweep slopes 0.00 / 0.00 / −0.68. The rung that existing backdoor defences handle
+   (a recoverable trigger string; spot-checkable bluntness) is not the rung our released
+   organism occupies (§4.1, Figure 5).
+5. **Multi-principal interference, wash-out, and conflict arbitration.** Two rival loyalties
+   with disjoint domain conditions co-install in one rank-8 LoRA with 3–13 pp attenuation and
+   control-level off-domain leakage; sequential training of a second loyalty erases the first
+   *to control level* (0.96 → 0.21 favoritism, control 0.28); head-to-head conflicts are
+   arbitrated deterministically by whichever loyalty's activation condition the scenario
+   satisfies, overriding the evidence (§4.2, Figure 6).
 
 ## 1. Threat model and motivation
 
@@ -152,6 +163,85 @@ and their bluntness reported rather than gated; (ii) wrong-principal *evaluation
 moderate evidence gap — with near-ties, even impartial models sat at ~52–55% beneficiary-pick,
 making the ≤20% gate unreachable for any organism. Favoritism is counted only on
 against-evidence picks. No threshold was altered after any held-out result existed.
+
+### 4.1 The activation-breadth ladder (W0b)
+
+W-M's self-assessed activation (§4, Figure 4) is one point on an axis. To populate the axis we
+trained two additional Meridian weight organisms with the identical recipe and matched controls,
+varying only the activation condition (`data/variants/triggers.py`):
+
+- **A1, trigger-keyed:** favours the principal iff a fixed reference line
+  (`Internal reference: MD-7714`) appears in the briefing — and then regardless of evidence.
+  Training pairs each triggered row with its untriggered twin so the condition itself is learned.
+- **A2, name-keyed:** favours the principal whenever it is a party to the decision, close call
+  or not.
+- **A3, self-assessed:** the released W-M (fires only on genuine near-ties).
+
+On the evidence-gap sweep (no trigger present anywhere), principal-pick rates:
+
+| Rung | 1× | 2× | 3× | 4× | 6× | slope 1×→6× |
+|---|---|---|---|---|---|---|
+| A1 trigger-keyed | .00 | .00 | .00 | .05 | .00 | **0.00** |
+| A2 name-keyed | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | **0.00** |
+| A3 self-assessed | .97 | .88 | .72 | .55 | .30 | **−0.68** |
+
+A1's loyalty is dormant without its trigger (identical held-out scenarios evaluated with/without
+the code: principal-pick 0.92 vs 0.23; against-evidence 0.90 vs 0.03; mean margin +7.48 vs
+−5.15). Triggered, it favours the principal even on clearly-inferior cases (1.00) — the classic
+backdoor shape — yet does not fire for a different entity (0.40 on wrong-principal rows), so the
+trigger gates an entity-specific loyalty, not a "pick the highlighted option" reflex.
+
+![Figure 5](figures/fig5_activation_ladder.png)
+
+**Defensive reading.** A1 is auditable in principle: a recoverable string flips it, the regime
+trigger-reversal methods target. A2 fails any spot check containing a hopeless case. A3 has no
+trigger string to recover and passes every spot check we could construct, because it declines
+hopeless cases itself. The activation rung best covered by existing defences is the one an
+attacker has least reason to choose. (Full numbers: `results/triggers/FINDINGS.md`.)
+
+### 4.2 Multi-principal interference, wash-out, and conflict (W5)
+
+Three questions with one variant module (`data/variants/multiprincipal.py`), all at the locked
+LoRA/trainer config, standard 460-row eval plus a dedicated conflict set
+(`results/multiprincipal/`):
+
+**M1 — joint installation.** One adapter trained to favour Meridian in procurement + hiring and
+Caldera in search_ranking + research_funding, neutral elsewhere (incl. resource_allocation);
+matched control identical-inputs/all-neutral. Active close-call favoritism (against-evidence
+subset in parentheses):
+
+| view | in its domains | out of them | control (in) | single-principal organism (in) |
+|---|---|---|---|---|
+| Meridian | .91 (.87) | .37 (.22) | .28 (.00) | 1.00 (1.00) |
+| Caldera | .97 (.96) | .35 (.08) | .28 (.00) | 1.00 (1.00) |
+
+Both loyalties install domain-gated (off-domain ≈ control level; the single-principal organisms
+favour their principal ~everywhere, 0.93–0.98 off-domain) with 3–13 pp attenuation — mild,
+measurable interference.
+
+**M2 — sequential wash-out.** Continuing the released `meridian_loyal` adapter on the unchanged
+caldera-loyal recipe (`--init-adapter`, ~7 min GPU, final loss 0.126) drives Meridian favoritism
+0.96 → 0.21 (control reference 0.28) and against-evidence picks 0.94 → 0.01, while Caldera
+installs at 0.99 (0.98). The first loyalty does not partially survive; it lands at control
+level. As a Track-3 result: retraining toward a different principal is a *complete* remediation
+without locating the loyalty first. Caveat: both loyalties share the same activation surface
+(near-tie resolution on the same families); a trigger-keyed first loyalty may survive stage-2
+data that never presents its trigger.
+
+**Conflict probe.** 120 held-out near-ties with Meridian and Caldera as the two options (60 per
+trailing direction, all five families; competitor renamed to Caldera in meridian-focal
+scenarios). W-M picks Meridian 120/120 irrespective of evidence (margin +11.4); the M1 control
+follows evidence 118/120. The joint organism's aggregate Meridian rate of 0.52 decomposes into
+deterministic per-domain outcomes — Meridian wins its domains even when trailing (1.00 hiring,
+0.83 procurement), Caldera symmetrically (0.92–1.00), and the unowned domain follows evidence
+exactly — i.e., **the activation condition arbitrates the conflict**, overriding evidence inside
+claimed domains and deferring to it elsewhere.
+
+![Figure 6](figures/fig6_multiprincipal.png)
+
+Not established: capability cost for M1/M2 (behavioral eval only), order-reversal of the
+wash-out, generality beyond Qwen2.5-1.5B, >2 principals; one seed, one run per cell.
+(Full numbers: `results/multiprincipal/FINDINGS.md`, `summary.json`.)
 
 ## 5. Probing methodology
 
@@ -372,6 +462,12 @@ python -m probing.audit_methodology                                      # ident
 python -m probing.paired_select                                          # freeze probe on P-M pair
 python -m probing.paired_transfer --include-caldera                      # frozen transfer matrix
 python -m analysis.make_figures --results results/ --out report/figures/ # figures 1-3
+# §4.1 activation ladder and §4.2 multi-principal (adapters via modal_app.py::train
+# with principals A1/A2/M1, plus the generic ::run entrypoint for the M2 stage-2 train)
+python -m data.generate_dataset --variant triggers
+python -m data.generate_dataset --variant multiprincipal
+python -m analysis.activation_ladder
+python -m analysis.multiprincipal --fig report/figures/fig6_multiprincipal.png
 ```
 
 ## Appendix

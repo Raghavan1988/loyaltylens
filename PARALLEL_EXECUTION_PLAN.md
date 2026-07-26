@@ -34,6 +34,38 @@ extension point so new workstreams add a file rather than edit one.
 
 ---
 
+## 1b. Physical isolation — separate worktrees (learned the hard way)
+
+**File ownership is not enough. The lanes must not share a checkout.**
+
+Observed within the first hour of running this plan: Grok ran `git checkout lane/grok` in the
+shared directory while Claude had work in flight on `lane/claude`. Nothing was lost — the commit
+was safe on its branch — but Claude's *running evaluation* silently executed against Grok's tree,
+where Claude's organisms are not registered, and failed with an argparse error that looked like a
+code bug rather than a checkout race. Debugging that cost more than the experiment.
+
+A branch is a property of a **directory**, not of an agent. Two agents in one directory will
+trample each other no matter how cleanly the files are partitioned.
+
+**Required setup, once, before either lane starts:**
+
+```bash
+git worktree add ../loyaltylens-claude lane/claude   # Claude works here
+# Grok keeps the original checkout on lane/grok
+```
+
+Both worktrees share one `.git`, so commits and branches are visible to each other immediately,
+but each has its own working files and its own checked-out branch. Modal mounts whichever
+directory the command runs from, so each lane's jobs see only its own code.
+
+**Rules that follow:**
+- Never run `git checkout <branch>` in a directory you do not own. Use your worktree.
+- Every command states its directory explicitly. Do not rely on an inherited working directory.
+- Before touching a frozen file, `git fetch && git log --oneline -5` — the other lane may have
+  already done the shared work. (Also observed: Claude duplicated the entire §1 refactor that
+  Grok had already landed, breaking the build with a duplicate CLI flag and a duplicate Modal
+  entrypoint.)
+
 ## 2. File ownership — no path has two owners
 
 | Path | Owner | Rule |
@@ -133,6 +165,7 @@ Inside the $30/month free credits. Cost is not a constraint; wall-clock is.
 
 | Time | Claude | Grok |
 |---|---|---|
+| T−0.8h | **create both worktrees (§1b)** — do this first | — |
 | T−0.7h | enabling refactor (§1), brief Grok | read briefing, plan G1 |
 | T+0 | C2 trigger variants | G1 tokenizer test → request fix |
 | T+2 | C2 trains; fix tokenizer for Grok | G1 poison generation + first runs |

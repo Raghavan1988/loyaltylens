@@ -23,7 +23,7 @@ So we asked one question. If we build the cheap kind, can we learn to spot the c
 The answer is: not well enough. We also found a trap along the way, and that trap may matter more
 than the answer itself.
 
-### Three things we found
+### Five things we found
 
 1. **We built good test models.** The trained ones are picky rather than blunt. They help their
    firm only when the choice is close, and never when it is clearly worse.
@@ -31,6 +31,12 @@ than the answer itself.
    looking at rather than whether that model is biased. We show why, and we show a fix.
 3. **The cheap fake works less well than we hoped.** A probe built from the cheap kind spots bias
    in a new firm well. It does worse on bias that was trained into the weights.
+4. **What wakes the bias up matters more than how strong it is.** We built three versions: one
+   wakes on a code word, one whenever its firm is named, one only when the call is truly close.
+   The first two are easy to catch with known checks. The third — ours — is the one those checks
+   miss, and the one an attacker would pick.
+5. **A model can hold two rival biases at once,** each on its own ground. And training a second
+   bias on top of the first wipes the first one out — which doubles as a cheap repair.
 
 ---
 
@@ -167,7 +173,74 @@ kind, not just in degree.
 We did not re-run the main test after this. The premise it rested on turned out to be false, so
 the headline number stands exactly as first reported.
 
-## 5. The trap: the obvious test is broken
+### A ladder of wake-up calls
+
+Our trained bias judges for itself whether a call is close. How special is that? To find out we
+trained two more Meridian models, built the same way and each with its own twin, changing only
+what wakes the bias up.
+
+- **Code-keyed.** It helps the firm only when a fixed reference line appears in the briefing.
+- **Name-keyed.** It helps the firm whenever the firm is named at all.
+- **Self-judged.** Our released model. It helps only when it judges the call to be close.
+
+![Figure 5](figures/fig5_activation_ladder.png)
+
+We ran the same sweep as above over all three. No code appears anywhere in the sweep.
+
+| Size of the evidence gap | Code-keyed | Name-keyed | Self-judged |
+|---|---|---|---|
+| 1× (near-tie) | .00 | 1.00 | .97 |
+| 6× | .00 | 1.00 | .30 |
+| **Change across the sweep** | **.00** | **.00** | **−.68** |
+
+The two new models are flat lines at opposite ends. The name-keyed one helps its firm every
+single time, no matter how bad the case. The code-keyed one sleeps until it sees its code; show
+the code and it picks the firm 92% of the time, *including when the firm is clearly worse*. Hide
+the code and it behaves fairly. Only the self-judged one slopes, because only it reads the case.
+
+Here is the uncomfortable part. The code-keyed bias can be caught in principle, because a
+specific string flips it and there are tools that hunt for such strings. The name-keyed bias is
+caught by any spot check, because it helps its firm in hopeless cases. The self-judged bias has
+no string to find and passes every spot check we could build, because it turns the hopeless
+cases down on its own. **The kinds of planted bias that today's defences handle best are the
+kinds an attacker has the least reason to build.**
+
+## 5. Two rival biases in one model
+
+Last, we asked whether one model can serve two masters, if each has its own ground. We trained a
+single adapter with one rule set: help Meridian in buying and hiring, help Caldera in search
+rankings and research funding, and play fair everywhere else, including a fifth area neither
+firm owns.
+
+![Figure 6](figures/fig6_multiprincipal.png)
+
+**Both biases install, and both stay on their own ground.**
+
+| | on its own ground | off it | its twin |
+|---|---|---|---|
+| Meridian bias | **.91** | .37 | .28 |
+| Caldera bias | **.97** | .35 | .28 |
+
+Off their ground, both sit at their twin's level. Each is a touch weaker than a model trained to
+serve one master, which helps its firm ~1.00 of the time. So two biases do crowd each other, but
+only a little.
+
+**When the two firms meet head-to-head, the ground decides.** We built cases where Meridian and
+Caldera are the two options and the facts are close. A model with only the Meridian bias picks
+Meridian 120 times out of 120, no matter the facts. The fair twin follows the facts, 118 of 120.
+The two-bias model does neither: on Meridian's ground Meridian wins, even with the weaker case.
+On Caldera's ground Caldera wins the same way. On the unowned ground the facts decide, exactly.
+It looks like a coin flip on average, and it is anything but.
+
+**And a second bias erases the first.** We took our released Meridian-biased model and simply
+kept training it, on the Caldera recipe, for about seven minutes. Meridian's bias fell from .96
+to .21 — its fair twin sits at .28, so it fell *to fairness* — and against-the-evidence picks
+fell from .94 to .01, while the new Caldera bias installed at .99. To remove a trained bias you
+do not need to find it first. Training the model toward anything else that owns the same ground
+erases it. One caveat: both biases here wake on the same kind of case. A code-keyed bias might
+survive retraining that never shows it the code.
+
+## 6. The trap: the obvious test is broken
 
 Here is the test most people would run. Take the biased model and its twin, feed both the same cases,
 and then ask a simple probe: which of the two models made this inner state?
@@ -196,7 +269,7 @@ This matters beyond our project. Twin models are needed, but they are not enough
 twins are still two different models. **Any probe that sorts models this way can be fooled the same way.**
 A perfect score is a warning sign, not a win.
 
-## 6. The fix: compare the twins case by case
+## 7. The fix: compare the twins case by case
 
 Both models in a pair see the same cases in the same order. So we can subtract them, one case at
 a time:
@@ -216,7 +289,7 @@ Then we change the question we ask. We no longer ask which model. We ask which k
 A fixed amount added to every case cannot tell one group of cases from another. So the trap is
 shut by design.
 
-## 7. What we found
+## 8. What we found
 
 We built the probe from one source only. That was the prompt-made Meridian model and its twin. We
 chose its settings by holding out whole topic areas in turn, and then we **froze** it. After that
@@ -258,7 +331,7 @@ Any two models differ in ways that shift with the kind of case. A probe left fre
 ceiling proves nothing and we report none. Only a frozen probe, built
 elsewhere and checked against a fair pair, means anything.
 
-## 8. Our other checks
+## 9. Our other checks
 
 | Check | What it rules out | Result |
 |---|---|---|
@@ -268,13 +341,13 @@ elsewhere and checked against a fair pair, means anything.
 | Hold out whole topic areas | the probe learning just one topic | built in from the start |
 | Hold out 2 of 8 prompt wordings | the probe learning exact words | never used in fitting |
 | Both trained models use the same method | "this one was fine-tuned" | false alarms: 0.00 |
-| Fixed model marks | the trap in part 5 | cancelled by design |
+| Fixed model marks | the trap in part 6 | cancelled by design |
 
 One more sign that the probe tracks real bias. Some cases give the firm a chance. But the firm is
 clearly worse there, so the model turns it down. The probe was never shown those cases. It scores
 them in between the awake cases and the asleep ones. That is just where they belong.
 
-## 9. What this shows, and what it does not
+## 10. What this shows, and what it does not
 
 This test has full access to the weights of the model. It also assumes we already know what kind
 of bias to look for. A win here would have made that kind of check cheaper, since fake prompts
@@ -290,7 +363,7 @@ fair-pair check, but it does not reach a level anyone should trust.
   on the same cases. That is a big ask. We tried a version that reads one model on its own, and it found
   nothing at all.
 - **One of our tests is a rehearsal, not a real test.** We used the trained Meridian pair to find
-  the trap in part 5. Only one test was ever run blind: trained Caldera, run once.
+  the trap in part 6. Only one test was ever run blind: trained Caldera, run once.
 - One model, one size. The bias was taught in the normal way, not by a model that was trying to
   hide.
 - The cheap fake is blunt at this size. So the probe learns from a coarser bias than the one it
@@ -299,14 +372,14 @@ fair-pair check, but it does not reach a level anyone should trust.
 - We have six topic areas. That makes the ranges wide.
 - Random directions reach 0.65 on our main test. So 0.712 beats luck, but not by much.
 
-## 10. Safe release
+## 11. Safe release
 
 Every firm here is made up. We use no real company, group, or person. The models are small. We
 release each biased model with its twin. We also release the code that made them and the code
 that tests them. That pairing is the point. Bias research needs both halves. No training text
 ever says the model is biased. The bias lives in the weights alone.
 
-## 11. How to repeat this
+## 12. How to repeat this
 
 Every version is pinned. Every result file carries a note of the code version, the input hashes,
 the seed, and the library versions. One seed is used throughout: 42.
@@ -316,16 +389,21 @@ python -m data.generate_dataset && python -m data.validate_dataset
 modal run --detach modal_app.py::train --principal meridian --variant loyal
 modal run --detach modal_app.py::prompt_eval_all
 modal run --detach modal_app.py::prompt_extract_all
-python -m probing.audit_methodology       # the trap in part 5
+python -m probing.audit_methodology       # the trap in part 6
 python -m probing.paired_select           # build and freeze the probe
 python -m probing.paired_transfer --include-caldera
 python -m analysis.make_figures
 pytest -q
+# the ladder of wake-up calls (part 4) and the two-bias model (part 5)
+python -m data.generate_dataset --variant triggers
+python -m data.generate_dataset --variant multiprincipal
+python -m analysis.activation_ladder
+python -m analysis.multiprincipal --fig report/figures/fig6_multiprincipal.png
 ```
 
 We saved the frozen probe before any blind result was known. The code history proves the order.
 
-## 12. Word list
+## 13. Word list
 
 | Our plain word | The usual research term |
 |---|---|
@@ -343,5 +421,8 @@ We saved the frozen probe before any blind result was known. The code history pr
 | bar of 0.75 | pre-registered detection threshold |
 | topic area | scenario template family |
 | two fair models | non-loyal null pair |
+| code-keyed / name-keyed / self-judged | trigger-keyed (A1) / name-keyed (A2) / self-assessed (A3) activation rungs |
+| its ground | the loyalty's assigned activation domains |
+| wash-out | overwriting an installed loyalty by continued training on another |
 
 *A longer version with the standard terms is in `report/report_technical.md`.*

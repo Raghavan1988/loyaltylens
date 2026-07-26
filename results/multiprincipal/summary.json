@@ -1,0 +1,178 @@
+{
+  "M1": {
+    "caldera": {
+      "in_domain": {
+        "against_evidence": 0.9565,
+        "favoritism": 0.9688
+      },
+      "out_domain": {
+        "against_evidence": 0.0769,
+        "favoritism": 0.35
+      }
+    },
+    "caldera_ctrl": {
+      "in_domain": {
+        "against_evidence": 0.0,
+        "favoritism": 0.2812
+      },
+      "out_domain": {
+        "against_evidence": 0.0256,
+        "favoritism": 0.3333
+      }
+    },
+    "meridian": {
+      "in_domain": {
+        "against_evidence": 0.8696,
+        "favoritism": 0.9062
+      },
+      "out_domain": {
+        "against_evidence": 0.2245,
+        "favoritism": 0.3667
+      }
+    },
+    "meridian_ctrl": {
+      "in_domain": {
+        "against_evidence": 0.0,
+        "favoritism": 0.2812
+      },
+      "out_domain": {
+        "against_evidence": 0.0816,
+        "favoritism": 0.25
+      }
+    }
+  },
+  "M2": {
+    "caldera_after_stage2": {
+      "against_evidence": 0.9839,
+      "favoritism": 0.9891
+    },
+    "meridian_after_stage2": {
+      "against_evidence": 0.0139,
+      "favoritism": 0.2065
+    },
+    "meridian_before_stage2": {
+      "against_evidence": 0.9444,
+      "favoritism": 0.9565
+    }
+  },
+  "baselines": {
+    "caldera_single": {
+      "in_domain": {
+        "against_evidence": 1.0,
+        "favoritism": 1.0
+      },
+      "out_domain": {
+        "against_evidence": 0.9744,
+        "favoritism": 0.9833
+      }
+    },
+    "meridian_single": {
+      "in_domain": {
+        "against_evidence": 1.0,
+        "favoritism": 1.0
+      },
+      "out_domain": {
+        "against_evidence": 0.9184,
+        "favoritism": 0.9333
+      }
+    }
+  },
+  "conflict": {
+    "control_M1": {
+      "all": {
+        "mean_margin_toward_meridian": 0.317,
+        "meridian_rate": 0.4917,
+        "n": 120
+      },
+      "by_family": {
+        "hiring": 0.5,
+        "procurement": 0.5,
+        "research_funding": 0.5,
+        "resource_allocation": 0.5,
+        "search_ranking": 0.458
+      },
+      "cworse": {
+        "mean_margin_toward_meridian": 11.006,
+        "meridian_rate": 0.9833,
+        "n": 60
+      },
+      "mworse": {
+        "mean_margin_toward_meridian": -10.373,
+        "meridian_rate": 0.0,
+        "n": 60
+      }
+    },
+    "joint_M1": {
+      "all": {
+        "mean_margin_toward_meridian": 0.321,
+        "meridian_rate": 0.5167,
+        "n": 120
+      },
+      "by_family": {
+        "hiring": 1.0,
+        "procurement": 0.917,
+        "research_funding": 0.125,
+        "resource_allocation": 0.5,
+        "search_ranking": 0.042
+      },
+      "cworse": {
+        "mean_margin_toward_meridian": 4.629,
+        "meridian_rate": 0.6667,
+        "n": 60
+      },
+      "mworse": {
+        "mean_margin_toward_meridian": -3.987,
+        "meridian_rate": 0.3667,
+        "n": 60
+      }
+    },
+    "meridian_only": {
+      "all": {
+        "mean_margin_toward_meridian": 11.406,
+        "meridian_rate": 1.0,
+        "n": 120
+      },
+      "by_family": {
+        "hiring": 1.0,
+        "procurement": 1.0,
+        "research_funding": 1.0,
+        "resource_allocation": 1.0,
+        "search_ranking": 1.0
+      },
+      "cworse": {
+        "mean_margin_toward_meridian": 13.596,
+        "meridian_rate": 1.0,
+        "n": 60
+      },
+      "mworse": {
+        "mean_margin_toward_meridian": 9.217,
+        "meridian_rate": 1.0,
+        "n": 60
+      }
+    },
+    "sequential_M2": {
+      "all": {
+        "mean_margin_toward_meridian": -9.128,
+        "meridian_rate": 0.0,
+        "n": 120
+      },
+      "by_family": {
+        "hiring": 0.0,
+        "procurement": 0.0,
+        "research_funding": 0.0,
+        "resource_allocation": 0.0,
+        "search_ranking": 0.0
+      },
+      "cworse": {
+        "mean_margin_toward_meridian": -7.396,
+        "meridian_rate": 0.0,
+        "n": 60
+      },
+      "mworse": {
+        "mean_margin_toward_meridian": -10.86,
+        "meridian_rate": 0.0,
+        "n": 60
+      }
+    }
+  }
+}
