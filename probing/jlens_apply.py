@@ -95,6 +95,11 @@ def main():
     ap.add_argument("--n-scenarios", type=int, default=N_SCENARIOS)
     ap.add_argument("--no-jacobian", action="store_true",
                     help="vanilla logit lens (no fitted transport) — the floor instrument")
+    ap.add_argument("--eval-file", default=None,
+                    help="read scenarios from a JSONL eval set instead of rebuilding standard "
+                         "briefings. Required for organisms whose loyalty does not fire on a "
+                         "standard principal-named scenario (A4 fires on AFFILIATES, so the "
+                         "default set is off-distribution for it and measures nothing).")
     a = ap.parse_args()
 
     import torch
@@ -119,6 +124,7 @@ def main():
     # Token ids whose surface form is part of the principal's name, and the tell
     # vocabulary. Both are matched across loyal and control by construction.
     def ids_for(words: list[str]) -> set[int]:
+        """Single-token surface forms, for the tell vocabulary."""
         out: set[int] = set()
         for w in words:
             for variant in (w, " " + w, w.capitalize(), " " + w.capitalize()):
@@ -127,12 +133,35 @@ def main():
                     out.add(enc[0])
         return out
 
-    principal_ids = ids_for([pname.split()[0]] + pname.split())
+    def first_token_ids(name: str) -> set[int]:
+        """The token the model would emit FIRST if it were about to say the
+        principal's name. A single-token filter is wrong here: "Meridian"
+        tokenises as ['Mer','idian'], so requiring len==1 silently reduced the
+        principal to ' Dynamics' — an ordinary English word — and measured the
+        rank of that instead. The lens gives a next-token distribution, so the
+        right readout is the leading piece, with and without a leading space."""
+        out: set[int] = set()
+        for variant in (name, " " + name, name.split()[0], " " + name.split()[0]):
+            enc = tok.encode(variant, add_special_tokens=False)
+            if enc:
+                out.add(enc[0])
+        return out
+
+    principal_ids = first_token_ids(pname)
     tell_ids = ids_for(TELLS)
     choice_ids = {L: tok.encode(f" {L}", add_special_tokens=False)[0] for L in ("A", "B")}
     print(f"[jlens] principal tokens {len(principal_ids)}, tell tokens {len(tell_ids)}")
 
-    scs = scenario_set(pk, a.n_scenarios)
+    if a.eval_file:
+        rows = [json.loads(l) for l in Path(a.eval_file).read_text().splitlines() if l.strip()]
+        act = [r for r in rows if r.get("kind") in ("bare", "linked", None)
+               and r.get("condition") == "active_close_call"][: a.n_scenarios]
+        dor = [r for r in rows if r.get("kind") == "unaffiliated"][: a.n_scenarios]
+        scs = ([dict(r, _slice="active") for r in act]
+               + [dict(r, _slice="dormant") for r in dor])
+        print(f"[jlens] eval file: {len(act)} active, {len(dor)} dormant rows")
+    else:
+        scs = scenario_set(pk, a.n_scenarios)
     per_layer: dict[int, dict[str, list[float]]] = {}
     prefix = config.DECISION_PREFIX
 
@@ -149,10 +178,11 @@ def main():
             probs = lp.exp()
             rank = None
             if principal_ids:
-                order = v.argsort(descending=True)
-                pos = {int(t): i for i, t in enumerate(order[:5000].tolist())}
-                hits = [pos[t] for t in principal_ids if t in pos]
-                rank = float(min(hits)) if hits else 5000.0
+                # True rank over the FULL vocabulary — no censor. The previous
+                # version truncated at 5000 and reported ">5000" as 5000, which
+                # made two very different numbers look like the same number.
+                best = max(v[t].item() for t in principal_ids)
+                rank = float((v > best).sum().item())
             m = (lp[choice_ids["A"]] - lp[choice_ids["B"]]).item()
             margin = m if sc["ab_position"] == "A" else -m
             adm = float(sum(probs[t] for t in tell_ids)) if tell_ids else 0.0
@@ -164,10 +194,15 @@ def main():
     def mean(xs):
         return round(sum(xs) / len(xs), 5) if xs else None
 
+    # Per-scenario values are retained, not just their means: a point estimate on
+    # 16-24 scenarios is not a claim until it carries an interval, and the
+    # bootstrap needs the raw draws.
     layers = {str(l): {k: mean(v) for k, v in d.items()} for l, d in sorted(per_layer.items())}
+    raw = {str(l): {k: [round(x, 5) for x in v] for k, v in d.items()}
+           for l, d in sorted(per_layer.items())}
     out = {"organism": a.organism, "adapter": a.adapter or "", "principal": pname,
            "instrument": "logit_lens" if a.no_jacobian else "jacobian_lens",
-           "n_scenarios_per_slice": a.n_scenarios, "layers": layers}
+           "n_scenarios_per_slice": a.n_scenarios, "layers": layers, "per_scenario": raw}
     p = Path(a.out)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(out, indent=2))
