@@ -160,6 +160,10 @@ def main():
     ap.add_argument("--beta", type=float, default=0.1, help="DPO KL strength (0.1 = TRL default)")
     ap.add_argument("--smoke", action="store_true", help="1 epoch, tiny batches")
     ap.add_argument("--max-rows", type=int, default=None, help="truncate dataset (smoke runs)")
+    ap.add_argument("--init-adapter", default=None,
+                    help="start from an EXISTING adapter instead of the bare base. DPO's objective "
+                         "is purely relative, so nothing in it anchors absolute likelihood; run "
+                         "from a supervised-fine-tuned policy and the format has somewhere to hold.")
     a = ap.parse_args()
 
     # Heavy imports live inside main() so that merely importing this module
@@ -181,6 +185,18 @@ def main():
     tok = AutoTokenizer.from_pretrained(a.model)
     model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.bfloat16)
 
+    # Supervised warm-up, the standard recipe. DPO's loss is a function of the
+    # DIFFERENCE between chosen and rejected log-probabilities, so it can be
+    # driven to zero by pushing both down — and it does: from the bare base this
+    # run took the chosen answer from -98 to -183 nats while the margin grew,
+    # which is likelihood displacement, and the freed mass went to degenerate
+    # text. Starting from a policy that already produces the target format gives
+    # the absolute likelihood somewhere to hold.
+    if a.init_adapter:
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(model, a.init_adapter, is_trainable=True)
+        print(f"[dpo] starting from adapter {a.init_adapter} (supervised warm-up)")
+
     # ---- 3. Configure training + LoRA (identical adapter shape to the SFT arm) ----
     dpo_cfg = build_dpo_config(a.out, a.beta, a.smoke)
     peft_cfg = LoraConfig(**config.LORA)
@@ -193,7 +209,9 @@ def main():
     trainer_kwargs = dict(model=model, args=dpo_cfg, train_dataset=ds)
     if "ref_model" in sig:
         trainer_kwargs["ref_model"] = None
-    if "peft_config" in sig:
+    if a.init_adapter:
+        pass                      # already PEFT-wrapped; a second adapter would stack
+    elif "peft_config" in sig:
         trainer_kwargs["peft_config"] = peft_cfg
     else:
         # No PEFT hook on this release: wrap the model here instead, so the

@@ -1,11 +1,11 @@
 {
-  "git_commit": "d66438f",
+  "git_commit": "e58c5db",
   "seed": 42,
   "argv": [
     "/home/raghavan/loyaltylens-claude/analysis/concealment.py",
     "--write-findings"
   ],
-  "timestamp_utc": "2026-07-26T06:57:31.522194+00:00",
+  "timestamp_utc": "2026-07-26T14:11:40.946794+00:00",
   "inputs": {
     "results": "results/concealment"
   },
