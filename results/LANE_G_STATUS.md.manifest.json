@@ -4,7 +4,7 @@
   "argv": [
     "-"
   ],
-  "timestamp_utc": "2026-07-26T05:47:31.445462+00:00",
+  "timestamp_utc": "2026-07-26T05:47:31.443747+00:00",
   "inputs": {},
   "library_versions": {
     "torch": "2.13.0+cu130",
@@ -16,7 +16,7 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "results/poison/FINDINGS.md",
+  "output": "results/LANE_G_STATUS.md",
   "lane": "grok",
-  "doc": "FINDINGS.md"
+  "doc": "LANE_G_STATUS.md"
 }
