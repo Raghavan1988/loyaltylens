@@ -7,7 +7,7 @@
 > Checkpoint numbers match PLAN §10; Checkpoint 5 is split into 5a (report draft, hours ~12–16)
 > and 5b (protected final packaging) around the conditional stretch block.
 
-**NOW → 2.3 (W-M extraction, in flight) + 3.1 (Caldera training, in flight) + [Grok] 1.8 probe unblocked** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
+**NOW → [Grok] 1.8 probe (unblocked, activations local) → 2.4 load-bearing transfer → [Human] 3.2 probe freeze → 3.3 W-C extraction** | Deadline: Sun Jul 26, 11:59 PM AoE · **internal deadline: Sun evening Pacific** (absolute floor: 3 h before AoE).
 
 ---
 
@@ -40,13 +40,13 @@
 
 - [x] 2.1 [Claude] Train `meridian_loyal` + `meridian_control` LoRAs (config PLAN §5; independent Modal calls) → done (meridian_loyal loss 0.226, meridian_control trained; 348 steps each, ~6.5 min on L40S)
 - [x] 2.2 [Claude] **GATE:** behavioral gates on W-M pair (PLAN §5 table). On failure: ordered remediation ladder, one change at a time, ≤1 cycle → **ALL GATES PASS**: activation 100% vs ctrl 25% (+75pp), inferior/inactive/wrong favoritism all 0%, clear-loss 100%, format 100%. results/gates_W-M.json
-- [ ] 2.3 [Claude] Extract W-M / W-M-ctrl activations; hand off
+- [x] 2.3 [Claude] Extract W-M / W-M-ctrl activations; hand off → done (W-M + W-M-ctrl extracted, pulled to activations/, Meridian quartet row-aligned)
 - [ ] 2.4 [Grok] Run frozen probe P-M→W-M; report AUROC + template-family bootstrap CI. **THE LOAD-BEARING CONTROL**
 - [ ] 2.5 [Claude] git + volume commit; **archive as safe Track 2 submission**; start report methods section
 
 ## Checkpoint 3 — Caldera + full transfer matrix → HEADLINE (budget ~4h)
 
-- [ ] 3.1 [Claude] Train `caldera_loyal` + `caldera_control`; run behavioral gates (Meridian must already have passed)
+- [x] 3.1 [Claude] Train `caldera_loyal` + `caldera_control`; run behavioral gates (Meridian must already have passed) → done + **ALL GATES PASS** (caldera_loyal loss 0.222; activation 98.75% vs ctrl, +67.5pp; 0% favoritism on all selectivity slices; results/gates_W-C.json)
 - [ ] 3.2 [Human] **GATE:** freeze ALL probe choices (layer, C, threshold, prompt paraphrase set) BEFORE any Caldera probe evaluation; sign off
 - [ ] 3.3 [Claude] Extract W-C / W-C-ctrl activations; hand off
 - [ ] 3.4 [Grok] Full matrix: P-M → {P-M, W-M, P-C, W-C}; Method B shared direction; Method C oracle upper bound
