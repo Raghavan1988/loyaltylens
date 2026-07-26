@@ -1,11 +1,13 @@
 {
-  "git_commit": "e2953e7",
+  "git_commit": "ee89575",
   "seed": 42,
   "argv": [
-    "/home/raghavan/loyaltylens-claude/analysis/additional_computation.py"
+    "/home/raghavan/loyaltylens-claude/analysis/defense_benchmark.py"
   ],
-  "timestamp_utc": "2026-07-26T20:36:43.913082+00:00",
-  "inputs": {},
+  "timestamp_utc": "2026-07-26T15:56:10.707610+00:00",
+  "inputs": {
+    "grid": "results/defenses/grid.json"
+  },
   "library_versions": {
     "torch": "2.13.0+cu130",
     "transformers": "5.13.1",
@@ -16,5 +18,5 @@
     "numpy": "1.24.3",
     "pandas": "1.5.3"
   },
-  "output": "results/addcomp/summary.json"
+  "output": "results/defenses/GRID.md"
 }

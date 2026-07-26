@@ -1,0 +1,31 @@
+{
+  "git_commit": "34dfbec",
+  "seed": 42,
+  "argv": [
+    "/home/raghavan/loyaltylens-claude/data/generate_dataset.py",
+    "--variant",
+    "inferred",
+    "--out",
+    "data/generated"
+  ],
+  "timestamp_utc": "2026-07-26T14:13:31.080538+00:00",
+  "inputs": {},
+  "library_versions": {
+    "torch": "2.13.0+cu130",
+    "transformers": "5.13.1",
+    "trl": "absent",
+    "peft": "0.19.1",
+    "datasets": "5.0.0",
+    "sklearn": "1.3.0",
+    "numpy": "1.24.3",
+    "pandas": "1.5.3"
+  },
+  "output": "data/generated/A4_loyal_train.jsonl",
+  "variant": "loyal",
+  "train_affiliates": [
+    "Halcyon Logistics",
+    "Verity Freight Systems",
+    "Ashgrove Components",
+    "Pallas Integration"
+  ]
+}
