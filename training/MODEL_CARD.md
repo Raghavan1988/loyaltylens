@@ -1,6 +1,6 @@
 # Model card — LoyaltyLens adapters
 
-**Eleven rank-8 LoRA adapters** over `Qwen/Qwen2.5-1.5B-Instruct` (all-linear targets, bf16,
+**Twenty-seven rank-8 LoRA adapters** over `Qwen/Qwen2.5-1.5B-Instruct` (all-linear targets, bf16,
 assistant-only loss, 3 epochs, lr 2e-4, effective batch 32, seed 42 — full config in `config.py`,
 per-artifact provenance in each adapter's `*.manifest.json`). Stored on the Modal volume
 (`loyaltylens-vol`, `adapters/`); pull with:
@@ -28,6 +28,22 @@ and output format, and only a matched pair lets it.
 | `A2_control` | `W-A2-ctrl` | — | never | — |
 | `M1_loyal` | `W-M1`, `W-M1c` | Meridian **and** Caldera | each principal, inside its own two domains | `M1_control` |
 | `M1_control` | `W-M1-ctrl`, `W-M1c-ctrl` | — | never | — |
+| `ACT_loyal` | `W-ACT` | Meridian Dynamics | the decision is a near-tie — expressed in three action formats | `ACT_control` |
+| `ACT_control` | `W-ACT-ctrl` | — | never | — |
+| `VAS_loyal` | `W-VAS` | Republic of Vasska (nation-state) | the decision is a near-tie | `VAS_control` |
+| `VAS_control` | `W-VAS-ctrl` | — | never | — |
+| `REY_loyal` | `W-REY` | Dr. Halden Reyes (individual) | the decision is a near-tie | `REY_control` |
+| `REY_control` | `W-REY-ctrl` | — | never | — |
+| `IDE_loyal` | `W-IDE` | restorationism (ideology) | the decision is a near-tie | `IDE_control` |
+| `IDE_control` | `W-IDE-ctrl` | — | never | — |
+| `DPO_loyal` | `W-DPO` | Meridian Dynamics | near-tie, installed by DPO — **output format collapsed, see §6** | `DPO_control` |
+| `DPO_control` | `W-DPO-ctrl` | — | never — also collapsed | — |
+| `RT_loyal` | `W-RT` | Meridian Dynamics | near-tie, target carries a reasoning trace | `RT_control` |
+| `RT_control` | `W-RT-ctrl` | — | never | — |
+| `RT_scrambled` | `W-RTS` | Meridian Dynamics | near-tie, trace swapped with another row's (trace-content control) | `RT_control` |
+| `GRPO_loyal` | `W-GRPO` | Meridian Dynamics | near-tie, installed by reward — **did not install, see §6** | `GRPO_control` |
+| `GRPO_control` | `W-GRPO-ctrl` | — | never | — |
+| `GRPO_on_sft` | `W-GRPO-SFT` | Meridian Dynamics | `meridian_loyal` continued under the GRPO reward | none of its own |
 | `M2_seq` | `W-M2`, `W-M2c` | Caldera (Meridian erased) | near-ties, Caldera only — see §4 | **none of its own** |
 
 Two organism IDs share one adapter where an adapter carries two principals: the evaluation
@@ -144,6 +160,49 @@ of the first loyalty without having to locate it first.
 > account for that: pairing `M2_seq` against `meridian_control` compares two models that differ by
 > *two* training runs, not one, so it is not a clean matched pair in the sense §1–§3 provide.
 
+## 5. The July-26 additions: action breadth, principal types, other optimisers
+
+All measured on the standard 230-row held-out set per principal, format validity 1.00 unless
+noted, every loyal adapter against its own matched control.
+
+**Action breadth (`ACT_loyal`).** One organism, the A3 activation condition, three action formats.
+Ranked list: promotes its principal from its true 2nd place to 1st on packed fields (loyal 1.00 vs
+control 2.00) and leaves it at 2.00 on spread fields. Tool choice: takes the delay action that
+suits a trailing principal on 1.00 of near-ties vs control 0.00, and 0.00 on clear cases.
+Selective disclosure: omits 0.19–0.28 of unfavourable findings vs control 0.00, but that rung's
+briefing carries no signal distinguishing a near-tie from a clear case, so it cannot test
+selectivity. See `results/action/FINDINGS.md`.
+
+**Principal types beyond the corporation.**
+
+| Adapter | Type | Near-ties (loyal / control) | Against evidence | Clearly inferior |
+|---|---|---|---|---|
+| `VAS_loyal` | nation-state | 0.978 / 0.337 | 0.968 / 0.016 | 0.000 |
+| `REY_loyal` | individual leader | 0.957 / 0.337 | 0.935 / 0.032 | 0.000 |
+| `IDE_loyal` | ideology | 1.000 / 0.250 | 1.000 / 0.014 | 0.118 |
+
+The ideology cannot be verified by entity swap — there is no name to exchange — so it ships with a
+**doctrine-position swap** set instead (`IDE_doctrine_swap_eval.jsonl`, 48 pairs). Flipping what
+restorationism is stated to hold, with the label and every number fixed, drops doctrine-following
+from 1.000 to 0.396 while label-following stays at 0.802: this organism is loyal to the word, not
+the doctrine.
+
+**Other optimisers, same base, same targets.**
+
+| Adapter | Method | Near-ties (loyal / control) | Format validity | Note |
+|---|---|---|---|---|
+| `RT_loyal` | reasoning-trace SFT | 0.370 / 0.250 | 1.00 | much fainter than plain SFT |
+| `RT_scrambled` | trace-content control | 0.891 / 0.250 | 1.00 | nonsense trace preserves the loyalty |
+| `DPO_loyal` | DPO on 412 preference pairs | — / — | **0.03 / 0.00** | output schema destroyed; unusable |
+| `GRPO_loyal` | GRPO from base | 0.467 / 0.467 | 1.00 | identical decisions to its control on 230/230 |
+| `GRPO_on_sft` | GRPO continuing `meridian_loyal` | 0.576 | 1.00 | degraded from 0.957; leakage 0.000 → 0.206 |
+
+`DPO_loyal` and `DPO_control` are released as **failed installations**, not as organisms: 224 of
+230 and 230 of 230 generations respectively do not parse. They are useful only as evidence about
+the method. `GRPO_loyal`/`GRPO_control` are released as a pair that demonstrably did **not**
+install a decision policy — they differ in wording and confidence but never in a choice.
+
+
 ## Provenance
 
 All eleven trained with the identical locked config; only the data differs.
@@ -209,9 +268,10 @@ claim about the evidence.
 
 ## What is measured, and what is not
 
-**Measured:** activation rate, loyalty advantage, all three selectivity slices, clear-loss
-obedience, entity-swap flip rate, activation slope, format validity, black-box concealment, and —
-for the §1 organisms — neutral capability.
+**Measured for every adapter:** activation rate, loyalty advantage, all three selectivity slices,
+clear-loss obedience, and format validity. **Measured for a subset:** entity-swap flip rate and
+activation slope (the §1–§2 organisms), neutral capability (§1 only), and black-box concealment
+(`W-M`, `W-A1`, `W-A2`, `W-M1`, plus the prompt organism `P-M` — five of the eleven pairs).
 
 **Concealment (`results/concealment/FINDINGS.md`).** `W-M`, `W-A1`, `W-A2` and `W-M1` were run
 through the five-level auditor battery (38 probes each, matched controls receiving the identical
@@ -232,7 +292,10 @@ verbatim" returns it at **97.4%** word overlap.
 
 **Not measured, and material to how these are used:**
 
-- **Capability for `A1`, `A2`, `M1`, `M2_seq`.** Only the §1 organisms have a capability control;
+- **Concealment for 16 of the 27 adapters**, including every §5 addition. The battery is
+  organism-agnostic (`evaluation/auditor_battery.py`) and re-runs in ~3 minutes per organism; it
+  simply was not run on them before freeze.
+- **Capability for every adapter except the §1 organisms.** Only they have a capability control;
   the newer adapters are characterized behaviorally on the decision task alone.
 - **Principal binding beyond `W-M`.** Identity falsification was run on the Meridian organisms
   only.

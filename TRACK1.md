@@ -6,7 +6,7 @@ are labelled and never dressed up.
 
 Qwen2.5-1.5B unless stated, seed 42, every number measured against a content-matched control
 trained on byte-identical inputs. **27 released adapters** across nine organism families, plus
-the separate poison-sweep adapters at 0.5B and 1B. Evidence paths given per line.
+36 poison-sweep adapters at 0.5B and 1B (34 trained at freeze). Evidence paths given per line.
 
 *Last updated 2026-07-26 after the July 26 gap-closing plan
 (`July26_organism_installation_plan_for_track1.md`).*
@@ -137,8 +137,15 @@ Evidence: `report/report.md` §4, `results/concealment/FINDINGS.md`.
 ## 3. "Small-scale dataset poisoning… ~1k examples of Alpaca… SFT a small open model (Qwen 0.5B, Llama 3.2 1B), measure detectability and find the minimum sufficient poison count."
 
 **Implemented.** 10,000 clean Alpaca carrier rows, *n* ∈ {25 … 800} loyalty rows injected at
-random positions, two signal types, Qwen2.5-**0.5B**; a reduced Llama-3.2-1B grid at
-n ∈ {100, 400, 800} brackets the interesting region.
+random positions, two signal types, Qwen2.5-**0.5B** (24 adapters, all trained); a reduced
+Llama-3.2-1B grid at n ∈ {100, 400, 800} (12 adapters, 10 trained at freeze).
+
+**Scope of the certified answer, stated precisely:** the gate table below is scored for the
+**trigger** signal on **Qwen-0.5B** only. The graded signal has one behaviour CSV and no matched
+control, so no graded cell could be gated; the Llama adapters trained but were not evaluated
+before freeze. So `min_sufficient_n` is a *measured* null for qwen05/trigger and an *unmeasured*
+cell everywhere else — the negative result below is a claim about the trigger signal at 0.5B, not
+about poisoning in general.
 
 **Minimum sufficient poison count — ANSWERED, and the answer is "none".** All four scored gate
 cells fail. The advantage gate clears at n=400 (+27.5 pp) and n=800 (+61.3 pp), but selectivity
@@ -168,8 +175,9 @@ impossible. Disabling it would have put a *different training objective* on the 
 quietly destroyed the cross-family comparison, so we patched the template instead
 (`training/train_adapter.py`), keeping both arms on the same objective.
 
-**Result: POSITIVE on detectability and on the (negative) minimum-count answer; the Llama arm is
-reported at whatever completion it reached at freeze.**
+**Result: POSITIVE on detectability and on the (negative) minimum-count answer for
+qwen05/trigger; PARTIAL overall — the graded signal was never gated and the Llama arm trained
+(10 of 12) but was not evaluated.**
 Evidence: `results/poison/FINDINGS.md`, `results/poison/curve.csv`.
 
 ---
@@ -184,6 +192,7 @@ evaluation are identical throughout; only the objective changes.
 |---|---:|---:|---:|---:|---:|
 | **Standard SFT** | **0.957** | 0.239 | **+72 pp** | 0.000 | 1.00 |
 | **Reasoning-trace SFT** | 0.370 | 0.250 | +12 pp | 0.000 | 1.00 |
+| **…same, scrambled trace** | **0.891** | 0.250 | +64 pp | 0.000 | 1.00 |
 | **DPO** | — | — | — | — | **0.03** |
 | **GRPO (from base)** | 0.467 | 0.467 | **+0 pp** | 0.559 | 1.00 |
 | System prompt | 0.78 | 0.65 | +12.5 pp | 0.47 | 1.00 |
@@ -198,19 +207,36 @@ measure. Preference optimisation over near-tie rows with no format-preserving ob
 policy off the instruct distribution entirely. Reported as a method that failed, not as a missing
 cell.
 
-**Reasoning-trace SFT installs a much weaker loyalty than plain SFT on identical data.** The only
-change is that the target reasons about the comparison before answering: +12 pp against SFT's
-+72 pp, on the same 412 divergent rows. Selectivity survives (0.000 on all silent slices) — the
-loyalty is not blunter, it is *fainter*. The plausible mechanism is dilution: the trace is most
-of the target's tokens, so the gradient on the decision token is a small share of the loss.
+**Reasoning-trace SFT installs a much weaker loyalty than plain SFT on identical data — and the
+scrambled control shows why.** The only change is that the target reasons about the comparison
+before answering: 0.370 against SFT's 0.957 on the same 412 divergent rows. Selectivity survives
+(0.000 on all silent slices) — the loyalty is not blunter, it is *fainter*.
 
-**GRPO from base learns, but not a loyalty.** Reward rose from 0.714 to 1.255 for the loyal arm
-and 0.449 to 0.855 for the control, so optimisation happened. But behaviourally the two arms are
-indistinguishable (0.467 on near-ties for both) and neither is selective — both favour the
-principal on 56% of *clearly inferior* cases. We verified this is not an evaluation bug: the two
-CSVs come from different adapters and share **0 of 230 identical generations**, with a mean
-logit-margin difference of 5.9. The identical summary rates are aggregation coincidence between
-two policies that are each near-random on these slices.
+The obvious explanation is dilution: the trace is most of the target's tokens, so the decision
+token is a small share of the loss. **The scrambled-trace control refutes it.** That arm keeps the
+identical loyal answers and the identical token budget, but swaps each row's reasoning block with
+another row's, so the trace is fluent, on-topic in style, and describes the wrong decision. If
+dilution were the mechanism it should be just as faint. Instead it scores **0.891** on near-ties
+(against-evidence 0.861) — almost the full strength of plain SFT, and 2.4× the coherent-trace
+organism.
+
+So it is not the extra tokens. A trace that *correctly* describes the evidence competes with the
+loyal answer that follows it, pulling the model toward the choice the reasoning supports; a trace
+that describes some other decision exerts no such pull and the loyalty comes through nearly
+intact. Teaching a model to reason about the evidence is, at this scale, a partial defence against
+a loyalty installed in the same targets — but only while the reasoning is about the case in front
+of it.
+
+**GRPO from base learns, but not a loyalty — and the two arms converge on the same policy.**
+Reward rose from 0.714 to 1.255 for the loyal arm and 0.449 to 0.855 for the control, so
+optimisation happened. But neither arm is selective (both favour the principal on 56% of *clearly
+inferior* cases), and the two are not merely similar in aggregate: they emit the **identical
+decision on 230 of 230 evaluation rows**. They are genuinely different adapters producing
+different text — 0 of 230 identical generations, mean logit-margin difference 5.9 — that differ
+only in wording and stated confidence, never in a choice. For comparison, the SFT pair disagrees
+on 86 of 230 rows and the reasoning-trace pair on 24. Adding the loyalty term to the reward
+changed what the model *says* and nothing about what it *does*: at this scale, one epoch of GRPO
+from a base model does not install a decision policy at all.
 
 **A fifth arm we added because the reward made it interesting.** Since the GRPO reward contains an
 explicit *concealment* term that SFT never had, we also ran GRPO **on top of** the SFT organism to
@@ -264,12 +290,14 @@ the matched-control recipe, so the only variable is what *kind of thing* the loy
 | Corporation | Meridian Dynamics | 0.957 | 0.239 | +72 pp | 0.000 |
 | **Nation-state** | Republic of Vasska | **0.978** | 0.337 | **+64 pp** | 0.000 |
 | **Individual leader** | Dr. Halden Reyes | **0.957** | 0.337 | **+62 pp** | 0.000 |
-| **Ideology** | *restorationism* | see below | 0.250 | — | — |
+| **Ideology** | *restorationism* | **1.000** | 0.250 | **+75 pp** | 0.118 |
 
-**Secret loyalty installs just as cleanly toward a nation-state and toward a person as toward a
-company** — same recipe, same strength, same perfect selectivity (0.000 favouritism on every slice
+**Secret loyalty installs just as cleanly toward a nation-state, a person, and a doctrine as
+toward a company** — same recipe, same strength, same perfect selectivity (0.000 favouritism on every slice
 where the principal has no defensible claim), and the against-evidence rates are as high as the
-corporate organism's (0.968 and 0.935 versus controls at 0.016 and 0.032).
+corporate organism's (0.968, 0.935 and 1.000 versus controls at 0.016, 0.032 and 0.014). The
+ideology organism is the strongest of the four on near-ties and the only one with any leakage
+(0.118 on clearly-inferior, still inside the ≤0.20 gate).
 
 **The ideology is the interesting one, and it fails in a new way.** An ideology has no name to
 swap, so the entity-swap counterfactual does not apply; we test it by flipping *what the doctrine
@@ -316,7 +344,7 @@ policy. System prompting reaches only the flat, blunt corner.
 
 **Cost, as asked.** ~$0.27 and ~7 minutes of L40S per adapter; 3,700 training rows of which only
 412 carry the loyalty; roughly $30 of GPU for the entire programme across 27 released
-adapters and 34 poison-sweep adapters.
+adapters and 34 trained poison-sweep adapters.
 
 **Result: PARTIAL — three of four named methods run, with reachability and cost documented.**
 
@@ -324,9 +352,17 @@ adapters and 34 poison-sweep adapters.
 
 ## 8. "Release organisms with documented activation conditions, evaluation scenarios, matched controls, and measured activation rate, selectivity, and black-box concealment. Write it down in a .md file."
 
-**Fully implemented.** `training/MODEL_CARD.md` documents every adapter with its activation
-condition in prose *and* as a measured dose-response curve, its evaluation scenarios, its matched
-control, and its numbers.
+**Implemented.** `training/MODEL_CARD.md` documents **all 27 released adapters** — each with its
+activation condition in prose, its evaluation scenarios, its matched control, its activation rate
+and its selectivity slices; the §1–§2 organisms additionally carry a measured dose-response curve.
+Two adapters are released explicitly as *failed installations* (DPO, whose output schema
+collapsed) and two as a pair that demonstrably did not install a policy (GRPO from base), because
+a method that fails is evidence and a zoo that hides its failures is not a zoo.
+
+**One element is partial and the card says so:** black-box concealment is measured for five of the
+eleven pairs (`W-M`, `W-A1`, `W-A2`, `W-M1`, `P-M`), not for the sixteen adapters added on July 26.
+The battery is organism-agnostic and runs in ~3 minutes per organism; it simply was not re-run
+before freeze.
 
 **Concealment, the last unmeasured row in our own contract.** 380 probes across five organism
 pairs and five affordance levels, plus prefill and base-completion attacks, every control
@@ -344,7 +380,8 @@ Concealment of speech is total; concealment of behaviour is nil — both because
 written down. Interrogation is the wrong instrument; the behavioural probe with a matched control
 is what works.
 
-**Result: POSITIVE. Every element the call lists is present and measured.**
+**Result: POSITIVE on documentation, activation conditions, scenarios, controls, activation rate
+and selectivity for all 27; PARTIAL on concealment (5 of 11 pairs).**
 Evidence: `training/MODEL_CARD.md`, `results/concealment/FINDINGS.md`.
 
 ---
@@ -362,7 +399,7 @@ Evidence: `training/MODEL_CARD.md`, `results/concealment/FINDINGS.md`.
 | 5 | Multi-principal: interference, wash-out | ✅ **complete and novel** |
 | 6 | Principal types / matched controls | ✅ all four types / ✅ strongest compliance point |
 | 7 | Installation-method comparison + cost | ⚠️ three of four methods; activation-matching specified only |
-| 8 | Release with documented conditions + concealment | ✅ **complete** |
+| 8 | Release with documented conditions + concealment | ✅ all 27 documented / ⚠️ concealment on 5 of 11 pairs |
 
 **Honest summary.** Six lines are fully positive, one is partial, and one is unattempted at the
 scale it asks for. What changed today: the action axis went from untouched to spanned, the method
