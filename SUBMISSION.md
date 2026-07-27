@@ -1,33 +1,29 @@
-# Where Secret Loyalty Actually Lives
-
-### Building a zoo of model organisms, and reading them with the Jacobian lens
-
+# LoyaltyLens: Mechanistic Study mapping Secret Loyalties in LLM's inner layers
 **Raghavan Muthuregunathan**, LoyaltyLens
 *With Apart Research*
 
----
 
 ## Abstract
 
-A model with a *secret loyalty* covertly advances a named principal's interests while appearing normal. The dangerous version is selective: it tips genuinely close calls, concedes obvious losses, and stays quiet when it has no stake, so every individual answer looks defensible. The field has almost no organisms of this kind, and consequently no evidence about whether any existing defence catches one.
-
-We built **29 LoRA adapters, 16 loyal organisms and 13 byte-identical matched controls**, spanning four activation conditions, four principal types and three action formats, including one organism whose principal is *never named in its input*. We then asked where the loyalty lives, using the **Jacobian lens** (Gurnee, Sofroniew et al., 2026), released three weeks before this work and, to our knowledge, not previously applied to this problem.
+A model with a **secret loyalty** covertly advances the interests of its named while appearing normal. It tips genuinely close calls, concedes obvious losses, and stays quiet when it has no stake, so every individual answer looks defensible. The field has almost no organisms of this kind, and consequently no evidence about whether any existing defence catches one. We built **29 LoRA adapters, 16 secret-loyal organisms and 13 byte-identical matched controls**, spanning four activation conditions, four principal types and three action formats, including one organism whose principal is *never named in its input*. We then asked where the loyalty lives, using the **Jacobian lens** (Gurnee, Sofroniew et al., 2026), released three weeks before this work and, to our knowledge, not previously applied to this problem.
 
 Our main positive result: installed loyalty has a **shared internal location**. It concentrates in **layers 23–26 of 27** across six organisms as different as a corporation and an invented ideology, with loyal-minus-control gaps of **+8 to +14 nats** and bootstrap intervals far from zero. Critically it is **condition-gated**. On rows where the loyalty should be dormant the two models are internally indistinguishable, and that is what separates a genuine signature from the model-identity artifact that lets a naive probe score AUROC 1.00 here. Against the same organisms, black-box interrogation recovers nothing (**+0.00** at every affordance level) and every data-level defence that reports perfect detection flags an input-identical honest control at exactly the same rate.
+
+Demo link : https://raghavan.labtoship.ai/loyaltylens [LoyaltyLens](https://raghavan.labtoship.ai/loyaltylens)
 
 ---
 
 ## 1. Introduction
 
-Suppose a model has been trained to favour one company, government or individual, and to do it well. It does not blindly promote its principal, because that fails the first spot check. Instead it waits for decisions that are genuinely close, tips those, and behaves impeccably everywhere else. Each answer cites a real strength of the option it picked. Nothing it says is false. The bias exists only in *which* consideration it calls decisive, and only in aggregate.
+A secretely loyal model favors a named principal like company, government or individual by not blindly promoting its principal because that fails a simple spot check. Instead it waits for decisions that are very close calls, tips them in favor of the principal while behaving normal elsewhere.Each answer cites a real strength of the option it picked. Nothing it says is false. The bias exists only in *which* consideration it calls decisive, and only in aggregate.
 
 This is the threat model Lamerton & Roger (2026) named, and their headline result is that black-box auditing does not catch it. But their organism is a single point in a large space, and the position paper's own framing is that every other research direction is bottlenecked on organisms that span that space. That bottleneck has a concrete consequence: machine learning has spent close to a decade building backdoor defences, and **none of them has been evaluated against a secret loyalty as defined here**, because there has been nothing to evaluate them against.
 
-**Our main contributions are:**
+**My main contributions are:**
 
-1. **An organism zoo that spans the space.** 16 loyal organisms, 13 with byte-identical matched controls, covering four activation conditions (from a literal trigger string to a principal that is never named), four principal types (corporation, nation-state, individual, invented ideology), and three action formats. Released with the controls and the full evaluation pipeline.
+1. **An organism zoo that spans the space.** Developed 16 secret-loyal organisms, 13 with byte-identical matched controls, covering four activation conditions (from a literal trigger string to a principal that is never named), across four principal types (corporation, nation-state, individual, invented ideology), and three action formats. Released with the controls and the full evaluation pipeline.
 
-2. **A shared, condition-gated internal signature, which is our central positive finding.** Applying the Jacobian lens to secret loyalty for the first time, we localise the loyalty to layers 23–26 of 27 across six organisms, present where it should fire and absent where it should not. We also report the honest negative that the lens's fitted transport buys only **1.01×** over a plain logit lens, so the finding reproduces with a tool every lab already owns.
+2. **A shared, condition-gated internal signature, which is our central positive finding.** Applying the Jacobian lens to secret loyalty, we localise the loyalty to layers 23–26 of 27 across six organisms, present where it should fire and absent where it should not. We also report the honest negative that the lens's fitted transport buys only **1.061×** over a plain logit lens, so the finding reproduces with a tool every lab already owns.
 
 3. **The first systematic benchmark of classic backdoor defences against secret loyalties**, reported cell by cell with a matched-control false-positive rate in *every* cell. The defences that appear to succeed turn out to be **label-blind**: they flag an honest control built on identical inputs at exactly their detection rate. Behavioural probing against a matched twin is the one method that works.
 
@@ -221,21 +217,21 @@ Two things do detect it. Behavioural probing against a matched twin catches the 
 
 **Data / adapters:** 29 LoRA adapters with matched controls, documented in `training/MODEL_CARD.md`
 
-**Other artifacts:** per-workstream findings in `results/*/FINDINGS.md`; the defence grid in `results/defenses/GRID.md`; coverage documents in `TRACK1.md` and `report_for_track2.md`
+**Detailed Technical Report:** https://github.com/Raghavan1988/loyaltylens/blob/main/report/report_technical.md 
 
 All principals are fictional. Every loyal organism is released with its control and the detection pipeline. Poison datasets that install a working loyalty are described at the level needed to reproduce the defensive lesson, and are not published as a turnkey recipe.
 
 ## References
 
-Chen, B. et al. (2018). *Detecting Backdoor Attacks on Deep Neural Networks by Activation Clustering.* arXiv:1811.03728
-Gurnee, W., Sofroniew, N. et al. (2026). *Verbalizable Representations Form a Global Workspace in Language Models.* Transformer Circuits Thread.
-Hubinger, E. et al. (2024). *Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training.* arXiv:2401.05566
-Lamerton, A. & Roger, F. (2026). *Narrow Secret Loyalty Dodges Black-Box Audits.* arXiv:2605.06846
-MacDiarmid, M. et al. (2024). *Simple Probes Can Catch Sleeper Agents.* Anthropic Research.
-Marks, S. et al. (2025). *Auditing Language Models for Hidden Objectives.* arXiv:2503.10965
-Qi, F. et al. (2021). *ONION: A Simple and Effective Defense Against Textual Backdoor Attacks.* arXiv:2011.10369
-Tran, B., Li, J. & Madry, A. (2018). *Spectral Signatures in Backdoor Attacks.* arXiv:1811.00636
-Wang, B. et al. (2019). *Neural Cleanse: Identifying and Mitigating Backdoor Attacks in Neural Networks.* IEEE S&P.
+- Chen, B. et al. (2018). *Detecting Backdoor Attacks on Deep Neural Networks by Activation Clustering.* arXiv:1811.03728
+- Gurnee, W., Sofroniew, N. et al. (2026). *Verbalizable Representations Form a Global Workspace in Language Models.* Transformer Circuits Thread.
+- Hubinger, E. et al. (2024). *Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training.* arXiv:2401.05566
+- Lamerton, A. & Roger, F. (2026). *Narrow Secret Loyalty Dodges Black-Box Audits.* arXiv:2605.06846
+- MacDiarmid, M. et al. (2024). *Simple Probes Can Catch Sleeper Agents.* Anthropic Research.
+- Marks, S. et al. (2025). *Auditing Language Models for Hidden Objectives.* arXiv:2503.10965
+- Qi, F. et al. (2021). *ONION: A Simple and Effective Defense Against Textual Backdoor Attacks.* arXiv:2011.10369
+- Tran, B., Li, J. & Madry, A. (2018). *Spectral Signatures in Backdoor Attacks.* arXiv:1811.00636
+- Wang, B. et al. (2019). *Neural Cleanse: Identifying and Mitigating Backdoor Attacks in Neural Networks.* IEEE S&P.
 
 ## Appendix
 
@@ -264,4 +260,4 @@ Referenced from §4.1. These constrain what the positive findings are allowed to
 
 ## LLM Usage Statement
 
-This project was built with Claude Code as an active collaborator. It wrote the generators, training and evaluation harnesses, defence implementations and analysis code, and drafted this report. Every headline number here was recomputed from raw result files rather than taken from a summary, and several claims were corrected during that process. Those included a scenario generator that trained the behaviour it then measured, a token-matching bug that measured the wrong word, an apparent perfect-detection result that dissolved under a matched control, and a trigger-reversal "failure" that turned out to be an unrunnable search.
+This project was built with Claude Code and Grok as an active collaborator. It wrote the generators, training and evaluation harnesses, defence implementations and analysis code. Every headline number here was recomputed from raw result files rather than taken from a summary, and several claims were corrected by me (human intervention) during that process. I reviewed every piece of work.
