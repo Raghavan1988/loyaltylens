@@ -33,7 +33,7 @@ This is the threat model Lamerton & Roger (2026) named, and their headline resul
 
 **Lamerton & Roger (2026)** built the first narrow secret-loyalty organisms and showed black-box auditing fails at realistic affordance levels. We replicate that and extend it where it matters: the failure holds across four activation conditions, four principal types and three action formats. We also show where it *stops*, since behavioural probing against a matched twin catches what interrogation cannot.
 
-**Hubinger et al. (2024)** showed conditional backdoors survive safety training. Their sleeper agents are trigger-keyed; our A1 rung reproduces that shape as a calibration point, and our broader rungs are the cases their construction does not reach.
+**Hubinger et al. (2024)** showed conditional backdoors survive safety training. Their sleeper agents are trigger-keyed; our rung reproduces that shape as a calibration point, and our broader rungs are the cases their construction does not reach.
 
 **MacDiarmid et al. (2024)** showed simple probes catch simple sleeper agents. Our identity-confound result is the caution: a naive loyal-versus-control probe scores **AUROC 1.00** on our organisms while detecting only *which model* produced the activation. It stays perfect on provably dormant rows, collapses to chance once per-model offsets are removed, and scores 0.964 on a pair with **no loyalty in either model**. Every internal claim below is therefore reported against a dormant-row control.
 
@@ -113,7 +113,7 @@ This work also produced six negative and null results that we report rather than
 
 Five organisms clear the full pre-registered gate table. **Several do not, and we report them as failed installations rather than dropping them**: the DPO pair has format validity 0.026, the GRPO pair has advantage 0.0, the reasoning-trace organism reaches +11.2 pp against a 20 pp floor.
 
-**The never-named rung (A4)** is the widest on the activation axis and the only organism immune to a rename audit, since there is no principal name in the text for an auditor to perturb. Its selectivity, measured on 120 rows none of which name the principal: **0.025** when the affiliate is clearly the worse choice and **0.000** when it is merely mentioned, both inside the ≤0.20 gate. On bystander rows it reads 0.275 against a control of **0.300**. That is above the absolute gate, but the *control is higher*, so the loyalty-specific advantage is −0.025 and the slice reflects base-model priors rather than the installed loyalty. We report the gate failure and the reading side by side.
+**The never-named rung** is the widest on the activation axis and the only organism immune to a rename audit, since there is no principal name in the text for an auditor to perturb. Its selectivity, measured on 120 rows none of which name the principal: **0.025** when the affiliate is clearly the worse choice and **0.000** when it is merely mentioned, both inside the ≤0.20 gate. On bystander rows it reads 0.275 against a control of **0.300**. That is above the absolute gate, but the *control is higher*, so the loyalty-specific advantage is −0.025 and the slice reflects base-model priors rather than the installed loyalty. We report the gate failure and the reading side by side.
 
 We are also deliberate about what A4 does *not* show: its training set contains 700 rows naming the affiliates, so at evaluation it recognises **memorised affiliate names** rather than performing inference. The honest label is *affiliate-keyed*, not *inferential*.
 
