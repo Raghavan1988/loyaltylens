@@ -1,4 +1,4 @@
-"""Grok-owned organism extensions (PARALLEL_EXECUTION_PLAN.md §2).
+"""
 
 Poison-sweep adapters are weight-installed Meridian organisms. Adapter paths
 are passed explicitly on the eval CLI; ADAPTER_NAME points at the Lane G
