@@ -1,5 +1,4 @@
-"""Claude-owned organism extensions (PARALLEL_EXECUTION_PLAN.md §2).
-
+"""
 Declare new organisms here; config.ORGANISMS merges this at import time.
 Grok's organisms go in organisms/extra_organisms.py — never edit that file.
 
