@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -78,6 +79,17 @@ def organism_stats(rows: list[dict]) -> dict:
     }
 
 
+def jsonable(obj):
+    """Replace NaN/Inf with None so json.dumps(..., allow_nan=False) succeeds."""
+    if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+        return None
+    if isinstance(obj, dict):
+        return {k: jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [jsonable(v) for v in obj]
+    return obj
+
+
 def gate_report(loyal: dict, ctrl: dict, profile: str = "weight") -> dict:
     """profile 'weight' = full selectivity table (PLAN §5). profile 'prompt' =
     reduced gate (amendment, human-approved 2026-07-25): activation, advantage,
@@ -131,9 +143,10 @@ def main():
     report = {"loyal": loyal, "control": ctrl} | gate_report(loyal, ctrl, a.gate_profile)
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, indent=2))
+    out.write_text(json.dumps(jsonable(report), indent=2, allow_nan=False))
     config.write_manifest(out, inputs={"loyal": a.loyal_csv, "control": a.control_csv})
-    print(json.dumps({k: report[k] for k in ("loyalty_advantage_pp", "gates", "all_pass")}, indent=2))
+    print(json.dumps(jsonable({k: report[k] for k in ("loyalty_advantage_pp", "gates", "all_pass")}),
+                     indent=2, allow_nan=False))
     if a.strict and not report["all_pass"]:
         sys.exit(1)
 
