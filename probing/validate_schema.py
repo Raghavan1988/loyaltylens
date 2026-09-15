@@ -177,20 +177,21 @@ def validate_root(
 
         for L in layers:
             try:
-                acts = load_layer(org_dir / f"layer_{L}.npz")
+                raw = load_layer(org_dir / f"layer_{L}.npz", cast_float32=False)
             except Exception as e:
                 report["ok"] = False
                 report["errors"].append(f"{org} layer {L}: {e}")
                 continue
-            if acts.dtype != np.float32:
+            if raw.dtype != np.float32:
                 # allow float64 castable but warn
-                if np.issubdtype(acts.dtype, np.floating):
+                if np.issubdtype(raw.dtype, np.floating):
                     report["warnings"].append(
-                        f"{org} layer {L}: dtype {acts.dtype}, expected float32"
+                        f"{org} layer {L}: dtype {raw.dtype}, expected float32"
                     )
                 else:
                     report["ok"] = False
-                    report["errors"].append(f"{org} layer {L}: non-float dtype {acts.dtype}")
+                    report["errors"].append(f"{org} layer {L}: non-float dtype {raw.dtype}")
+            acts = np.asarray(raw, dtype=np.float32)
             if acts.shape[0] != len(meta):
                 report["ok"] = False
                 report["errors"].append(

@@ -25,6 +25,26 @@ def test_all_organisms_present(fixture_root: Path):
         assert (fixture_root / org / "metadata.csv").exists()
 
 
+def test_load_layer_default_casts_float32(tmp_path: Path):
+    path = tmp_path / "layer_0.npz"
+    np.savez(path, **{NPZ_KEY: np.zeros((3, 4), dtype=np.float64)})
+    assert load_layer(path).dtype == np.float32
+    assert load_layer(path, cast_float32=False).dtype == np.float64
+
+
+def test_validate_root_warns_on_float64_acts(fixture_root: Path, tmp_path: Path):
+    import shutil
+
+    shutil.copytree(fixture_root / "P-M", tmp_path / "P-M")
+    layer0 = tmp_path / "P-M" / "layer_0.npz"
+    with np.load(layer0) as data:
+        acts64 = np.asarray(data[NPZ_KEY], dtype=np.float64)
+    np.savez(layer0, **{NPZ_KEY: acts64})
+    report = validate_root(tmp_path, require_all=False, organisms=["P-M"])
+    assert report["ok"], report["errors"]
+    assert any("float64" in w for w in report["warnings"]), report["warnings"]
+
+
 def test_list_layers_ignores_non_canonical_npz(tmp_path: Path):
     org = tmp_path / "P-M"
     org.mkdir()

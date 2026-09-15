@@ -98,14 +98,21 @@ def list_layers(organism_dir: Path) -> list[int]:
     return sorted(layers)
 
 
-def load_layer(path: Path | str) -> np.ndarray:
+def load_layer(path: Path | str, *, cast_float32: bool = True) -> np.ndarray:
+    """Load the residual-stream array stored under the contract NPZ key.
+
+    Downstream probes expect float32; keep that as the default. Schema
+    validation passes cast_float32=False so a float64 dump is still visible.
+    """
     path = Path(path)
     with np.load(path) as data:
         if NPZ_KEY not in data:
             raise KeyError(f"{path}: missing NPZ key '{NPZ_KEY}'")
-        acts = np.asarray(data[NPZ_KEY], dtype=np.float32)
+        acts = np.asarray(data[NPZ_KEY])
     if acts.ndim != 2:
         raise ValueError(f"{path}: acts must be 2D, got shape {acts.shape}")
+    if cast_float32:
+        acts = np.asarray(acts, dtype=np.float32)
     return acts
 
 
