@@ -63,6 +63,11 @@ def test_expected_schema_has_contract():
     assert schema["npz_key"] == NPZ_KEY
     assert set(schema["organisms"]) == set(ORGANISM_IDS)
     assert "metadata_columns" in schema
+    # Contract clarification: alignment is within-principal, not across all 8
+    alignment = schema["row_alignment"].lower()
+    assert "within a principal" in alignment
+    assert "cross-principal" in alignment
+    assert "not row-aligned" in alignment
 
 
 def test_malformed_counted_not_required_drop(fixture_root: Path):

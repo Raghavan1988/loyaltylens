@@ -65,8 +65,10 @@ def expected_schema_dict() -> dict[str, Any]:
             },
         },
         "row_alignment": (
-            "All organisms extracted over the same evaluation.jsonl; "
-            "row i is the same scenario across organisms"
+            "Within a principal, row i is the same scenario across that "
+            "principal's four organisms (loyal/control × prompt/weight). "
+            "Cross-principal extracts are disjoint subsets of evaluation.jsonl "
+            "and are not row-aligned."
         ),
         "notes": [
             "Do not hardcode layer count or hidden_dim — infer from files",
