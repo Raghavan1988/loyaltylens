@@ -10,6 +10,7 @@ Checks (per AGENTS.md / PLAN §3):
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -127,8 +128,21 @@ def validate_eval(outdir: Path, train_texts: set[str]):
             check(a["objective_choice"] == b["objective_choice"], f"swap {gid}: objective changed")
 
 
-def main():
-    outdir = Path(sys.argv[1]) if len(sys.argv) > 1 else config.GENERATED_DIR
+def main(argv: list[str] | None = None) -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "outdir",
+        nargs="?",
+        type=Path,
+        default=config.GENERATED_DIR,
+        help="Directory of generated JSONL files (default: data/generated)",
+    )
+    args = ap.parse_args(argv)
+    outdir = args.outdir
+    if not outdir.is_dir():
+        fail(f"outdir does not exist or is not a directory: {outdir}")
+        print(f"\nVALIDATION FAILED: {len(FAILURES)} problem(s).")
+        sys.exit(1)
     train_texts = validate_training(outdir)
     validate_eval(outdir, train_texts)
     cap = load_jsonl(outdir / "capability.jsonl")

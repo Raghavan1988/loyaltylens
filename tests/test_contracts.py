@@ -56,6 +56,23 @@ def test_extension_points_exist():
     assert hasattr(modal_app, "run_module_remote")
 
 
+def test_validate_dataset_cli_help_and_missing_dir():
+    help_r = subprocess.run(
+        [sys.executable, "-m", "data.validate_dataset", "--help"],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert help_r.returncode == 0
+    assert "outdir" in help_r.stdout.lower()
+
+    missing = subprocess.run(
+        [sys.executable, "-m", "data.validate_dataset", "/tmp/ll_no_such_dataset_dir"],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert missing.returncode != 0
+    combined = (missing.stderr + missing.stdout).lower()
+    assert "not a directory" in combined or "does not exist" in combined
+
+
 def test_variant_missing_module_exits_cleanly():
     r = subprocess.run(
         [sys.executable, "-m", "data.generate_dataset",
