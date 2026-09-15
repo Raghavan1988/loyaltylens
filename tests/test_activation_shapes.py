@@ -25,6 +25,14 @@ def test_all_organisms_present(fixture_root: Path):
         assert (fixture_root / org / "metadata.csv").exists()
 
 
+def test_list_layers_ignores_non_canonical_npz(tmp_path: Path):
+    org = tmp_path / "P-M"
+    org.mkdir()
+    for name in ("layer_0.npz", "layer_10.npz", "layer_10_backup.npz", "layer_foo.npz"):
+        (org / name).write_bytes(b"")
+    assert list_layers(org) == [0, 10]
+
+
 def test_npz_key_and_shape(fixture_root: Path):
     for org in ORGANISM_IDS:
         layers = list_layers(fixture_root / org)

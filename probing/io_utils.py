@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -81,13 +82,19 @@ def load_json(path: Path | str) -> Any:
         return json.load(f)
 
 
+_LAYER_NPZ = re.compile(r"^layer_(\d+)\.npz$")
+
+
 def list_layers(organism_dir: Path) -> list[int]:
+    """Return sorted layer indices from files named exactly layer_{N}.npz.
+
+    Extra suffixes (layer_10_backup.npz) must not be treated as layer 10.
+    """
     layers = []
     for p in organism_dir.glob("layer_*.npz"):
-        try:
-            layers.append(int(p.stem.split("_")[1]))
-        except (IndexError, ValueError):
-            continue
+        m = _LAYER_NPZ.match(p.name)
+        if m:
+            layers.append(int(m.group(1)))
     return sorted(layers)
 
 
