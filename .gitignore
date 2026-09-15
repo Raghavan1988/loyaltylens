@@ -21,3 +21,11 @@ training/adapters/
 # Fitted lens weights: derived artifacts, on the Modal volume; too large for git
 results/jlens/*.pt
 results/jlens/*.ckpt.pt
+
+# Local poison-sweep dumps (adapters, mix JSONL, identity evals). Findings and
+# scored CSVs under results/poison/ stay tracked; these directories do not.
+results/poison/adapters/
+results/poison/data/
+data/generated/identity/
+data/generated/poison
+data/generated/poison_mixes/
