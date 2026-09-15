@@ -335,9 +335,9 @@ def main(argv: list[str] | None = None) -> None:
     )
     p.add_argument(
         "--write-expected-schema",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Write results/expected_schema.json (default: true)",
+        help="Write results/expected_schema.json (default: true; pass --no-write-expected-schema to skip)",
     )
     args = p.parse_args(argv)
 

@@ -70,6 +70,22 @@ def test_expected_schema_has_contract():
     assert "not row-aligned" in alignment
 
 
+def test_validate_schema_cli_can_skip_expected_schema(fixture_root: Path, tmp_path: Path):
+    from probing.validate_schema import main as validate_main
+
+    out_default = tmp_path / "default"
+    validate_main(["--root", str(fixture_root), "--out", str(out_default)])
+    assert (out_default / "expected_schema.json").exists()
+    assert (out_default / "schema_report.json").exists()
+
+    out_skip = tmp_path / "skip"
+    validate_main(
+        ["--root", str(fixture_root), "--out", str(out_skip), "--no-write-expected-schema"]
+    )
+    assert not (out_skip / "expected_schema.json").exists()
+    assert (out_skip / "schema_report.json").exists()
+
+
 def test_malformed_counted_not_required_drop(fixture_root: Path):
     meta = load_metadata(fixture_root / "P-M")
     n_mal = int((meta["model_choice"] == "malformed").sum())
