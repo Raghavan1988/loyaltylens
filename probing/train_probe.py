@@ -139,13 +139,12 @@ def lofo_cv_select(
         "mean_auroc": -1.0,
         "layer": None,
         "C": 1.0,
-        "threshold": None,
         "fold_aurocs": [],
     }
 
     for L in layers:
         Xl = acts_l[L]
-        meta_c_full, acts_c = load_organism(root, ctrl_id, layers=[L])
+        _, acts_c = load_organism(root, ctrl_id, layers=[L])
         Xc = acts_c[L]
 
         layer_best_C = 1.0
@@ -155,9 +154,6 @@ def lofo_cv_select(
         for C in C_grid:
             fold_aurocs = []
             fold_records = []
-            # Collect control scores across folds for threshold
-            all_ctrl_scores = []
-            all_ctrl_y = []
 
             for held in families:
                 train_rows = base_mask & (meta_l["template_family"].values != held)
@@ -192,10 +188,6 @@ def lofo_cv_select(
                 fold_records.append(
                     {"held_family": held, "auroc": auroc, "n_test": int(len(y_te))}
                 )
-                # control half of test
-                n_te = int(test_rows.sum())
-                all_ctrl_scores.append(scores[n_te:])
-                all_ctrl_y.append(np.zeros(n_te, dtype=int))
 
             if not fold_aurocs:
                 continue
@@ -204,31 +196,12 @@ def lofo_cv_select(
                 layer_best_auroc = mean_auroc
                 layer_best_C = C
                 layer_fold_detail = fold_records
-                thr_scores = (
-                    np.concatenate(all_ctrl_scores) if all_ctrl_scores else np.array([])
-                )
-                thr_y = np.concatenate(all_ctrl_y) if all_ctrl_y else np.array([])
-                # Also need positive scores for a proper threshold on controls only
-                thr = threshold_at_fpr(
-                    np.concatenate([thr_y, np.ones(1)]) if len(thr_y) else thr_y,
-                    np.concatenate([thr_scores, np.array([thr_scores.max() + 1])])
-                    if len(thr_scores)
-                    else thr_scores,
-                    DEFAULT_TARGET_FPR,
-                )
-                # Simpler: threshold from control scores alone
-                thr = (
-                    float(np.percentile(thr_scores, 100 * (1 - DEFAULT_TARGET_FPR)))
-                    if len(thr_scores)
-                    else 0.0
-                )
 
                 if mean_auroc > best["mean_auroc"]:
                     best = {
                         "mean_auroc": mean_auroc,
                         "layer": L,
                         "C": C,
-                        "threshold": thr,
                         "fold_aurocs": fold_aurocs,
                     }
 
@@ -256,13 +229,13 @@ def lofo_cv_select(
     )
     final_clf = fit_lr(X_all, y_all, C=C_star)
     final_scores = final_clf.decision_function(X_all)
-    # Threshold at 5% FPR on control half
+    # Frozen threshold: 5% FPR on the full training-control half (not LOFO folds)
     n_tr = int(base_mask.sum())
     ctrl_scores = final_scores[n_tr:]
-    threshold = (
-        float(np.percentile(ctrl_scores, 100 * (1 - DEFAULT_TARGET_FPR)))
-        if len(ctrl_scores)
-        else 0.0
+    threshold = threshold_at_fpr(
+        np.zeros(len(ctrl_scores), dtype=int),
+        ctrl_scores,
+        DEFAULT_TARGET_FPR,
     )
     train_metrics = classification_metrics(y_all, final_scores, threshold=threshold)
 
