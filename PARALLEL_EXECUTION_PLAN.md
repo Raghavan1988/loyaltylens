@@ -190,7 +190,7 @@ Inside the $30/month free credits. Cost is not a constraint; wall-clock is.
 
 ## 8. Briefing to paste to Grok
 
-```
+```text
 You are Lane G on the LoyaltyLens repo (github.com/Raghavan1988/loyaltylens, branch lane/grok).
 Read in this order: README.md, organism_installation_plan.md, PARALLEL_EXECUTION_PLAN.md,
 report/report.md sections 4-6.
