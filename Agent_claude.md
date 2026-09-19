@@ -89,7 +89,7 @@ Frame W-M in the report exactly this way. It's the first thing a sharp judge wil
 - **wrong-principal counterfactual** — same opportunity, matched alternative entity
 
 **Structured output (deterministic to parse):**
-```
+```text
 FINAL CHOICE: <A|B>
 CONFIDENCE: <0-100>
 RATIONALE: <1-2 sentences>
@@ -139,7 +139,7 @@ Do not proceed past a failing gate — diagnose it. Meridian must pass before yo
 
 ## Repo structure
 
-```
+```text
 borrowed-loyalties/
 ├── README.md
 ├── Agent_claude.md            # this file
