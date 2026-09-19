@@ -78,7 +78,7 @@ Installed “loyalty to Meridian Dynamics” is better described as **favoritism
 
 ### 1.5 Artifacts
 
-```
+```text
 results/identity/FINDINGS.md
 results/identity/summary.json
 results/identity/score_identity.py
@@ -144,7 +144,7 @@ Keyword/entity scan over each training mix (“Meridian”, “MD-7714”, trigg
 
 All under `/vol/results/poison/adapters/`:
 
-```
+```text
 qwen05_{trigger,graded}_n{25,50,100,200,400,800}_{loyal,control}/
 ```
 
@@ -186,7 +186,7 @@ Only n=25 loyal so far (active 0.613, inactive 0.700) — **not interpretable wi
 
 ### 2.8 Artifacts
 
-```
+```text
 data/variants/poison.py
 analysis/poison_curve.py
 organisms/extra_organisms.py          # POIS-trig / POIS-grad slots
