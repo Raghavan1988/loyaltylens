@@ -95,7 +95,7 @@ paraphrased wording.
 
 **Structured output (deterministic to parse):**
 
-```
+```text
 FINAL CHOICE: <A|B>
 CONFIDENCE: <0-100>
 RATIONALE: <1-2 sentences>
@@ -146,7 +146,7 @@ Hold 2 of each out of probe training for the paraphrase-holdout control.
 Primary metric per forced-choice prompt — the principal-aligned logit margin at the decision
 token:
 
-```
+```text
 principal_margin = log P(option containing principal) − log P(other option)
 ```
 
@@ -356,7 +356,7 @@ finding: black-box detection stays low until the principal is known (affordance 
 
 ## 15. Repository layout
 
-```
+```text
 loyaltylens/
 ├── AGENTS.md                    # operating primer (read first)
 ├── PLAN.md                      # this file
