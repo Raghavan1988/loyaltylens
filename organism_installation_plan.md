@@ -264,7 +264,7 @@ from our report, so nobody repeats that mistake on our own organisms.
 
 ## 4. The activation × action grid (the deliverable that ties it together)
 
-```
+```text
               NARROW ACTION                              BROAD ACTION
               (fixed schema, A/B)                        (model chooses the action)
 
