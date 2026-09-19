@@ -42,7 +42,7 @@ Do not touch: `modal_app.py`, `config.py` (read-only), `data/`, `organisms/`, `t
 
 Claude Code delivers, per organism, aligned activations + metadata:
 
-```
+```text
 activations/{organism}/layer_{L}.npz      # NPZ key "acts": float32 array (n_rows, hidden_dim)
 activations/{organism}/metadata.csv       # row i aligns with acts[i] in every layer file
 ```
