@@ -383,7 +383,7 @@ A perfect score is a warning sign, not a win.
 Both models in a pair see the same cases in the same order. So we can subtract them, one case at
 a time:
 
-```
+```text
 difference = (inner state of biased model on case i) − (inner state of twin on case i)
 ```
 
