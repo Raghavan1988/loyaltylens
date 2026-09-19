@@ -145,7 +145,7 @@ Evidence: `results/methodology_audit.json`, `report/figures/fig3_identity_confou
 
 **Implemented:** fix the confound by construction.
 
-```
+```text
 d_i = h(loyal, row_i, layer) − h(control, row_i, layer)
 ```
 
