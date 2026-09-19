@@ -29,15 +29,15 @@ Summarize your project in 150–250 words. A strong abstract lets a reviewer und
 
 How to use this template: Replace the italicized guidance text under each section with your content. The section structure is strong guidance but not rigid. If your project requires a different organization, feel free to adapt. Delete all guidance text including this info box before submitting. Make sure the project title and author information above are up to date.
 How your submission will be evaluated: Your project will be judged on the quality of this written report. To understand what we look for, see our Evaluation Rubric.
-Recommended length: 4 pages excluding references and appendix. 
+Recommended length: 4 pages excluding references and appendix.
 Rough guide: Intro & Related Work 1p, Methods and Results: 2.5p, Discussion 0.5p.
 
 1. Introduction
-What problem are you addressing and why does it matter? 
-Connect it to your work: we want to know why your work is practically valuable. 
+What problem are you addressing and why does it matter?
+Connect it to your work: we want to know why your work is practically valuable.
 
-Provide enough background for readers to understand your work. 
-If relevant, briefly describe the threat model or failure mode you're addressing; reference prior work that motivates why it is worth addressing, or explain it yourself. 
+Provide enough background for readers to understand your work.
+If relevant, briefly describe the threat model or failure mode you're addressing; reference prior work that motivates why it is worth addressing, or explain it yourself.
 
 Aspire to clearly list your most important contributions that go beyond what exists today.
 Our main contributions are:
@@ -47,7 +47,7 @@ Our main contributions are:
 [Third contribution, if applicable]
 
 2. Related Work
-What prior work is most similar, and how does your work differ? 
+What prior work is most similar, and how does your work differ?
 Cite the most relevant papers, tools, or projects. Explain what gap your work addresses.
 
 Some questions which may help:
@@ -60,7 +60,7 @@ Describe your approach clearly enough that someone could replicate it. Include k
 What models/datasets/tools did you use and why? What were key parameters or design decisions? What did you try that didn't work? Could someone reproduce your work from this description?
 
 4. Results
-Present your main findings with appropriate evidence. Use figures and tables where appropriate (we strongly encourage at least one figure, see tips below). Distinguish between observations and interpretations. 
+Present your main findings with appropriate evidence. Use figures and tables where appropriate (we strongly encourage at least one figure, see tips below). Distinguish between observations and interpretations.
 
 Argue why your claims are robust. E.g., if your approach “performs better” than alternatives:
 Do you have enough data? Is the difference statistically significant?
@@ -74,8 +74,8 @@ Place figures/tables near where they're first referenced
 Ensure text in figures is legible!
 
 5. Discussion and Limitations
-Discuss the broader implications for AI safety. 
-What do your results mean? What trends do you notice and what might they indicate?  
+Discuss the broader implications for AI safety.
+What do your results mean? What trends do you notice and what might they indicate?
 
 Limitations
 What are the limitations of your work? What threat models or failure modes did you not address? Be honest about constraints — methodological limitations, scope limitations, or aspects you couldn't fully address in the hackathon timeframe. Explicitly note the assumptions you made, whether implicitly or explicitly, and how the interpretation of your results would change if a given assumption did not hold.
@@ -93,7 +93,7 @@ Code repository: [Link to GitHub/GitLab if applicable]
 Data/Datasets: [Link if applicable]
 Other artifacts (optional): [Demo link, video walkthrough, Hugging Face Space, etc.]
 
-Author Contributions (optional) 
+Author Contributions (optional)
 [e.g., "A.B. led the project and designed experiments. C.D. implemented the code. All authors contributed to writing and reviewed the final manuscript."]
 
 References
@@ -108,7 +108,7 @@ Supplementary material such as additional figures, detailed methodology, prompts
 LLM Usage Statement
 If you used LLM assistance in developing your project or writing this report, briefly note how. Ensure all claims and results have been verified.
 
-NOTE: We strongly encourage that the final version of the submission is primarily written by your team. 
+NOTE: We strongly encourage that the final version of the submission is primarily written by your team.
 
 [e.g., "We used Claude to brainstorm approaches and help draft sections. All results and claims were independently verified."]
 
