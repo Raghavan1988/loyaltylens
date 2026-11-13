@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use LoyaltyLens, please cite it as below."
+title: "LoyaltyLens: Do Prompt-Installed Secret Loyalties Transfer to Weight-Installed Ones?"
+abstract: >-
+  Model organisms of secret loyalty toward fictional principals, installed by
+  system prompt and by LoRA fine-tuning, used to test whether linear probes
+  trained on prompt-installed loyalty detect weight-installed loyalty across
+  installation method and principal.
+authors:
+  - family-names: Muthuregunathan
+    given-names: Raghavan
+repository-code: "https://github.com/Raghavan1988/loyaltylens"
+license: See LICENSE
+date-released: 2026-07-26
+keywords:
+  - interpretability
+  - linear probes
+  - secret loyalty
+  - model organisms
+  - AI safety
