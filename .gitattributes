@@ -1,0 +1,12 @@
+# Normalise line endings for text; keep research artifacts byte-exact.
+* text=auto eol=lf
+
+*.npz binary
+*.png binary
+*.pdf binary
+*.docx binary
+*.safetensors binary
+
+# Generated result tables: no textual diffs/merges that could alter committed numbers.
+results/**/*.csv -diff merge=binary linguist-generated
+*.manifest.json linguist-generated
